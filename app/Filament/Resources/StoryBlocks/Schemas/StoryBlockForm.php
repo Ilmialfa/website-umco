@@ -2,9 +2,11 @@
 
 namespace App\Filament\Resources\StoryBlocks\Schemas;
 
-use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class StoryBlockForm
@@ -13,34 +15,50 @@ class StoryBlockForm
     {
         return $schema
             ->components([
-                Section::make('Blok Narasi Editorial')
-                    ->columns(2)
+                Grid::make(['default' => 1, 'lg' => 3])
                     ->schema([
-                        TextInput::make('page')
-                            ->label('Halaman')
-                            ->default('about')
-                            ->required(),
+                        Group::make([
+                            Section::make('Blok Narasi Editorial Kafe')
+                                ->description('Teks cerita, filosofi, dan narasi arsitektur.')
+                                ->icon('heroicon-o-book-open')
+                                ->schema([
+                                    TextInput::make('title')
+                                        ->label('Judul Narasi / Sub-Headline')
+                                        ->placeholder('Contoh: Titik Temu Mahasiswa & Penikmat Kopi')
+                                        ->required()
+                                        ->columnSpanFull(),
 
-                        TextInput::make('key')
-                            ->label('Kunci Pengenal (Key)')
-                            ->required()
-                            ->helperText('Contoh: philosophy, architecture_h, bean_journey_1'),
+                                    Textarea::make('body')
+                                        ->label('Isi Cerita Lengkap')
+                                        ->rows(6)
+                                        ->required()
+                                        ->columnSpanFull()
+                                        ->placeholder('Tuliskan paragraf cerita kafe di sini...'),
+                                ]),
+                        ])->columnSpan(['default' => 1, 'lg' => 2]),
 
-                        TextInput::make('title')
-                            ->label('Judul Narasi')
-                            ->required()
-                            ->columnSpanFull(),
+                        Group::make([
+                            Section::make('Identifikasi Teknis')
+                                ->description('Penempatan halaman dan urutan.')
+                                ->icon('heroicon-o-tag')
+                                ->schema([
+                                    TextInput::make('page')
+                                        ->label('Halaman Target')
+                                        ->default('about')
+                                        ->required()
+                                        ->helperText('Contoh: about, home, contact'),
 
-                        Textarea::make('body')
-                            ->label('Isi Cerita')
-                            ->rows(5)
-                            ->required()
-                            ->columnSpanFull(),
+                                    TextInput::make('key')
+                                        ->label('Kunci Pengenal (Key)')
+                                        ->required()
+                                        ->helperText('Contoh: philosophy, architecture_h, bean_journey_1'),
 
-                        TextInput::make('sort')
-                            ->label('Urutan Tampil')
-                            ->numeric()
-                            ->default(0),
+                                    TextInput::make('sort')
+                                        ->label('Urutan Tampil')
+                                        ->numeric()
+                                        ->default(0),
+                                ]),
+                        ])->columnSpan(['default' => 1, 'lg' => 1]),
                     ]),
             ]);
     }

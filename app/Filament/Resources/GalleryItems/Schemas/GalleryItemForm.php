@@ -3,10 +3,12 @@
 namespace App\Filament\Resources\GalleryItems\Schemas;
 
 use Filament\Forms\Components\FileUpload;
-use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class GalleryItemForm
@@ -15,48 +17,66 @@ class GalleryItemForm
     {
         return $schema
             ->components([
-                Section::make('Aset Galeri Suasana')
-                    ->columns(2)
+                Grid::make(['default' => 1, 'lg' => 3])
                     ->schema([
-                        Select::make('group')
-                            ->label('Area Suasana')
-                            ->options([
-                                'indoor' => 'Indoor (Full AC & Nugas)',
-                                'outdoor' => 'Outdoor (Street Food & Santai)',
-                                'general' => 'Umum / Gedung H',
-                            ])
-                            ->default('general')
-                            ->required(),
+                        Group::make([
+                            Section::make('Aset Galeri Suasana Kafe')
+                                ->description('Dokumentasi visual area indoor, outdoor, dan fasilitas.')
+                                ->icon('heroicon-o-photo')
+                                ->schema([
+                                    Grid::make(2)
+                                        ->schema([
+                                            Select::make('group')
+                                                ->label('Zona Area Suasana')
+                                                ->options([
+                                                    'indoor' => 'Indoor Wing Barat (Full AC & Nugas)',
+                                                    'outdoor' => 'Outdoor Wing Timur (Courtyard & Santai)',
+                                                    'general' => 'Umum / Gedung H UMRI',
+                                                ])
+                                                ->default('general')
+                                                ->required(),
 
-                        Select::make('type')
-                            ->label('Tipe Media')
-                            ->options([
-                                'image' => 'Foto (Gambar)',
-                                'video' => 'Video Loop Pendek (MP4/WebM)',
-                            ])
-                            ->default('image')
-                            ->required(),
+                                            Select::make('type')
+                                                ->label('Tipe Media')
+                                                ->options([
+                                                    'image' => 'Foto (Gambar)',
+                                                    'video' => 'Video Loop Pendek (MP4)',
+                                                ])
+                                                ->default('image')
+                                                ->required(),
+                                        ]),
 
-                        FileUpload::make('image_path')
-                            ->label('File Foto / Video')
-                            ->disk('public')
-                            ->directory('gallery')
-                            ->required()
-                            ->columnSpanFull(),
+                                    FileUpload::make('image_path')
+                                        ->label('Berkas Foto atau Video Loop')
+                                        ->disk('public')
+                                        ->directory('gallery')
+                                        ->required()
+                                        ->columnSpanFull()
+                                        ->helperText('Format JPG, PNG, WebP, atau video MP4 ringan.'),
 
-                        TextInput::make('caption')
-                            ->label('Keterangan / Alt Text')
-                            ->placeholder('Contoh: Suasana meja kerja indoor ber-AC sejuk.')
-                            ->columnSpanFull(),
+                                    TextInput::make('caption')
+                                        ->label('Keterangan / Teks Foto (Caption)')
+                                        ->placeholder('Contoh: Meja panjang nugas dengan stopkontak berlimpah di Wing Barat.')
+                                        ->columnSpanFull(),
+                                ]),
+                        ])->columnSpan(['default' => 1, 'lg' => 2]),
 
-                        TextInput::make('sort')
-                            ->label('Urutan')
-                            ->numeric()
-                            ->default(0),
+                        Group::make([
+                            Section::make('Visibilitas')
+                                ->description('Status tayang galeri.')
+                                ->icon('heroicon-o-eye')
+                                ->schema([
+                                    Toggle::make('is_active')
+                                        ->label('Aktif Ditampilkan')
+                                        ->helperText('Tampilkan foto/video ini di galeri publik.')
+                                        ->default(true),
 
-                        Toggle::make('is_active')
-                            ->label('Aktif')
-                            ->default(true),
+                                    TextInput::make('sort')
+                                        ->label('Urutan Tampil')
+                                        ->numeric()
+                                        ->default(0),
+                                ]),
+                        ])->columnSpan(['default' => 1, 'lg' => 1]),
                     ]),
             ]);
     }

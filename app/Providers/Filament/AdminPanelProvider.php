@@ -33,7 +33,12 @@ class AdminPanelProvider extends PanelProvider
             ->favicon('/favicon.svg')
             ->renderHook(
                 PanelsRenderHook::HEAD_END,
-                fn (): HtmlString => new HtmlString('<link rel="stylesheet" href="/css/filament-theme.css">')
+                fn (): HtmlString => new HtmlString('
+                    <link rel="preconnect" href="https://fonts.googleapis.com">
+                    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+                    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap">
+                    <link rel="stylesheet" href="/css/filament-theme.css">
+                ')
             )
             ->colors([
                 'primary' => [
@@ -62,7 +67,6 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
                 \App\Filament\Widgets\ReservationStatsWidget::class,
                 \App\Filament\Widgets\PlaceholderAuditWidget::class,

@@ -12,6 +12,11 @@ class PlaceholderAuditWidget extends Widget
 {
     protected static ?int $sort = 2;
 
+    public static function canView(): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
+    }
+
     protected string $view = 'filament.widgets.placeholder-audit-widget';
 
     public function getViewData(): array

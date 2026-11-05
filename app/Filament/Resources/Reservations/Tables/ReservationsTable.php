@@ -134,11 +134,6 @@ class ReservationsTable
                             $template = Settings::get('whatsapp_templates.confirmation', 'Halo Kak {nama}, kami dari Admin UM.CO House mengonfirmasi reservasi Kakak (Kode: {kode}) untuk {jumlah} orang pada {tanggal} pukul {jam} WIB. Ditunggu kehadirannya di UM.CO House ya!');
                             $msg = self::renderTemplate($template, $record);
 
-                            ActivityLog::record('whatsapp_click', Reservation::class, $record->id, [
-                                'template' => 'confirmation',
-                                'phone' => $record->phone_wa,
-                            ]);
-
                             return PhoneNumber::waLink($record->phone_wa, $msg);
                         }),
 
@@ -151,11 +146,6 @@ class ReservationsTable
                             $template = Settings::get('whatsapp_templates.cancellation', 'Halo Kak {nama}, mohon maaf dari Admin UM.CO House terkait reservasi {kode} pada {tanggal} {jam} WIB ada penyesuaian jadwal / menu habis. Silakan hubungi kami untuk opsi meja pengganti.');
                             $msg = self::renderTemplate($template, $record);
 
-                            ActivityLog::record('whatsapp_click', Reservation::class, $record->id, [
-                                'template' => 'cancellation',
-                                'phone' => $record->phone_wa,
-                            ]);
-
                             return PhoneNumber::waLink($record->phone_wa, $msg);
                         }),
 
@@ -165,11 +155,6 @@ class ReservationsTable
                         ->color('primary')
                         ->openUrlInNewTab()
                         ->url(function (Reservation $record) {
-                            ActivityLog::record('whatsapp_click', Reservation::class, $record->id, [
-                                'template' => 'custom',
-                                'phone' => $record->phone_wa,
-                            ]);
-
                             return PhoneNumber::waLink($record->phone_wa, '');
                         }),
                 ])

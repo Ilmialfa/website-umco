@@ -92,11 +92,6 @@ class UpcomingReservationsWidget extends BaseWidget
                             '{catatan}' => $record->note ?? '-',
                         ]);
 
-                        ActivityLog::record('whatsapp_click', Reservation::class, $record->id, [
-                            'template' => 'confirmation',
-                            'phone' => $record->phone_wa,
-                        ]);
-
                         return PhoneNumber::waLink($record->phone_wa, $msg);
                     }),
 

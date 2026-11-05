@@ -11,7 +11,6 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Widgets\AccountWidget;
-use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -28,8 +27,29 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->brandName('UM.CO House')
+            ->favicon('/favicon.svg')
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => [
+                    50 => '#f4f7f4',
+                    100 => '#e5ede5',
+                    200 => '#c7d9c8',
+                    300 => '#9fbfa1',
+                    400 => '#6f9e73',
+                    500 => '#3E5C45', // Moss
+                    600 => '#2d4733',
+                    700 => '#1D3B2A', // Espresso
+                    800 => '#0F2A1D', // Forest Deep
+                    900 => '#091A12',
+                    950 => '#040b07',
+                ],
+                'gray' => Color::Zinc,
+            ])
+            ->navigationGroups([
+                'Operasional Reservasi',
+                'Katalog & Menu',
+                'Konten Website',
+                'Pengaturan & Audit',
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
@@ -38,8 +58,9 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
-                AccountWidget::class,
-                FilamentInfoWidget::class,
+                \App\Filament\Widgets\ReservationStatsWidget::class,
+                \App\Filament\Widgets\PlaceholderAuditWidget::class,
+                \App\Filament\Widgets\UpcomingReservationsWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

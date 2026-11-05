@@ -1,0 +1,86 @@
+<?php
+
+namespace App\Filament\Resources\MenuItems\Tables;
+
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
+use Filament\Tables\Table;
+
+class MenuItemsTable
+{
+    public static function configure(Table $table): Table
+    {
+        return $table
+            ->defaultSort('favorite_order', 'asc')
+            ->columns([
+                ImageColumn::make('image_path')
+                    ->label('Foto')
+                    ->circular()
+                    ->defaultImageUrl('/images/coffee-placeholder.jpg'),
+
+                TextColumn::make('name')
+                    ->label('Nama Menu')
+                    ->searchable()
+                    ->sortable()
+                    ->weight('bold'),
+
+                TextColumn::make('category.name')
+                    ->label('Kategori')
+                    ->badge()
+                    ->sortable(),
+
+                TextColumn::make('price')
+                    ->label('Harga')
+                    ->money('IDR')
+                    ->sortable(),
+
+                ToggleColumn::make('is_available')
+                    ->label('Tersedia'),
+
+                ToggleColumn::make('is_favorite')
+                    ->label('Favorit'),
+
+                TextColumn::make('favorite_order')
+                    ->label('Urut Favorit')
+                    ->sortable()
+                    ->alignCenter(),
+
+                ToggleColumn::make('is_new')
+                    ->label('Baru'),
+
+                ToggleColumn::make('is_active')
+                    ->label('Aktif'),
+            ])
+            ->filters([
+                SelectFilter::make('category_id')
+                    ->label('Kategori')
+                    ->relationship('category', 'name'),
+
+                TernaryFilter::make('is_available')
+                    ->label('Ketersediaan')
+                    ->placeholder('Semua')
+                    ->trueLabel('Tersedia Saja')
+                    ->falseLabel('Habis (Sold Out)'),
+
+                TernaryFilter::make('is_favorite')
+                    ->label('Menu Favorit')
+                    ->placeholder('Semua')
+                    ->trueLabel('Favorit / Unggulan')
+                    ->falseLabel('Menu Biasa'),
+            ])
+            ->recordActions([
+                EditAction::make(),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+}

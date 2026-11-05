@@ -9,7 +9,7 @@
                 <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 text-xs font-black uppercase tracking-widest text-[#F5B82E]">
                     Katalog Resmi
                 </span>
-                <h1 class="font-display text-4xl sm:text-6xl font-black uppercase tracking-tight leading-none text-white">
+                <h1 class="font-display text-3xl sm:text-5xl font-extrabold uppercase tracking-wide leading-tight text-white">
                     Fresh Brews &amp; Bites.
                 </h1>
                 <p class="text-sm sm:text-base text-[#9AB4A6] max-w-lg mx-auto">

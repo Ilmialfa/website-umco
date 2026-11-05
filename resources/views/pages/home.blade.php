@@ -26,10 +26,10 @@
                         <span class="text-white">Kampus UMRI Pekanbaru</span>
                     </div>
 
-                    <!-- Giant Bold Sans-Serif Display Headline (Bebas Neue / Taraq Style - Zero Legs/Serifs) -->
-                    <h1 class="font-display text-5xl sm:text-7xl lg:text-8xl font-black uppercase tracking-tight text-white leading-[0.92] drop-shadow-lg">
-                        A BETTER PLACE<br/>
-                        <span class="text-[#F5B82E]">FOR COFFEE.</span>
+                    <!-- Giant Bold Sans-Serif Display Headline (Outfit - Geometric, Spacious, Zero Berdempetan) -->
+                    <h1 class="font-display text-4xl sm:text-6xl lg:text-7xl font-extrabold uppercase tracking-wide text-white leading-[1.08] drop-shadow-md">
+                        A Better Place<br/>
+                        <span class="text-[#F5B82E]">For Coffee.</span>
                     </h1>
 
                     <!-- Clean 1-2 Sentence Punchy Subtitle -->
@@ -103,11 +103,11 @@
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             
             <!-- Section Header -->
-            <div class="text-center max-w-2xl mx-auto space-y-2 mb-12">
+            <div class="text-center max-w-2xl mx-auto space-y-3 mb-12">
                 <span class="text-xs font-black uppercase tracking-widest text-[#145341]">Suasana &amp; Keseharian</span>
-                <h2 class="font-display text-4xl sm:text-6xl font-black uppercase tracking-tight text-[#0D3B2E] leading-none">
-                    EVERYTHING YOU NEED<br/>
-                    FOR A GOOD PAUSE.
+                <h2 class="font-display text-3xl sm:text-5xl font-extrabold uppercase tracking-wide text-[#0D3B2E] leading-tight">
+                    Everything You Need<br/>
+                    For A Good Pause.
                 </h2>
                 <p class="text-sm sm:text-base text-[#122018]/70 max-w-md mx-auto pt-1 font-medium">
                     Ruang singgah santai untuk rehat sejenak di antara padatnya jadwal kuliah.
@@ -202,8 +202,8 @@
             <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
                 <div>
                     <span class="text-xs font-black uppercase tracking-widest text-[#145341]">Favorit Kampus</span>
-                    <h2 class="font-display text-4xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight text-[#0D3B2E] mt-1 leading-none">
-                        GOOD COFFEE, MADE SIMPLY.
+                    <h2 class="font-display text-3xl sm:text-5xl font-extrabold uppercase tracking-wide text-[#0D3B2E] mt-1 leading-tight">
+                        Good Coffee, Made Simply.
                     </h2>
                 </div>
                 <a
@@ -284,10 +284,10 @@
             <div class="max-w-6xl mx-auto px-6 sm:px-12 lg:px-16 py-14 sm:py-20 relative z-10 w-full flex flex-col md:flex-row md:items-end justify-between gap-8">
                 <div class="max-w-xl space-y-3">
                     <span class="text-xs font-black uppercase tracking-widest text-[#F5B82E]">Arsitektur Gedung H</span>
-                    <h2 class="font-display text-4xl sm:text-6xl font-black uppercase tracking-tight leading-none text-white drop-shadow">
-                        MEET IN COMFORT.
+                    <h2 class="font-display text-3xl sm:text-5xl font-extrabold uppercase tracking-wide leading-tight text-white drop-shadow">
+                        Meet In Comfort.
                     </h2>
-                    <p class="text-sm sm:text-base text-white/90 leading-relaxed drop-shadow">
+                    <p class="text-sm sm:text-base text-white/90 leading-relaxed drop-shadow font-medium">
                         Wing Barat ber-AC untuk nugas tanpa bising, dan Wing Timur outdoor dengan aneka jajanan street food sore hingga malam.
                     </p>
                 </div>
@@ -308,10 +308,10 @@
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-xl mx-auto mb-16 space-y-2">
                 <span class="text-xs font-black uppercase tracking-widest text-[#145341]">Standar Kualitas</span>
-                <h2 class="font-display text-4xl sm:text-5xl font-black uppercase tracking-tight text-[#0D3B2E]">
-                    FROM BEAN TO CUP.
+                <h2 class="font-display text-3xl sm:text-5xl font-extrabold uppercase tracking-wide text-[#0D3B2E]">
+                    From Bean To Cup.
                 </h2>
-                <p class="text-xs sm:text-sm text-[#122018]/60">Tiga komitmen di balik setiap tegukan kopi yang kami sajikan.</p>
+                <p class="text-xs sm:text-sm text-[#122018]/60 font-medium">Tiga komitmen di balik setiap tegukan kopi yang kami sajikan.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -350,8 +350,8 @@
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="mb-12">
                 <span class="text-xs font-black uppercase tracking-widest text-[#145341]">Ulasan Mahasiswa &amp; Dosen</span>
-                <h2 class="font-display text-4xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight text-[#0D3B2E] mt-1 leading-none">
-                    WHY PEOPLE COME BACK.
+                <h2 class="font-display text-3xl sm:text-5xl font-extrabold uppercase tracking-wide text-[#0D3B2E] mt-1 leading-tight">
+                    Why People Come Back.
                 </h2>
             </div>
 
@@ -381,9 +381,9 @@
         <section class="rounded-[2rem] sm:rounded-[3rem] bg-[#07241C] text-white py-20 px-6 sm:px-12 text-center relative overflow-hidden">
             <div class="max-w-2xl mx-auto space-y-4 relative z-10">
                 <span class="text-xs font-black uppercase tracking-widest text-[#F5B82E]">Reservasi Meja</span>
-                <h2 class="font-display text-4xl sm:text-6xl lg:text-7xl font-black uppercase tracking-tight leading-none text-white">
-                    COME IN.<br/>
-                    TAKE A BREATH.
+                <h2 class="font-display text-3xl sm:text-5xl lg:text-6xl font-extrabold uppercase tracking-wide leading-tight text-white">
+                    Come In.<br/>
+                    Take A Breath.
                 </h2>
                 <p class="text-sm sm:text-base text-[#D1E0D7] leading-relaxed pt-2 font-medium">
                     Amankan meja belajarmu sekarang. Bebas pilih meja saja tanpa DP, atau pesan menu favorit sekaligus.

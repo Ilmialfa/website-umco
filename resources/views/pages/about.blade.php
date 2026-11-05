@@ -9,7 +9,7 @@
                 <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 text-xs font-black uppercase tracking-widest text-[#F5B82E]">
                     Cerita &amp; Ruang
                 </span>
-                <h1 class="font-display text-4xl sm:text-6xl font-black uppercase tracking-tight leading-none text-white">
+                <h1 class="font-display text-3xl sm:text-5xl font-extrabold uppercase tracking-wide leading-tight text-white">
                     Where Coffee Meets Campus.
                 </h1>
                 <p class="text-sm sm:text-base text-[#9AB4A6] max-w-lg mx-auto">
@@ -25,7 +25,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
                 <div class="lg:col-span-7 space-y-6">
                     <span class="text-xs font-black uppercase tracking-widest text-[#145341]">Ruang Ketiga Kampus</span>
-                    <h2 class="font-display text-3xl sm:text-4xl lg:text-5xl font-black uppercase tracking-tight text-[#0D3B2E] leading-tight">
+                    <h2 class="font-display text-2xl sm:text-4xl font-extrabold uppercase tracking-wide text-[#0D3B2E] leading-tight">
                         Tempat Lahirnya Ide &amp; Kolaborasi.
                     </h2>
                     <p class="text-sm sm:text-base text-[#122018]/80 leading-relaxed font-medium">
@@ -69,7 +69,7 @@
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-xl mx-auto mb-14 space-y-2">
                 <span class="text-xs font-black uppercase tracking-widest text-[#145341]">Denah Bangunan</span>
-                <h2 class="font-display text-3xl sm:text-4xl font-black uppercase tracking-tight text-[#0D3B2E]">
+                <h2 class="font-display text-2xl sm:text-4xl font-extrabold uppercase tracking-wide text-[#0D3B2E]">
                     Arsitektur Huruf &ldquo;H&rdquo;
                 </h2>
                 <p class="text-xs sm:text-sm text-[#122018]/60">Dua sayap suasana berbeda yang dihubungkan oleh taman tengah terbuka.</p>

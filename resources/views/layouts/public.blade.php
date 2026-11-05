@@ -61,10 +61,10 @@
     }
     </script>
 
-    <!-- Google Fonts: Bebas Neue (Display), Outfit (Subheadings/Pills), Plus Jakarta Sans (Body) - 100% SANS-SERIF, ZERO KAKI -->
+    <!-- Google Fonts: Outfit (Spacious Geometric Sans, Zero Berdempetan) & Plus Jakarta Sans (Clean Sans) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
@@ -223,22 +223,30 @@
         {{ $slot }}
     </main>
 
-    <!-- FOOTER: GIANT WORDMARK + REAL CUTOUT PHOTOGRAPH (OVERLAPPING TARAQ STYLE) -->
-    <footer id="public-footer" class="bg-[#07241C] text-white relative overflow-hidden pt-20 pb-10">
+    <!-- FOOTER: CLEAN, SPACIOUS, MODERN (ZERO OVERLAPPING, ZERO COLLISION) -->
+    <footer id="public-footer" class="bg-[#07241C] text-white relative overflow-hidden pt-16 sm:pt-20 pb-12">
+        
+        <!-- Subtle Ambient Background Wordmark (Background Layer Only, Never Colliding With Text) -->
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden opacity-[0.03]">
+            <span class="font-display font-black text-[22vw] tracking-[0.2em] text-white whitespace-nowrap">
+                UM.CO
+            </span>
+        </div>
+
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <!-- Footer Content Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-10 pb-16">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-white/10">
                 <!-- Brand Info -->
                 <div class="md:col-span-5 space-y-4">
-                    <div class="flex items-center gap-1.5">
+                    <div class="flex items-center gap-2">
                         <span class="font-display text-3xl font-black tracking-wider text-white">UM.CO</span>
                         <span class="w-2.5 h-2.5 rounded-full bg-[#F5B82E]"></span>
                     </div>
-                    <p class="text-sm text-[#9AB4A6] leading-relaxed max-w-sm">
+                    <p class="text-sm text-[#9AB4A6] leading-relaxed max-w-sm font-medium">
                         Ruang temu hangat di Kampus UMRI Pekanbaru. Dari seduhan kopi harian hingga street food malam hari di courtyard terbuka.
                     </p>
-                    <div class="pt-2">
-                        <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 text-xs text-[#F5B82E]">
+                    <div class="pt-1">
+                        <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 text-xs text-[#F5B82E] font-medium border border-white/10">
                             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                             <span>Buka Setiap Hari: 08.00 – 21.00 WIB</span>
                         </span>
@@ -248,7 +256,7 @@
                 <!-- Navigation Links -->
                 <div class="md:col-span-3 space-y-3">
                     <p class="text-xs uppercase tracking-widest text-[#F5B82E] font-bold">Navigasi</p>
-                    <ul class="space-y-2 text-sm text-white/80">
+                    <ul class="space-y-2.5 text-sm text-white/80 font-medium">
                         <li><a href="/" wire:navigate class="hover:text-[#F5B82E] transition">Beranda</a></li>
                         <li><a href="/menu" wire:navigate class="hover:text-[#F5B82E] transition">Katalog Menu</a></li>
                         <li><a href="/about" wire:navigate class="hover:text-[#F5B82E] transition">Cerita &amp; Lokasi Kampus</a></li>
@@ -259,8 +267,8 @@
                 <!-- Location & Contact -->
                 <div class="md:col-span-4 space-y-3">
                     <p class="text-xs uppercase tracking-widest text-[#F5B82E] font-bold">Lokasi Kampus</p>
-                    <p class="text-sm text-white/80 leading-relaxed">
-                        Kampus 2 UMRI, Jl. Tuanku Tambusai Ujung, Delima, Pekanbaru.
+                    <p class="text-sm text-white/80 leading-relaxed font-medium">
+                        Kampus 2 UMRI, Jl. Tuanku Tambusai Ujung, Delima, Pekanbaru, Riau.
                     </p>
                     <div class="pt-2 flex items-center gap-3">
                         <a
@@ -278,33 +286,10 @@
                 </div>
             </div>
 
-            <!-- Bottom Copyright -->
-            <div class="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-xs text-[#9AB4A6] gap-4">
+            <!-- Bottom Copyright (Unobstructed, Clean, Spacious) -->
+            <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#9AB4A6] gap-4 font-medium">
                 <p>&copy; {{ date('Y') }} UM.CO House Kampus UMRI. All rights reserved.</p>
                 <p>Designed for Campus Living &amp; Coffee Lovers</p>
-            </div>
-        </div>
-
-        <!-- DRAMATIC BOTTOM: GIANT WORDMARK + REAL CUTOUT PHOTOGRAPH (SECTION 4.3) -->
-        <div class="relative w-full overflow-hidden mt-8 pt-6 select-none pointer-events-none">
-            <!-- Giant Wordmark UM.CO -->
-            <div class="w-full text-center leading-none">
-                <span
-                    class="font-display font-black tracking-tighter text-white/[0.08] block uppercase"
-                    style="font-size: clamp(6rem, 22vw, 25rem);"
-                >
-                    UM.CO
-                </span>
-            </div>
-
-            <!-- Overlapping Real Cutout Photograph (Iced Macchiato with Cold Foam & Ice) -->
-            <div class="absolute bottom-[-10px] sm:bottom-[-20px] left-1/2 -translate-x-1/2 w-48 sm:w-64 md:w-80 lg:w-96 z-10 footer-signature-drink pointer-events-auto">
-                <img
-                    src="{{ asset('/images/signature-drink-cutout.png') }}"
-                    alt="Signature Iced Coffee UM.CO"
-                    class="w-full h-auto drop-shadow-2xl transition-transform duration-500 hover:scale-105"
-                    loading="lazy"
-                />
             </div>
         </div>
     </footer>

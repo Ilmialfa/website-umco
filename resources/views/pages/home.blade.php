@@ -1,70 +1,93 @@
 <x-layouts.public>
-    <!-- HERO CONTAINER (MELLOW & TARAQ STYLE: ROUNDED FRAME WITH CINEMATIC PHOTOGRAPHY) -->
-    <div class="px-3 sm:px-6 pt-4 pb-12">
-        <section class="relative min-h-[88vh] lg:min-h-[92vh] rounded-[2rem] sm:rounded-[2.5rem] lg:rounded-[3rem] overflow-hidden bg-[#07241C] text-white flex items-center">
+    <!-- 1. HERO CONTAINER (MELLOW & COFFEELO STYLE: ROUNDED FRAME WITH PROMINENT SPLASHING DRINK) -->
+    <div class="px-3 sm:px-6 pt-2 pb-6">
+        <section class="relative rounded-[2rem] sm:rounded-[2.5rem] lg:rounded-[3rem] overflow-hidden bg-[#07241C] text-white pt-24 sm:pt-28 pb-16 sm:pb-20 px-6 sm:px-10 lg:px-16">
             
-            <!-- Background Photographic Layer with Dramatic Warm Grading -->
-            <div class="absolute inset-0 z-0">
-                <img
-                    src="{{ asset('/images/hero-photo.jpg') }}"
-                    alt="UM.CO House Coffee & Patio"
-                    class="w-full h-full object-cover object-center opacity-35 scale-105"
-                />
-                <div class="absolute inset-0 bg-gradient-to-r from-[#07241C] via-[#07241C]/80 to-transparent"></div>
-            </div>
+            <!-- Soft Warm Radial Glow Behind Content -->
+            <div class="absolute -top-40 -left-40 w-[30rem] h-[30rem] rounded-full bg-[#F5B82E]/15 blur-3xl pointer-events-none"></div>
+            <div class="absolute top-1/2 right-0 -translate-y-1/2 w-[32rem] h-[32rem] rounded-full bg-[#F5B82E]/10 blur-3xl pointer-events-none"></div>
 
-            <!-- Ambient Glow -->
-            <div class="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-[#F5B82E]/15 blur-3xl pointer-events-none"></div>
+            <div class="max-w-6xl mx-auto relative z-10">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
+                    
+                    <!-- Left Column: Big Bold Condensed Sans Typography (Zero Legs / Serifs) -->
+                    <div class="lg:col-span-7 space-y-6 text-left">
+                        
+                        <!-- Top Location Tag (Mellow style) -->
+                        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-xs font-bold tracking-widest uppercase text-[#F5B82E]">
+                            <span class="w-2 h-2 rounded-full bg-[#F5B82E] animate-ping"></span>
+                            <span class="text-white">Kampus UMRI Pekanbaru</span>
+                        </div>
 
-            <div class="max-w-6xl mx-auto px-6 sm:px-10 lg:px-12 py-28 sm:py-36 relative z-10 w-full">
-                <div class="max-w-2xl space-y-6">
+                        <!-- Massive Condensed Display Headline (Bebas Neue / Mellow / Taraq Style) -->
+                        <h1 class="font-display text-5xl sm:text-7xl lg:text-8xl font-black uppercase tracking-tight text-white leading-[0.92]">
+                            WHERE COFFEE<br/>
+                            <span class="text-[#F5B82E]">MEETS CALM.</span>
+                        </h1>
 
-                    <!-- Top Tag (Mellow style) -->
-                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-xs font-bold tracking-widest uppercase">
-                        <span class="w-2 h-2 rounded-full bg-[#F5B82E]"></span>
-                        <span class="text-white">Kampus UMRI Pekanbaru</span>
+                        <!-- Punchy 2-Sentence Subtitle (Clean & Direct) -->
+                        <p class="text-base sm:text-lg text-[#D1E0D7] font-medium leading-relaxed max-w-lg">
+                            Ruang tenang ber-AC untuk fokus nugas di siang hari, dan courtyard terbuka hijau dengan aneka street food malam hari.
+                        </p>
+
+                        <!-- Action Button Pills -->
+                        <div class="pt-2 flex flex-wrap items-center gap-4">
+                            <a
+                                href="/reservasi"
+                                wire:navigate
+                                class="px-8 py-4 rounded-full text-xs sm:text-sm font-black uppercase tracking-wider bg-[#F5B82E] text-[#07241C] hover:bg-[#D99B16] transition active:scale-95 text-center shadow-none"
+                            >
+                                Reservasi Meja &rarr;
+                            </a>
+                            <a
+                                href="/menu"
+                                wire:navigate
+                                class="px-7 py-4 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider bg-white/10 hover:bg-white/20 text-white backdrop-blur-md transition text-center"
+                            >
+                                Katalog Menu
+                            </a>
+                        </div>
+
+                        <!-- Social Proof & Hours Sticker -->
+                        <div class="pt-6 border-t border-white/10 flex items-center gap-6 text-xs text-white/80">
+                            <div class="flex items-center gap-2">
+                                <span class="font-display font-black text-2xl text-[#F5B82E]">4.9 ★</span>
+                                <span class="text-[#9AB4A6] leading-tight block">Google Review<br/><span class="text-white/60">86 ulasan asli</span></span>
+                            </div>
+                            <span class="text-white/20">|</span>
+                            <div>
+                                <span class="font-display font-black text-2xl text-white">08.00 - 21.00</span>
+                                <span class="text-[#9AB4A6] leading-tight block">Buka Setiap Hari<br/><span class="text-white/60">Kampus 2 UMRI</span></span>
+                            </div>
+                        </div>
+
                     </div>
 
-                    <!-- Giant Bold Sans-Serif Display Headline (NO SERIFS) -->
-                    <h1 class="font-display text-4xl sm:text-6xl lg:text-7xl font-black uppercase tracking-tight text-white leading-[1.02]">
-                        A Better Place<br/>
-                        <span class="text-[#F5B82E]">For Coffee.</span>
-                    </h1>
-
-                    <!-- Clean 2-Sentence Punchy Subtitle (Zero AI Clutter) -->
-                    <p class="text-base sm:text-lg text-[#9AB4A6] leading-relaxed max-w-lg font-medium">
-                        Ruang tenang ber-AC untuk nugas di siang hari, dan courtyard terbuka hijau dengan aneka street food malam hari.
-                    </p>
-
-                    <!-- Big Pill Action Buttons -->
-                    <div class="pt-4 flex flex-wrap items-center gap-4">
-                        <a
-                            href="/reservasi"
-                            wire:navigate
-                            class="px-8 py-4 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider bg-[#F5B82E] text-[#07241C] hover:bg-[#D99B16] transition active:scale-95 text-center shadow-lg"
-                        >
-                            Reservasi Meja &rarr;
-                        </a>
-                        <a
-                            href="/menu"
-                            wire:navigate
-                            class="px-8 py-4 rounded-full text-xs sm:text-sm font-bold tracking-wide bg-white/10 hover:bg-white/20 text-white backdrop-blur-md transition text-center"
-                        >
-                            Lihat Menu
-                        </a>
-                    </div>
-
-                    <!-- Quick Rating Sticker (Mochanf style) -->
-                    <div class="pt-8 flex items-center gap-6 text-xs text-white/70">
-                        <div class="flex items-center gap-2">
-                            <span class="font-display font-black text-lg text-white">4.9 ★</span>
-                            <span class="text-[#9AB4A6]">Google Review</span>
+                    <!-- Right Column: Prominent Product Hero (High-Res Splashing Drink & Floating Beans) -->
+                    <div class="lg:col-span-5 relative flex items-center justify-center">
+                        
+                        <!-- Floating Scalloped / Starburst Sticker (CoffeeLo & Brewhaus style) -->
+                        <div class="absolute -top-4 -right-2 sm:top-2 sm:right-4 z-20 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-[#F5B82E] text-[#07241C] flex flex-col items-center justify-center p-2 text-center rotate-12 shadow-none select-none">
+                            <span class="font-display text-base sm:text-lg font-black uppercase leading-tight">FAVORIT #1</span>
+                            <span class="text-[9px] font-bold uppercase tracking-wider text-[#07241C]/80">Es Kopi Aren</span>
                         </div>
-                        <span class="text-white/20">|</span>
-                        <div>
-                            <span class="font-display font-black text-lg text-white">08.00 - 21.00</span>
-                            <span class="text-[#9AB4A6] block">Buka Setiap Hari</span>
+
+                        <!-- Floating Origin Pill Badge (CoffeeLo style) -->
+                        <div class="absolute bottom-4 -left-2 sm:bottom-8 sm:left-0 z-20 bg-white/15 backdrop-blur-md rounded-2xl px-4 py-2.5 text-left border border-white/10 max-w-[180px]">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-[#F5B82E] block">Single-Origin</span>
+                            <span class="text-xs font-semibold text-white leading-tight block">Arabica Mandheling &amp; Gayo</span>
                         </div>
+
+                        <!-- Hero Splashing Drink Cutout Image -->
+                        <div class="relative w-full max-w-[380px] sm:max-w-[420px] mx-auto aspect-square flex items-center justify-center">
+                            <img
+                                src="{{ asset('/images/hero-iced-coffee-splash-cutout.png') }}"
+                                alt="Signature Iced Coffee Splash UM.CO"
+                                class="w-full h-full object-contain filter drop-shadow-2xl transition-transform duration-700 hover:scale-105"
+                                loading="eager"
+                            />
+                        </div>
+
                     </div>
 
                 </div>
@@ -72,31 +95,131 @@
         </section>
     </div>
 
-    <!-- 2. PRODUCT SHOWCASE: "GOOD COFFEE, MADE SIMPLY" (TARAQ & BREWHAUS STYLE) -->
-    <section class="py-16 lg:py-24 bg-[#FAF7EE]">
+    <!-- 2. INFINITE RUNNING TICKER TAPE (MOCHANF STYLE) -->
+    <div class="w-full bg-[#F5B82E] text-[#07241C] py-3 overflow-hidden select-none">
+        <div class="animate-marquee flex items-center gap-8 whitespace-nowrap font-display text-base sm:text-xl font-black uppercase tracking-widest">
+            <span>★ UM.CO HOUSE</span>
+            <span>★ FRESH BREW COFFEE</span>
+            <span>★ KAMPUS UMRI PEKANBARU</span>
+            <span>★ ESPRESSO BAR</span>
+            <span>★ COLD BREW BOTOLAN</span>
+            <span>★ RUANG NUGAS AC INDOOR</span>
+            <span>★ COURTYARD STREET FOOD</span>
+            <span>★ BUKA 08.00 - 21.00 WIB</span>
+            <span>★ 100% ARABICA GRADE 1</span>
+            <!-- Duplicate for seamless infinite loop -->
+            <span>★ UM.CO HOUSE</span>
+            <span>★ FRESH BREW COFFEE</span>
+            <span>★ KAMPUS UMRI PEKANBARU</span>
+            <span>★ ESPRESSO BAR</span>
+            <span>★ COLD BREW BOTOLAN</span>
+            <span>★ RUANG NUGAS AC INDOOR</span>
+            <span>★ COURTYARD STREET FOOD</span>
+            <span>★ BUKA 08.00 - 21.00 WIB</span>
+            <span>★ 100% ARABICA GRADE 1</span>
+        </div>
+    </div>
+
+    <!-- 3. "LIFE BEGINS AFTER COFFEE" - TRIO SPECIALTY DRINKS & CATEGORY CLOUD (MOCHANF STYLE) -->
+    <section class="py-16 sm:py-24 bg-[#FAF7EE] relative">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- Section Header -->
+            <div class="text-center max-w-2xl mx-auto space-y-3 mb-10">
+                <span class="text-xs font-black uppercase tracking-widest text-[#145341]">Pilihan Rasa UM.CO</span>
+                <h2 class="font-display text-4xl sm:text-6xl lg:text-7xl font-black uppercase tracking-tight text-[#0D3B2E] leading-none">
+                    LIFE BEGINS <span class="bg-[#07241C] text-[#F5B82E] px-4 py-1 rounded-2xl inline-block mt-1 sm:mt-0">AFTER COFFEE</span>
+                </h2>
+                <p class="text-sm sm:text-base text-[#122018]/70 max-w-md mx-auto pt-1 font-medium">
+                    Dari kopi susu gula aren yang creamy hingga manual brew single-origin segar setiap hari.
+                </p>
+            </div>
+
+            <!-- Floating Coffee Bean Category Cloud (Mochanf style) -->
+            <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-3 max-w-3xl mx-auto mb-12">
+                <a href="/menu?kategori=kopi-susu" wire:navigate class="px-5 py-2.5 rounded-full bg-[#0D3B2E] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#F5B82E] hover:text-[#07241C] transition">
+                    Kopi Susu Aren
+                </a>
+                <a href="/menu?kategori=espresso" wire:navigate class="px-5 py-2.5 rounded-full bg-white text-[#0D3B2E] text-xs font-bold uppercase tracking-wider hover:bg-[#F5B82E] transition">
+                    Espresso Based
+                </a>
+                <a href="/menu?kategori=manual-brew" wire:navigate class="px-5 py-2.5 rounded-full bg-white text-[#0D3B2E] text-xs font-bold uppercase tracking-wider hover:bg-[#F5B82E] transition">
+                    Manual Brew V60
+                </a>
+                <a href="/menu?kategori=non-coffee" wire:navigate class="px-5 py-2.5 rounded-full bg-white text-[#0D3B2E] text-xs font-bold uppercase tracking-wider hover:bg-[#F5B82E] transition">
+                    Matcha &amp; Cokelat
+                </a>
+                <a href="/menu?kategori=cold-brew" wire:navigate class="px-5 py-2.5 rounded-full bg-white text-[#0D3B2E] text-xs font-bold uppercase tracking-wider hover:bg-[#F5B82E] transition">
+                    Cold Brew Signature
+                </a>
+                <a href="/menu?kategori=snack" wire:navigate class="px-5 py-2.5 rounded-full bg-white text-[#0D3B2E] text-xs font-bold uppercase tracking-wider hover:bg-[#F5B82E] transition">
+                    Pastry &amp; Toast
+                </a>
+                <a href="/about#street-food" wire:navigate class="px-5 py-2.5 rounded-full bg-[#F5B82E] text-[#07241C] text-xs font-black uppercase tracking-wider hover:bg-[#D99B16] transition">
+                    Street Food Malam
+                </a>
+            </div>
+
+            <!-- Commercial Drink Trio Photographic Showcase Banner -->
+            <div class="relative rounded-3xl sm:rounded-[2.5rem] overflow-hidden bg-[#07241C] text-white">
+                <div class="relative aspect-[16/9] sm:aspect-[21/9] w-full">
+                    <img
+                        src="{{ asset('/images/drinks-trio-banner.jpg') }}"
+                        alt="UM.CO Specialty Iced Drinks"
+                        class="w-full h-full object-cover object-center"
+                        loading="lazy"
+                    />
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#07241C] via-transparent to-black/20"></div>
+
+                    <!-- Overlay Bottom Card -->
+                    <div class="absolute bottom-4 left-4 right-4 sm:bottom-8 sm:left-8 sm:right-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                        <div class="space-y-1">
+                            <span class="text-xs font-bold uppercase tracking-widest text-[#F5B82E]">Racikan Barista Kampus</span>
+                            <h3 class="font-display text-2xl sm:text-4xl font-black uppercase tracking-tight text-white leading-none">
+                                Iced Caramel • Matcha Cold Foam • Dark Mocha
+                            </h3>
+                        </div>
+                        <a
+                            href="/menu"
+                            wire:navigate
+                            class="px-6 py-3 rounded-full bg-[#F5B82E] text-[#07241C] font-black text-xs uppercase tracking-wider hover:bg-[#D99B16] transition flex-shrink-0 self-start sm:self-auto text-center"
+                        >
+                            Pesan Sekarang &rarr;
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 4. "GOOD COFFEE, MADE SIMPLY" - PHOTOGRAPHIC MENU CARDS (TARAQ & BREWHAUS STYLE) -->
+    <section class="py-16 sm:py-24 bg-[#FAF7EE] border-t border-[#EAE2D0]/60">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            
             <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
                 <div>
-                    <span class="text-xs font-black uppercase tracking-widest text-[#145341]">Menu Favorit Kampus</span>
-                    <h2 class="font-display text-3xl sm:text-4xl lg:text-5xl font-black uppercase tracking-tight text-[#0D3B2E] mt-1">
-                        Good Coffee, Made Simply.
+                    <span class="text-xs font-black uppercase tracking-widest text-[#145341]">Favorit Pengunjung</span>
+                    <h2 class="font-display text-4xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight text-[#0D3B2E] mt-1 leading-none">
+                        GOOD COFFEE, MADE SIMPLY.
                     </h2>
                 </div>
                 <a
                     href="/menu"
                     wire:navigate
-                    class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#0D3B2E] hover:text-[#D99B16] transition"
+                    class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold uppercase tracking-wider text-[#0D3B2E] hover:text-[#D99B16] transition"
                 >
                     <span>Buka Katalog Lengkap</span>
                     <span>&rarr;</span>
                 </a>
             </div>
 
-            <!-- Big Photographic Product Cards Grid -->
+            <!-- Big Photographic Product Cards Grid (Zero Text Clutter) -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 @foreach ($favoriteMenuItems->take(4) as $item)
-                    <div class="bg-white rounded-3xl p-4 flex flex-col justify-between hover:bg-[#F4EEDF]/40 transition group">
-                        <!-- Dominant Image -->
+                    <div class="bg-white rounded-3xl p-4 flex flex-col justify-between hover:bg-[#F4EEDF]/50 transition group">
+                        
+                        <!-- Dominant Image Frame -->
                         <div class="relative w-full aspect-square rounded-2xl overflow-hidden bg-[#FAF7EE] mb-4">
                             <img
                                 src="{{ $item->image_url }}"
@@ -109,26 +232,26 @@
                             </span>
                         </div>
 
-                        <!-- Card Meta: Short, Punchy, No Text Clutter -->
+                        <!-- Card Info: Clean, Minimalist -->
                         <div class="space-y-1">
                             <span class="text-[10px] font-bold uppercase tracking-wider text-[#145341]">
                                 {{ $item->category?->name ?? 'Minuman' }}
                             </span>
-                            <h3 class="font-display text-lg font-bold text-[#0D3B2E] truncate">
+                            <h3 class="font-display text-xl font-bold text-[#0D3B2E] truncate">
                                 {{ $item->name }}
                             </h3>
                         </div>
 
-                        <!-- Bottom Price & Order Action -->
+                        <!-- Price & Order Action -->
                         <div class="pt-4 mt-3 border-t border-[#EAE2D0] flex items-center justify-between">
-                            <span class="font-display font-black text-base text-[#0D3B2E]">
+                            <span class="font-display font-black text-lg text-[#0D3B2E]">
                                 {{ $item->formatted_price }}
                             </span>
                             <a
                                 href="/reservasi?menu={{ $item->slug }}"
                                 wire:navigate
-                                class="w-8 h-8 rounded-full bg-[#0D3B2E] text-white hover:bg-[#F5B82E] hover:text-[#07241C] transition flex items-center justify-center font-bold text-sm"
-                                title="Pesan"
+                                class="w-9 h-9 rounded-full bg-[#0D3B2E] text-white hover:bg-[#F5B82E] hover:text-[#07241C] transition flex items-center justify-center font-black text-sm"
+                                title="Pesan dan Amankan Meja"
                             >
                                 +
                             </a>
@@ -136,38 +259,39 @@
                     </div>
                 @endforeach
             </div>
+
         </div>
     </section>
 
-    <!-- 3. FULL-BLEED PHOTOGRAPHIC ATMOSPHERE SECTION (TARAQ "MEET IN COMFORT" STYLE) -->
+    <!-- 5. "MEET IN COMFORT" - ATMOSPHERE SHOWCASE (TARAQ STYLE) -->
     <div class="px-3 sm:px-6 py-6">
-        <section class="relative min-h-[60vh] rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden bg-[#0D3B2E] text-white flex items-end">
-            <!-- Full Photographic Background -->
+        <section class="relative min-h-[50vh] sm:min-h-[60vh] rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden bg-[#0D3B2E] text-white flex items-end">
+            <!-- Full Photographic Background Layer -->
             <div class="absolute inset-0 z-0">
                 <img
                     src="{{ asset('/images/hero-photo.jpg') }}"
-                    alt="Suasana Cafe UMCO"
-                    class="w-full h-full object-cover object-center opacity-40 scale-105"
+                    alt="Suasana UMCO House Kampus UMRI"
+                    class="w-full h-full object-cover object-center opacity-45 scale-105"
                     loading="lazy"
                 />
                 <div class="absolute inset-0 bg-gradient-to-t from-[#07241C] via-[#07241C]/60 to-transparent"></div>
             </div>
 
-            <div class="max-w-6xl mx-auto px-6 sm:px-10 lg:px-12 py-16 sm:py-20 relative z-10 w-full flex flex-col md:flex-row md:items-end justify-between gap-8">
+            <div class="max-w-6xl mx-auto px-6 sm:px-10 lg:px-12 py-14 sm:py-20 relative z-10 w-full flex flex-col md:flex-row md:items-end justify-between gap-8">
                 <div class="max-w-xl space-y-3">
-                    <span class="text-xs font-black uppercase tracking-widest text-[#F5B82E]">Arsitektur Huruf H</span>
-                    <h2 class="font-display text-3xl sm:text-5xl font-black uppercase tracking-tight leading-none text-white">
-                        Meet In Comfort.
+                    <span class="text-xs font-black uppercase tracking-widest text-[#F5B82E]">Arsitektur Gedung H</span>
+                    <h2 class="font-display text-4xl sm:text-6xl font-black uppercase tracking-tight leading-none text-white">
+                        MEET IN COMFORT.
                     </h2>
-                    <p class="text-sm sm:text-base text-[#9AB4A6] leading-relaxed">
-                        Satu gedung, dua zona berbeda: Wing Barat ber-AC untuk laptopan tanpa gangguan suara, dan Wing Timur outdoor dengan aneka jajanan street food sore hari.
+                    <p class="text-sm sm:text-base text-[#D1E0D7] leading-relaxed">
+                        Wing Barat ber-AC untuk laptopan tanpa bising, dan Wing Timur outdoor dengan aneka jajanan street food sore hingga malam.
                     </p>
                 </div>
 
                 <a
                     href="/about"
                     wire:navigate
-                    class="px-8 py-3.5 rounded-full text-xs font-bold uppercase tracking-wider bg-white text-[#07241C] hover:bg-[#F5B82E] transition flex-shrink-0 text-center"
+                    class="px-8 py-4 rounded-full text-xs font-black uppercase tracking-wider bg-white text-[#07241C] hover:bg-[#F5B82E] transition flex-shrink-0 text-center"
                 >
                     Lihat Denah &amp; Lokasi &rarr;
                 </a>
@@ -175,55 +299,13 @@
         </section>
     </div>
 
-    <!-- 4. FROM BEAN TO CUP 3-STEP VISUAL (TARAQ EDITORIAL STYLE) -->
-    <section class="py-16 lg:py-24 bg-[#FAF7EE]">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-xl mx-auto mb-16 space-y-2">
-                <span class="text-xs font-black uppercase tracking-widest text-[#145341]">Standar Kualitas</span>
-                <h2 class="font-display text-3xl sm:text-4xl lg:text-5xl font-black uppercase tracking-tight text-[#0D3B2E]">
-                    From Bean To Cup.
-                </h2>
-                <p class="text-sm text-[#122018]/60">Tiga komitmen di balik setiap tegukan kopi yang kami sajikan.</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Step 1 -->
-                <div class="bg-white rounded-3xl p-8 space-y-3">
-                    <span class="font-display text-5xl font-black text-[#145341]/20 block">01</span>
-                    <h3 class="font-display text-xl font-bold text-[#0D3B2E] uppercase">Biji Pilihan Sumatera</h3>
-                    <p class="text-xs sm:text-sm text-[#122018]/70 leading-relaxed">
-                        Kurasi biji Arabica Mandheling dan Gayo grade 1 dengan profil rasa cokelat, rempah, dan aroma karamel yang tebal.
-                    </p>
-                </div>
-
-                <!-- Step 2 -->
-                <div class="bg-white rounded-3xl p-8 space-y-3">
-                    <span class="font-display text-5xl font-black text-[#145341]/20 block">02</span>
-                    <h3 class="font-display text-xl font-bold text-[#0D3B2E] uppercase">Kalibrasi Presisi Harian</h3>
-                    <p class="text-xs sm:text-sm text-[#122018]/70 leading-relaxed">
-                        Setiap pagi pukul 07.30 WIB, barista menguji rasio ekstraksi dan suhu air agar rasa cangkir pertamamu konsisten hingga malam hari.
-                    </p>
-                </div>
-
-                <!-- Step 3 -->
-                <div class="bg-white rounded-3xl p-8 space-y-3">
-                    <span class="font-display text-5xl font-black text-[#145341]/20 block">03</span>
-                    <h3 class="font-display text-xl font-bold text-[#0D3B2E] uppercase">Sajian Hangat Kampus</h3>
-                    <p class="text-xs sm:text-sm text-[#122018]/70 leading-relaxed">
-                        Dihidangkan segar dalam gelas kaca untuk dine-in santai, atau take-away cepat menuju ruang kuliah.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 5. REAL REVIEWS: "WHY PEOPLE COME BACK" (TARAQ STYLE) -->
-    <section class="py-16 lg:py-24 bg-[#F4EEDF]">
+    <!-- 6. REAL REVIEWS: "WHY PEOPLE COME BACK" (TARAQ STYLE) -->
+    <section class="py-16 sm:py-24 bg-[#F4EEDF]">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="mb-12">
-                <span class="text-xs font-black uppercase tracking-widest text-[#145341]">Ulasan Pengunjung</span>
-                <h2 class="font-display text-3xl sm:text-4xl lg:text-5xl font-black uppercase tracking-tight text-[#0D3B2E] mt-1">
-                    Why People Come Back.
+                <span class="text-xs font-black uppercase tracking-widest text-[#145341]">Ulasan Mahasiswa &amp; Dosen</span>
+                <h2 class="font-display text-4xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight text-[#0D3B2E] mt-1 leading-none">
+                    WHY PEOPLE COME BACK.
                 </h2>
             </div>
 
@@ -231,15 +313,15 @@
                 @foreach ($testimonials->take(3) as $review)
                     <div class="bg-white rounded-3xl p-7 flex flex-col justify-between space-y-6">
                         <div class="space-y-3">
-                            <div class="flex items-center gap-1 text-[#F5B82E]">
+                            <div class="flex items-center gap-1 text-[#F5B82E] text-base">
                                 ★★★★★
                             </div>
-                            <p class="text-sm text-[#122018]/80 leading-relaxed">
+                            <p class="text-sm text-[#122018]/85 leading-relaxed font-medium">
                                 &ldquo;{{ $review->body }}&rdquo;
                             </p>
                         </div>
                         <div class="pt-4 border-t border-[#EAE2D0]">
-                            <span class="font-display font-bold text-sm text-[#0D3B2E] block">{{ $review->author_name }}</span>
+                            <span class="font-display font-bold text-base text-[#0D3B2E] block">{{ $review->author_name }}</span>
                             <span class="text-xs text-[#122018]/50">{{ $review->author_role ?? 'Pengunjung Kafe' }}</span>
                         </div>
                     </div>
@@ -248,23 +330,23 @@
         </div>
     </section>
 
-    <!-- 6. FINAL BOTTOM CTA: "COME IN. TAKE A BREATH" (TARAQ STYLE) -->
-    <div class="px-3 sm:px-6 py-8">
+    <!-- 7. FINAL BOTTOM CTA: "COME IN. TAKE A BREATH" (TARAQ STYLE) -->
+    <div class="px-3 sm:px-6 py-6 pb-12">
         <section class="rounded-[2rem] sm:rounded-[2.5rem] bg-[#07241C] text-white py-20 px-6 sm:px-12 text-center relative overflow-hidden">
             <div class="max-w-2xl mx-auto space-y-4 relative z-10">
                 <span class="text-xs font-black uppercase tracking-widest text-[#F5B82E]">Reservasi Meja</span>
-                <h2 class="font-display text-3xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight leading-none text-white">
-                    Come In.<br/>
-                    Take A Breath.
+                <h2 class="font-display text-4xl sm:text-6xl lg:text-7xl font-black uppercase tracking-tight leading-none text-white">
+                    COME IN.<br/>
+                    TAKE A BREATH.
                 </h2>
-                <p class="text-sm sm:text-base text-[#9AB4A6] leading-relaxed pt-2">
-                    Amankan meja belajarmu sekarang. Tanpa biaya muka, menu bisa dipesan saat tiba.
+                <p class="text-sm sm:text-base text-[#D1E0D7] leading-relaxed pt-2">
+                    Amankan meja belajarmu sekarang. Bebas pilih meja saja tanpa DP, atau pesan menu favorit sekaligus.
                 </p>
                 <div class="pt-6">
                     <a
                         href="/reservasi"
                         wire:navigate
-                        class="px-8 py-4 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider bg-[#F5B82E] text-[#07241C] hover:bg-[#D99B16] transition shadow-lg inline-block"
+                        class="px-9 py-4 rounded-full text-xs sm:text-sm font-black uppercase tracking-wider bg-[#F5B82E] text-[#07241C] hover:bg-[#D99B16] transition shadow-none inline-block active:scale-95"
                     >
                         Mulai Reservasi &rarr;
                     </a>

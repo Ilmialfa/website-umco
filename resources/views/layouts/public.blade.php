@@ -61,31 +61,35 @@
     }
     </script>
 
+    <!-- Google Fonts: Bebas Neue (Display), Outfit (Subheadings/Pills), Plus Jakarta Sans (Body) - 100% SANS-SERIF, ZERO KAKI -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
 <body class="bg-[#FAF7EE] text-[#122018] font-sans antialiased selection:bg-[#F5B82E] selection:text-[#07241C] min-h-full flex flex-col">
 
-    <!-- MINIMALIST RESPONSIVE NAVBAR: TRANSPARENT ON HERO, FLOATING PILL ON SCROLL -->
+    <!-- MINIMALIST RESPONSIVE NAVBAR: FLOATING PILL / TRANSPARENT OVER HERO (MELLOW STYLE) -->
     <header
         x-data="{
             scrolled: false,
             mobileOpen: false,
             init() {
-                this.scrolled = window.pageYOffset > 50;
+                this.scrolled = window.pageYOffset > 30;
                 window.addEventListener('scroll', () => {
-                    this.scrolled = window.pageYOffset > 50;
+                    this.scrolled = window.pageYOffset > 30;
                 }, { passive: true });
             }
         }"
-        class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 pointer-events-none"
-        :class="scrolled ? 'py-3 sm:py-4 px-4 sm:px-6' : 'py-5 sm:py-6 px-4 sm:px-8'"
+        class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 pointer-events-none py-3 sm:py-4 px-4 sm:px-6"
     >
         <div
-            class="max-w-6xl mx-auto transition-all duration-300 pointer-events-auto"
+            class="max-w-5xl mx-auto transition-all duration-300 pointer-events-auto rounded-full px-5 sm:px-7 py-2.5 sm:py-3 text-white"
             :class="scrolled
-                ? 'bg-[#07241C]/85 backdrop-blur-md rounded-full px-5 py-2.5 text-white'
-                : 'bg-transparent text-white'"
+                ? 'bg-[#07241C]/95 backdrop-blur-md shadow-none'
+                : '{{ request()->is('/') ? 'bg-[#07241C]/80 backdrop-blur-md md:bg-transparent md:backdrop-blur-none' : 'bg-[#07241C]/95 backdrop-blur-md' }}'"
         >
             <div class="flex items-center justify-between">
 
@@ -95,7 +99,7 @@
                     <button
                         type="button"
                         @click="mobileOpen = !mobileOpen"
-                        class="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 transition text-white"
+                        class="md:hidden inline-flex items-center justify-center w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 transition text-white"
                         aria-label="Toggle Menu"
                     >
                         <svg x-show="!mobileOpen" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -107,25 +111,25 @@
                     </button>
 
                     <!-- Desktop Nav Links -->
-                    <nav class="hidden md:flex items-center gap-7 text-sm font-medium tracking-wide">
+                    <nav class="hidden md:flex items-center gap-7 text-xs font-bold tracking-wider uppercase">
                         <a
                             href="/"
                             wire:navigate
-                            class="transition-colors hover:text-[#F5B82E] {{ request()->is('/') ? 'text-[#F5B82E] font-semibold' : 'text-white/90' }}"
+                            class="transition-colors hover:text-[#F5B82E] {{ request()->is('/') ? 'text-[#F5B82E]' : 'text-white/90' }}"
                         >
                             Beranda
                         </a>
                         <a
                             href="/menu"
                             wire:navigate
-                            class="transition-colors hover:text-[#F5B82E] {{ request()->is('menu*') ? 'text-[#F5B82E] font-semibold' : 'text-white/90' }}"
+                            class="transition-colors hover:text-[#F5B82E] {{ request()->is('menu*') ? 'text-[#F5B82E]' : 'text-white/90' }}"
                         >
                             Menu
                         </a>
                         <a
                             href="/about"
                             wire:navigate
-                            class="transition-colors hover:text-[#F5B82E] {{ request()->is('about*') ? 'text-[#F5B82E] font-semibold' : 'text-white/90' }}"
+                            class="transition-colors hover:text-[#F5B82E] {{ request()->is('about*') ? 'text-[#F5B82E]' : 'text-white/90' }}"
                         >
                             Cerita &amp; Lokasi
                         </a>
@@ -135,7 +139,7 @@
                 <!-- Center Logo -->
                 <div class="flex-shrink-0">
                     <a href="/" wire:navigate class="inline-flex items-center gap-1.5 focus:outline-none group">
-                        <span class="font-display text-2xl sm:text-3xl font-black tracking-wider text-white group-hover:text-[#F5B82E] transition">
+                        <span class="font-display text-2xl sm:text-3xl font-black tracking-widest text-white group-hover:text-[#F5B82E] transition">
                             UM.CO
                         </span>
                         <span class="w-2 h-2 rounded-full bg-[#F5B82E]"></span>
@@ -143,7 +147,7 @@
                 </div>
 
                 <!-- Right Action Buttons -->
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 sm:gap-3">
                     @php
                         $waNumber = \App\Support\Settings::get('contact.phone_wa', '082248001571');
                         $waLink = \App\Support\PhoneNumber::waLink($waNumber, 'Halo UM.CO House, saya ingin bertanya seputar kafe dan reservasi meja.');
@@ -153,7 +157,7 @@
                         href="{{ $waLink }}"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="hidden sm:inline-flex items-center justify-center px-4 py-2 rounded-full text-xs font-semibold tracking-wide text-white/90 hover:text-white hover:bg-white/10 transition"
+                        class="hidden sm:inline-flex items-center justify-center px-4 py-2 rounded-full text-xs font-bold tracking-wider uppercase text-white/90 hover:text-white hover:bg-white/10 transition"
                     >
                         WhatsApp
                     </a>
@@ -161,8 +165,13 @@
                     <a
                         href="/reservasi"
                         wire:navigate
-                        class="inline-flex items-center justify-center px-5 py-2 rounded-full text-xs font-bold tracking-wide bg-[#F5B82E] text-[#07241C] hover:bg-[#D99B16] transition active:scale-95"
+                        class="inline-flex items-center justify-center px-5 py-2 rounded-full text-xs font-black tracking-wider uppercase bg-[#F5B82E] text-[#07241C] hover:bg-[#D99B16] transition active:scale-95 shadow-none"
                     >
+                        Reservasi Meja
+                    </a>
+                </div>
+            </div>
+        </div>
                         Reservasi Meja
                     </a>
                 </div>

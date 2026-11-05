@@ -22,12 +22,17 @@ class ReservationPage extends Component
 {
     use WithFileUploads;
 
+    // Slide state: 1 = Meja, 2 = Pilihan Menu (Optional), 3 = Tiket Sukses
+    public int $slide = 1;
+    public string $step = 'form'; // 'form' | 'success'
+
     #[Url(as: 'mode')]
-    public string $mode = 'a'; // 'a' = Meja Saja (Tanpa DP), 'b' = Meja + Menu (DP 30%)
+    public string $mode = 'a'; // 'a' = table_only, 'b' = table_menu
 
     #[Url(as: 'menu')]
     public ?string $initialMenuSlug = null;
 
+    // Slide 1 Fields (Table reservation)
     public string $name = '';
     public string $phone = '';
     public string $date = '';
@@ -35,12 +40,11 @@ class ReservationPage extends Component
     public int $party_size = 2;
     public string $note = '';
 
-    // Mode B fields
+    // Slide 2 Fields (Menu pre-order & payment)
     public array $selected_items = []; // [item_id => quantity]
     public $payment_proof = null;
 
-    // View state: 'form' | 'success'
-    public string $step = 'form';
+    // Success State
     public ?string $created_code = null;
     public ?Reservation $created_reservation = null;
 
@@ -48,12 +52,10 @@ class ReservationPage extends Component
     {
         $this->date = now()->format('Y-m-d');
 
-        // Check if query string requested mode b
-        if ($this->mode !== 'b') {
-            $this->mode = 'a';
+        if ($this->mode === 'b' || $this->initialMenuSlug) {
+            $this->slide = 1; // Start at slide 1, but keep mode b ready
         }
 
-        // If pre-selected menu slug is present in URL
         if ($this->initialMenuSlug) {
             $item = MenuItem::where('slug', $this->initialMenuSlug)
                 ->where('is_active', true)
@@ -67,10 +69,46 @@ class ReservationPage extends Component
         }
     }
 
-    public function setMode(string $mode): void
+    public function goToSlide(int $target): void
     {
-        if (in_array($mode, ['a', 'b'])) {
-            $this->mode = $mode;
+        if ($target === 2) {
+            $this->validateSlide1();
+            $this->slide = 2;
+        } elseif ($target === 1) {
+            $this->slide = 1;
+        }
+    }
+
+    public function validateSlide1(): void
+    {
+        if (!PhoneNumber::isValid($this->phone)) {
+            $this->addError('phone', 'Nomor WhatsApp belum benar, contoh: 0812 3456 7890');
+            throw ValidationException::withMessages(['phone' => 'Nomor WhatsApp belum benar, contoh: 0812 3456 7890']);
+        }
+
+        $this->validate([
+            'name' => ['required', 'string', 'min:2', 'max:100'],
+            'phone' => ['required', 'string'],
+            'date' => ['required', 'date', 'after_or_equal:today', 'before_or_equal:' . now()->addDays(14)->format('Y-m-d')],
+            'time' => ['required', 'string'],
+            'party_size' => ['required', 'integer', 'min:1', 'max:12'],
+            'note' => ['nullable', 'string', 'max:500'],
+        ], [
+            'name.required' => 'Nama lengkap wajib diisi.',
+            'name.min' => 'Nama minimal 2 karakter.',
+            'date.required' => 'Tanggal kedatangan wajib dipilih.',
+            'date.after_or_equal' => 'Tanggal tidak boleh di masa lampau.',
+            'date.before_or_equal' => 'Maksimal booking 14 hari ke depan.',
+            'time.required' => 'Jam wajib dipilih.',
+            'party_size.min' => 'Jumlah orang minimal 1.',
+            'party_size.max' => 'Untuk di atas 12 orang, silakan hubungi WhatsApp kami langsung.',
+        ]);
+
+        if ($this->closedDateNotice) {
+            $reason = $this->closedDateNotice->reason ?: 'Operasional Libur';
+            throw ValidationException::withMessages([
+                'date' => "Mohon maaf, UM.CO House tutup pada tanggal ini: {$reason}.",
+            ]);
         }
     }
 
@@ -84,6 +122,7 @@ class ReservationPage extends Component
         if ($item) {
             $current = $this->selected_items[$itemId] ?? 0;
             $this->selected_items[$itemId] = $current + 1;
+            $this->mode = 'b';
         }
     }
 
@@ -96,16 +135,20 @@ class ReservationPage extends Component
                 unset($this->selected_items[$itemId]);
             }
         }
+
+        if (empty($this->selected_items) || array_sum($this->selected_items) === 0) {
+            $this->mode = 'a';
+        }
     }
 
     public function getSubtotalProperty(): int
     {
-        $subtotal = 0;
         if (empty($this->selected_items)) {
             return 0;
         }
 
         $items = MenuItem::whereIn('id', array_keys($this->selected_items))->get();
+        $subtotal = 0;
         foreach ($items as $item) {
             $qty = $this->selected_items[$item->id] ?? 0;
             $subtotal += ($item->price * $qty);
@@ -114,12 +157,9 @@ class ReservationPage extends Component
         return $subtotal;
     }
 
-    /**
-     * DP formula: 30% of subtotal, minimum Rp 25.000, rounded up to nearest Rp 1.000.
-     */
     public function getDpAmountProperty(): int
     {
-        if ($this->mode !== 'b' || $this->subtotal === 0) {
+        if ($this->subtotal === 0) {
             return 0;
         }
 
@@ -143,7 +183,6 @@ class ReservationPage extends Component
             $slots[] = sprintf('%02d:30', $h);
         }
 
-        // Query used capacity for this date
         $usedBySlot = Reservation::where('date', $this->date)
             ->where('status', '!=', 'cancelled')
             ->select('time', DB::raw('SUM(party_size) as total_pax'))
@@ -175,67 +214,69 @@ class ReservationPage extends Component
         return ClosedDate::where('date', $this->date)->first();
     }
 
-    public function submit(): void
+    /**
+     * Submit action for Table-Only (Instant without DP)
+     */
+    public function confirmTableOnly(): void
     {
-        // 1. Phone validation & normalization check
-        if (!PhoneNumber::isValid($this->phone)) {
-            $this->addError('phone', 'Nomor WhatsApp belum benar, contoh: 0812 3456 7890');
+        $this->mode = 'a';
+        $this->selected_items = [];
+        $this->executeReservation();
+    }
+
+    /**
+     * Submit action with Pre-ordered Menu and Proof Upload
+     */
+    public function confirmWithMenu(): void
+    {
+        $this->mode = 'b';
+
+        if (empty($this->selected_items) || array_sum($this->selected_items) === 0) {
+            $this->addError('selected_items', 'Silakan pilih minimal 1 menu sebelum melanjutkan.');
             return;
         }
 
-        $normalizedPhone = PhoneNumber::normalize($this->phone);
-
-        // 2. Base Validation
-        $rules = [
-            'name' => ['required', 'string', 'min:2', 'max:100'],
-            'phone' => ['required', 'string'],
-            'date' => ['required', 'date', 'after_or_equal:today', 'before_or_equal:' . now()->addDays(14)->format('Y-m-d')],
-            'time' => ['required', 'string'],
-            'party_size' => ['required', 'integer', 'min:1', 'max:12'],
-            'note' => ['nullable', 'string', 'max:500'],
-        ];
-
-        // 3. Mode B Validation
-        if ($this->mode === 'b') {
-            if (empty($this->selected_items) || array_sum($this->selected_items) === 0) {
-                $this->addError('selected_items', 'Silakan pilih minimal 1 menu untuk Mode B.');
-                return;
-            }
-
-            $rules['payment_proof'] = ['required', 'file', 'mimes:jpeg,png,jpg,webp,pdf', 'max:4096'];
-        }
-
-        $this->validate($rules, [
-            'name.required' => 'Nama lengkap wajib diisi.',
-            'name.min' => 'Nama minimal 2 karakter.',
-            'date.required' => 'Tanggal reservasi wajib dipilih.',
-            'date.after_or_equal' => 'Tanggal reservasi tidak boleh di masa lampau.',
-            'date.before_or_equal' => 'Maksimal reservasi hingga 14 hari ke depan.',
-            'time.required' => 'Jam reservasi wajib dipilih.',
-            'party_size.min' => 'Jumlah orang minimal 1.',
-            'party_size.max' => 'Untuk reservasi di atas 12 orang, silakan hubungi WhatsApp kami langsung.',
-            'payment_proof.required' => 'Bukti transfer DP 30% wajib diunggah untuk konfirmasi Mode B.',
-            'payment_proof.max' => 'Ukuran file bukti transfer maksimal 4 MB.',
-            'payment_proof.mimes' => 'Format bukti transfer harus berupa JPG, PNG, WEBP, atau PDF.',
+        $this->validate([
+            'payment_proof' => ['required', 'file', 'mimes:jpeg,png,jpg,webp,pdf', 'max:4096'],
+        ], [
+            'payment_proof.required' => 'Bukti transfer DP 30% wajib diunggah.',
+            'payment_proof.max' => 'Ukuran file maksimal 4 MB.',
         ]);
 
-        // 4. Closed date check
-        if ($this->closedDateNotice) {
-            $reason = $this->closedDateNotice->reason ?: 'Toko sedang tutup operasional';
-            throw ValidationException::withMessages([
-                'date' => "Mohon maaf, UM.CO House tutup pada tanggal ini: {$reason}.",
-            ]);
-        }
+        $this->executeReservation();
+    }
 
-        // 5. DB Transaction with Slot Pessimistic Locking
+    /**
+     * Universal submit method (backward compatible with Pest test calls)
+     */
+    public function submit(): void
+    {
+        $this->validateSlide1();
+
+        if ($this->mode === 'b') {
+            $this->confirmWithMenu();
+        } else {
+            $this->confirmTableOnly();
+        }
+    }
+
+    protected function executeReservation(): void
+    {
+        $this->validateSlide1();
+        $normalizedPhone = PhoneNumber::normalize($this->phone);
+
         try {
             DB::transaction(function () use ($normalizedPhone) {
-                // Lock existing reservations on same date & time to prevent race conditions
-                $existingPax = Reservation::where('date', $this->date)
+                // Concurrency lock on requested slot (applied on MySQL/Postgres)
+                $query = Reservation::where('date', $this->date)
                     ->where('time', $this->time)
-                    ->where('status', '!=', 'cancelled')
-                    ->lockForUpdate()
-                    ->sum('party_size');
+                    ->where('status', '!=', 'cancelled');
+
+                if (DB::getDriverName() !== 'sqlite') {
+                    $query->lockForUpdate();
+                }
+
+                $existingPax = $query->sum('party_size');
 
                 $maxCapacity = 40;
                 if (($existingPax + $this->party_size) > $maxCapacity) {
@@ -245,13 +286,11 @@ class ReservationPage extends Component
                     ]);
                 }
 
-                // Handle payment proof upload
                 $proofPath = null;
                 if ($this->mode === 'b' && $this->payment_proof) {
                     $proofPath = $this->payment_proof->store('payment-proofs', 'public');
                 }
 
-                // Create reservation
                 $reservation = Reservation::create([
                     'code' => Reservation::generateUniqueCode(),
                     'name' => trim($this->name),
@@ -269,7 +308,6 @@ class ReservationPage extends Component
                     'payment_proof_path' => $proofPath,
                 ]);
 
-                // Create reservation items snapshot if Mode B
                 if ($this->mode === 'b') {
                     $itemIds = array_keys($this->selected_items);
                     $menuItems = MenuItem::whereIn('id', $itemIds)->get()->keyBy('id');
@@ -289,7 +327,6 @@ class ReservationPage extends Component
                     }
                 }
 
-                // Audit log
                 ActivityLog::record(
                     action: 'reservasi_dibuat_pelanggan',
                     subjectType: Reservation::class,
@@ -297,7 +334,6 @@ class ReservationPage extends Component
                     details: [
                         'code' => $reservation->code,
                         'customer' => $reservation->name,
-                        'phone' => $reservation->phone_wa,
                         'date' => $reservation->date->format('Y-m-d'),
                         'time' => $reservation->time,
                         'pax' => $reservation->party_size,
@@ -308,19 +344,21 @@ class ReservationPage extends Component
 
                 $this->created_code = $reservation->code;
                 $this->created_reservation = $reservation->load('items');
+                $this->slide = 3;
                 $this->step = 'success';
             });
         } catch (ValidationException $e) {
             throw $e;
         } catch (\Throwable $e) {
             report($e);
-            $this->addError('general', 'Terjadi kesalahan sistem saat memproses reservasi. Silakan coba kembali atau hubungi WhatsApp kasir.');
+            $this->addError('general', 'Terjadi kendala sistem. Silakan coba kembali atau hubungi WhatsApp kasir.');
         }
     }
 
     public function resetBooking(): void
     {
         $this->reset([
+            'slide',
             'step',
             'created_code',
             'created_reservation',

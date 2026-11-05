@@ -1,0 +1,99 @@
+/* UM.CO HOUSE FILAMENT ADMIN THEME (CLEAN CREAM/WHITE + YELLOW ACCENTS + ZERO SHADOW) */
+
+:root {
+    --umco-cream: #FAF8F5;
+    --umco-emerald: #0D3B2E;
+    --umco-yellow: #F5B82E;
+    --umco-yellow-dark: #D99B16;
+}
+
+body.fi-body {
+    background-color: #FAF8F5 !important;
+    font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif !important;
+}
+
+/* SIDEBAR & TOPBAR */
+.fi-sidebar {
+    background-color: #FAF8F5 !important;
+    border-right: 1px solid #EFEAE1 !important;
+    box-shadow: none !important;
+}
+
+.fi-topbar {
+    background-color: #FAF8F5 !important;
+    border-bottom: 1px solid #EFEAE1 !important;
+    box-shadow: none !important;
+}
+
+.fi-sidebar-header {
+    border-bottom: 1px solid #EFEAE1 !important;
+}
+
+/* ACTIVE SIDEBAR ITEM */
+.fi-sidebar-item-active .fi-sidebar-item-button {
+    background-color: #0D3B2E !important;
+    color: #FFFFFF !important;
+    border-radius: 0.75rem !important;
+}
+
+.fi-sidebar-item-active .fi-sidebar-item-icon {
+    color: #F5B82E !important;
+}
+
+/* CONTAINERS: ZERO SHADOW & CLEAN WHITE BACKGROUND */
+.fi-section,
+.fi-ta-ctn,
+.fi-wi-widget,
+.fi-card,
+.fi-stats-overview-stat {
+    box-shadow: none !important;
+    border: none !important;
+    background-color: #FFFFFF !important;
+    border-radius: 1.25rem !important;
+}
+
+/* TABLE STYLING */
+.fi-ta-header,
+.fi-ta-content,
+.fi-ta-table {
+    border: none !important;
+}
+
+.fi-ta-table thead tr {
+    background-color: #FAF8F5 !important;
+}
+
+.fi-ta-table th {
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    color: #0D3B2E !important;
+    border-bottom: 1px solid #EFEAE1 !important;
+}
+
+.fi-ta-table td {
+    border-bottom: 1px solid #F6F3ED !important;
+    font-size: 0.875rem !important;
+}
+
+/* PRIMARY BUTTONS: VIBRANT YELLOW & EMERALD */
+.fi-btn-color-primary:not(.fi-btn-outlined) {
+    background-color: #F5B82E !important;
+    color: #07241C !important;
+    font-weight: 700 !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 9999px !important;
+}
+
+.fi-btn-color-primary:not(.fi-btn-outlined):hover {
+    background-color: #D99B16 !important;
+}
+
+/* BADGES */
+.fi-badge {
+    border-radius: 9999px !important;
+    font-weight: 600 !important;
+    box-shadow: none !important;
+}

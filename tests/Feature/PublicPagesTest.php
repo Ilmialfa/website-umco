@@ -44,8 +44,7 @@ it('renders about page with architectural story and location', function () {
 it('renders reservation page successfully', function () {
     $response = $this->get('/reservasi');
     $response->assertStatus(200);
-    $response->assertSee('Mode A');
-    $response->assertSee('Mode B');
+    $response->assertSee('Pilih Meja');
 });
 
 it('downloads ics calendar event for a valid reservation', function () {

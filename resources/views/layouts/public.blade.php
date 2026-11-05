@@ -135,7 +135,7 @@
                 <!-- Center Logo -->
                 <div class="flex-shrink-0">
                     <a href="/" wire:navigate class="inline-flex items-center gap-1.5 focus:outline-none group">
-                        <span class="font-serif text-2xl sm:text-3xl font-black tracking-wider text-white group-hover:text-[#F5B82E] transition">
+                        <span class="font-display text-2xl sm:text-3xl font-black tracking-wider text-white group-hover:text-[#F5B82E] transition">
                             UM.CO
                         </span>
                         <span class="w-2 h-2 rounded-full bg-[#F5B82E]"></span>
@@ -181,7 +181,7 @@
             class="md:hidden fixed inset-x-4 top-20 bg-[#07241C]/95 backdrop-blur-xl rounded-3xl p-6 text-white pointer-events-auto"
             style="display: none;"
         >
-            <div class="flex flex-col gap-4 font-serif text-lg">
+            <div class="flex flex-col gap-4 font-display text-lg">
                 <a href="/" wire:navigate @click="mobileOpen = false" class="py-2 border-b border-white/10 {{ request()->is('/') ? 'text-[#F5B82E] font-bold' : 'text-white' }}">
                     Beranda
                 </a>
@@ -222,7 +222,7 @@
                 <!-- Brand Info -->
                 <div class="md:col-span-5 space-y-4">
                     <div class="flex items-center gap-1.5">
-                        <span class="font-serif text-3xl font-black tracking-wider text-white">UM.CO</span>
+                        <span class="font-display text-3xl font-black tracking-wider text-white">UM.CO</span>
                         <span class="w-2.5 h-2.5 rounded-full bg-[#F5B82E]"></span>
                     </div>
                     <p class="text-sm text-[#9AB4A6] leading-relaxed max-w-sm">
@@ -281,7 +281,7 @@
             <!-- Giant Wordmark UM.CO -->
             <div class="w-full text-center leading-none">
                 <span
-                    class="font-serif font-black tracking-tighter text-white/[0.08] block uppercase"
+                    class="font-display font-black tracking-tighter text-white/[0.08] block uppercase"
                     style="font-size: clamp(6rem, 22vw, 25rem);"
                 >
                     UM.CO

@@ -37,7 +37,7 @@
             <div class="bg-white rounded-3xl p-6 sm:p-10 space-y-8">
                 <div>
                     <span class="text-xs font-bold uppercase tracking-widest text-[#145341]">Langkah Pertama</span>
-                    <h1 class="font-serif text-3xl sm:text-4xl font-black text-[#0D3B2E] mt-1">
+                    <h1 class="font-display text-3xl sm:text-4xl font-black text-[#0D3B2E] mt-1">
                         Reservasi Tempat Duduk
                     </h1>
                     <p class="text-xs sm:text-sm text-[#122018]/70 mt-1">
@@ -204,7 +204,7 @@
                 <div class="bg-white rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
                     <div>
                         <span class="text-xs font-bold uppercase tracking-widest text-[#145341]">Langkah Kedua (Opsional)</span>
-                        <h2 class="font-serif text-2xl sm:text-3xl font-black text-[#0D3B2E] mt-0.5">
+                        <h2 class="font-display text-2xl sm:text-3xl font-black text-[#0D3B2E] mt-0.5">
                             Mau Sekalian Pesan Menu?
                         </h2>
                         <p class="text-xs sm:text-sm text-[#122018]/70 mt-1">
@@ -225,7 +225,7 @@
                 <!-- Menu Item Catalog Grid -->
                 <div class="bg-white rounded-3xl p-6 sm:p-8 space-y-8">
                     <div class="flex items-center justify-between border-b border-[#EAE2D0] pb-4">
-                        <h3 class="font-serif text-xl font-bold text-[#0D3B2E]">Daftar Menu Siap Saji</h3>
+                        <h3 class="font-display text-xl font-bold text-[#0D3B2E]">Daftar Menu Siap Saji</h3>
                         <span class="text-xs text-[#122018]/60">Pilih menu dengan menekan tombol (+)</span>
                     </div>
 
@@ -238,7 +238,7 @@
                     <div class="space-y-8">
                         @foreach ($menuCategories as $catName => $items)
                             <div>
-                                <h4 class="font-serif text-lg font-bold text-[#0D3B2E] mb-4 text-[#145341]">
+                                <h4 class="font-display text-lg font-bold text-[#0D3B2E] mb-4 text-[#145341]">
                                     {{ $catName }}
                                 </h4>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -287,7 +287,7 @@
                     <div class="bg-[#0D3B2E] text-white rounded-3xl p-6 sm:p-8 space-y-6" x-data="{ copied: false }">
                         <div class="border-b border-white/10 pb-4">
                             <span class="text-xs font-bold uppercase tracking-widest text-[#F5B82E]">Ringkasan Pembayaran</span>
-                            <h3 class="font-serif text-2xl font-bold mt-1">DP 30% Pre-Order</h3>
+                            <h3 class="font-display text-2xl font-bold mt-1">DP 30% Pre-Order</h3>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
@@ -300,7 +300,7 @@
                                 <div class="p-4 rounded-2xl bg-white/10 flex items-center justify-between">
                                     <div>
                                         <span class="text-[10px] uppercase tracking-wider text-[#F5B82E] font-bold block">Wajib DP 30% (Min 25k)</span>
-                                        <span class="font-serif text-2xl font-black text-white">Rp {{ number_format($this->dpAmount, 0, ',', '.') }}</span>
+                                        <span class="font-display text-2xl font-black text-white">Rp {{ number_format($this->dpAmount, 0, ',', '.') }}</span>
                                     </div>
                                     <span class="text-[11px] text-[#9AB4A6] text-right">Sisa dibayar di kasir</span>
                                 </div>
@@ -402,7 +402,7 @@
                         <span class="text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-white/10 text-[#F5B82E] inline-block mb-1">
                             Reservasi Berhasil
                         </span>
-                        <h2 class="font-serif text-3xl font-black mt-1">Tiket Reservasi UM.CO</h2>
+                        <h2 class="font-display text-3xl font-black mt-1">Tiket Reservasi UM.CO</h2>
                         <p class="text-xs text-[#9AB4A6] mt-1">Tunjukkan kode ini kepada kasir saat kamu tiba.</p>
 
                         <!-- Big Code Pill -->

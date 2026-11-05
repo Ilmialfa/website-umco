@@ -28,12 +28,35 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'email', 'password'])]
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
+
+#[Fillable(['name', 'email', 'password', 'role', 'must_change_password'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
-class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
+class User extends Authenticatable implements MustVerifyEmail, PasskeyUser, FilamentUser
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable;
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return in_array($this->role, ['owner', 'admin', 'cashier']);
+    }
+
+    public function isOwner(): bool
+    {
+        return $this->role === 'owner';
+    }
+
+    public function isAdmin(): bool
+    {
+        return in_array($this->role, ['owner', 'admin']);
+    }
+
+    public function isCashier(): bool
+    {
+        return $this->role === 'cashier';
+    }
 
     /**
      * Get the attributes that should be cast.

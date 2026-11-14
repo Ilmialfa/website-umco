@@ -18,6 +18,7 @@ const modules = {
     'crowd-chart': () => import('./sections/crowd-chart.js'),
     'testimonials-slider': () => import('./sections/testimonials-slider.js'),
     'gallery-mosaic': () => import('./sections/gallery-mosaic.js'),
+    'altimeter': () => import('./sections/altimeter.js'),
 };
 
 let io = null;

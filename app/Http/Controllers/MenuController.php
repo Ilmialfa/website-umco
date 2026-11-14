@@ -4,53 +4,73 @@ namespace App\Http\Controllers;
 
 use App\Models\MenuCategory;
 use App\Models\MenuItem;
+use App\Models\PageSection;
+use App\Support\IndonesianFormat;
+use Illuminate\Support\Facades\Cache;
 
 class MenuController extends Controller
 {
     public function __invoke()
     {
-        $categories = MenuCategory::where('is_active', true)
-            ->orderBy('sort')
-            ->with(['items' => function ($q) {
-                $q->where('is_active', true)->orderBy('sort');
-            }])
-            ->get();
+        $data = Cache::remember('umco_menu_data', now()->addMinutes(30), function () {
+            $hero = PageSection::where('page', 'menu')
+                ->where('key', 'hero')
+                ->first();
 
-        $allItems = MenuItem::where('is_active', true)
-            ->with('category')
-            ->orderBy('sort')
-            ->get();
+            $categories = MenuCategory::where('is_active', true)
+                ->orderBy('sort')
+                ->get(['id', 'name', 'slug', 'sort']);
 
-        $bestSellers = MenuItem::where('is_active', true)
-            ->where('is_favorite', true)
-            ->with('category')
-            ->orderBy('favorite_order')
-            ->take(4)
-            ->get();
+            $allItems = MenuItem::where('is_active', true)
+                ->with('category')
+                ->orderBy('sort')
+                ->get();
 
-        $itemsPayload = $allItems->map(function ($item) {
+            $itemsPayload = $allItems->map(function (MenuItem $item) {
+                $catSlug = $item->category?->slug ?? '';
+                $tone = match ($catSlug) {
+                    'kopi-hitam', 'kopi-susu' => 'bg-[var(--mentega)]/40',
+                    'susu' => 'bg-[var(--blush)]',
+                    'teh', 'mocktail' => 'bg-[var(--zaitun)]',
+                    default => 'bg-[var(--kertas-terang)] rule-notebook border border-[var(--garis)]',
+                };
+
+                $img800 = $item->imageUrlFor(800, 'webp');
+
+                return [
+                    'id' => $item->id,
+                    'category_id' => $item->category_id,
+                    'category_slug' => $catSlug,
+                    'category_name' => $item->category?->name ?? '',
+                    'name' => $item->name,
+                    'slug' => $item->slug,
+                    'price' => $item->price,
+                    'price_formatted' => IndonesianFormat::rupiah($item->price),
+                    'price_ribu' => IndonesianFormat::ribu($item->price),
+                    'description' => $item->description,
+                    'ingredients' => $item->ingredients ?: $item->description,
+                    'has_temperature' => (bool) $item->has_temperature,
+                    'variants' => $item->variants ?? [],
+                    'is_favorite' => (bool) $item->is_favorite,
+                    'is_new' => (bool) $item->is_new,
+                    'is_available' => (bool) $item->is_available,
+                    'is_placeholder' => (bool) ($item->is_placeholder || empty($img800)),
+                    'image_480' => $item->imageUrlFor(480, 'webp'),
+                    'image_800' => $img800,
+                    'srcset_webp' => $item->srcsetFor('webp'),
+                    'srcset_avif' => $item->srcsetFor('avif'),
+                    'placeholder_tone' => $tone,
+                ];
+            })->values()->all();
+
             return [
-                'id' => $item->id,
-                'category_id' => $item->category_id,
-                'category_slug' => $item->category?->slug ?? '',
-                'category_name' => $item->category?->name ?? '',
-                'name' => $item->name,
-                'slug' => $item->slug,
-                'price' => $item->price,
-                'price_formatted' => $item->formatted_price,
-                'description' => $item->description,
-                'image_url' => $item->image_url,
-                'is_favorite' => (bool) $item->is_favorite,
-                'is_available' => (bool) $item->is_available,
-                'allergens' => $item->allergens ?? '',
-                'tags' => $item->tags ?? [],
+                'hero' => $hero,
+                'categories' => $categories,
+                'itemsCount' => count($itemsPayload),
+                'itemsPayload' => $itemsPayload,
             ];
         });
 
-        return view('pages.menu', [
-            'categories' => $categories,
-            'bestSellers' => $bestSellers,
-            'itemsPayload' => $itemsPayload,
-        ]);
+        return view('pages.menu', $data);
     }
 }

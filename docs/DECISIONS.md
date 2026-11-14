@@ -66,3 +66,10 @@ Keputusan di bawah ini menggantikan Decision 02 dan Decision 04 di atas.
   1. Setiap interaksi section (`hero`, `led-board`, `story-line`, `signature-reel`, `brew-toy`, `crowd-chart`, `testimonials-slider`, `gallery-mosaic`) dipisah menjadi modul Vite dinamis (`0.3–1.5 KB` gzip) yang dimuat lewat `IntersectionObserver` `[data-module]`, sehingga `app.js` awal tetap ~50,6 KB gzip.
   2. Urutan dan visibilitas 13 section dikendalikan lewat `PageSection` di basis data; ketika tabel kosong saat uji unit/fitur, fallback urutan default tetap menampilkan ketigabelas section.
   3. S04 Nota menyimpan item pilihan pengunjung di `localStorage` (`umco_nota_v1`) sekaligus mengirimkan parameter query (`?items=...`) maupun `?tanggal=&orang=` dari S09 Karcis Teaser menuju `/reservasi`.
+
+### Decision 12 (Fase 4): Halaman Menu Daftar/Foto Client-Side & Halaman Cerita Altimeter
+- **Konteks:** Halaman `/menu` harus tetap ringan saat memfilter 39 item (termasuk varian Americano dan suhu Panas/Es), menyediakan tampilan ringkas di HP, serta menampilkan placeholder tipografis jujur untuk menu tanpa foto. Halaman `/cerita` harus membuang seluruh narasi arsitektur lama.
+- **Keputusan:**
+  1. `MenuController` menyajikan data terstruktur (varian, suhu, URL AVIF/WebP 480/800/1200, flag placeholder) sekali ke Alpine agar pencarian dan tab kategori jalan 0 ms di sisi klien; default di HP `<640px` adalah tampilan Daftar bergaya nota agar compact, sedangkan Tablet/Desktop default ke grid Foto.
+  2. Sheet detail item di `/menu` mengizinkan pemilihan varian & suhu lalu menyinkronkan ke `localStorage` (`umco_nota_v1`) yang terhubung ke `/reservasi`.
+  3. `/cerita` menampilkan pembuka, daftar ketinggian biji kopi (`BeanOrigin`) dengan modul lazy `altimeter.js` (`0,35 KB` gzip), tiga hal yang kami pegang, daftar teman jajan gaya tabel nota, serta ajakan kolaborasi WhatsApp.

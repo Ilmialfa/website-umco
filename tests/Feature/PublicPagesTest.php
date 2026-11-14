@@ -32,14 +32,16 @@ it('renders menu page with items and categories', function () {
         'name' => 'Kopi Pandan UMCO',
         'slug' => 'kopi-pandan-umco',
         'price' => 28000,
+        'is_placeholder' => true,
         'is_active' => true,
         'is_available' => true,
     ]);
 
     $response = $this->get('/menu');
     $response->assertStatus(200);
-    $response->assertSee('Katalog');
+    $response->assertSee('Menu');
     $response->assertSee('Kopi Pandan UMCO');
+    $response->assertSee('foto menyusul');
     expect($response->getContent())->not->toMatch('/[\x{1F300}-\x{1FAFF}]/u');
 });
 
@@ -48,7 +50,8 @@ it('renders cerita page and permanently redirects /about to /cerita', function (
 
     $response = $this->get('/cerita');
     $response->assertStatus(200);
-    $response->assertSee('Kampus 2 UMRI');
+    $response->assertSee('Dari kampus, buat yang lagi butuh tempat.');
+    $response->assertSee('Tiga hal yang kami pegang');
     $response->assertDontSee('Wing Barat');
     $response->assertDontSee('Arsitektur');
     expect($response->getContent())->not->toMatch('/[\x{1F300}-\x{1FAFF}]/u');

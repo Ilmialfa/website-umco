@@ -52,3 +52,10 @@ Keputusan di bawah ini menggantikan Decision 02 dan Decision 04 di atas.
   1. Empat font (`Anybody` variable `wdth`/`wght`, `Familjen Grotesk`, `Reenie Beanie`, `Doto`) disimpan lokal di `public/fonts/`. Hanya `anybody-latin.woff2` dan `familjen-grotesk-latin.woff2` yang di-preload; CSS font aksen dimuat asinkron.
   2. Smooth scroll (`Lenis`) dimatikan secara default (`motion.smooth_scroll = false`) dan hanya di-import dinamis bila owner mengaktifkannya dari panel.
   3. Asset gambar dekoratif footer (`public/images/footer-cutout.webp`, 34 KB WebP transparan) di-render bersih dari potongan gelas kopi tanpa kotak bayangan lantai.
+
+### Decision 10 (Fase 2): Migrasi Aditif, Konversi Gambar Menu 3 Ukuran, & Standar Pengisian Data Awal
+- **Konteks:** Sistem membutuhkan skema baru (`spend_tiers`, `seating_options`, `crowd_patterns`, `rules`, `page_sections`, `bean_origins`, `notifications`, serta kolom tambahan pada `reservations`, `reservation_items`, dan `menu_items`) tanpa mengubah migrasi historis. Foto menu asli di `docs/Menu Umco - belum lengkap/` berbentuk `.JPG` beresolusi besar (2–5 MB per file).
+- **Keputusan:**
+  1. Seluruh skema baru ditambahkan lewat migrasi aditif `2026_11_14_000001_add_redesign_2026_tables_and_columns.php`.
+  2. `App\Support\MenuImageProcessor` otomatis memperbaiki orientasi EXIF kamera dan menghasilkan varian **WebP + AVIF** (480px, 800px, 1200px) idempoten ke `storage/app/public/menu/` (234 berkas untuk 39 menu), dengan nilai koma (misal `25,5k`) tersimpan sebagai integer rupiah (`25500`).
+  3. Nilai default Bagian 16 diterapkan: jam buka `08:00–22:00`, minimal belanja bertingkat (`2 -> 50k`, `3 -> 100k`, `4 -> 125k`, `5 -> 150k`, `6+ -> 150k + 25k/orang`), kebijakan DP pindah jadwal 1x maksimal 2 jam sebelum datang, serta nomor uji bisnis `02248001571` (`622248001571`).

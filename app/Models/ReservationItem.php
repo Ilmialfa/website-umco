@@ -14,12 +14,16 @@ class ReservationItem extends Model
         'reservation_id',
         'menu_item_id',
         'name_snapshot',
+        'variant_label',
+        'temperature',
         'price_snapshot',
+        'unit_price',
         'qty',
     ];
 
     protected $casts = [
         'price_snapshot' => 'integer',
+        'unit_price' => 'integer',
         'qty' => 'integer',
     ];
 

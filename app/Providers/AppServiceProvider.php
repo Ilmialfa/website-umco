@@ -3,11 +3,17 @@
 namespace App\Providers;
 
 use App\Models\Banner;
+use App\Models\BeanOrigin;
+use App\Models\CrowdPattern;
 use App\Models\Facility;
 use App\Models\GalleryItem;
 use App\Models\MenuCategory;
 use App\Models\MenuItem;
+use App\Models\PageSection;
+use App\Models\Rule;
+use App\Models\SeatingOption;
 use App\Models\Setting;
+use App\Models\SpendTier;
 use App\Models\StoryBlock;
 use App\Models\StreetStall;
 use App\Models\Testimonial;
@@ -52,6 +58,12 @@ class AppServiceProvider extends ServiceProvider
         StreetStall::observe(PublicContentObserver::class);
         Testimonial::observe(PublicContentObserver::class);
         StoryBlock::observe(PublicContentObserver::class);
+        PageSection::observe(PublicContentObserver::class);
+        Rule::observe(PublicContentObserver::class);
+        SpendTier::observe(PublicContentObserver::class);
+        SeatingOption::observe(PublicContentObserver::class);
+        CrowdPattern::observe(PublicContentObserver::class);
+        BeanOrigin::observe(PublicContentObserver::class);
     }
 
     /**

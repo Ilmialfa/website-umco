@@ -64,7 +64,7 @@ it('does not expose legacy specimen route', function () {
 it('renders reservation page successfully', function () {
     $response = $this->get('/reservasi');
     $response->assertStatus(200);
-    $response->assertSee('Pilih Meja');
+    $response->assertSee('Pesan meja di UMCO.');
     $response->assertDontSee('Wing Barat');
 });
 
@@ -75,7 +75,7 @@ it('downloads ics calendar event for a valid reservation', function () {
         'date' => now()->format('Y-m-d'),
         'time' => '14:00',
         'party_size' => 2,
-        'mode' => 'table_only',
+        'mode' => 'table_menu',
     ]);
 
     $response = $this->get("/reservasi/calendar/{$reservation->code}");
@@ -83,5 +83,5 @@ it('downloads ics calendar event for a valid reservation', function () {
     $response->assertHeader('Content-Type', 'text/calendar; charset=utf-8');
     $response->assertSee('BEGIN:VCALENDAR');
     $response->assertSee("UID:{$reservation->code}@umco.house");
-    $response->assertSee('UM.CO House');
+    $response->assertSee('UMCO House');
 });

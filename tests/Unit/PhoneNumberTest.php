@@ -37,3 +37,10 @@ test('generates valid WhatsApp click to chat link', function () {
     $link = PhoneNumber::waLink('082248001571', 'Halo UM.CO House!');
     expect($link)->toBe('https://wa.me/6282248001571?text=Halo%20UM.CO%20House%21');
 });
+
+test('normalizes business landline and mobile numbers separately without altering customer rules', function () {
+    expect(PhoneNumber::normalizeBusiness('02248001571'))->toBe('622248001571')
+        ->and(PhoneNumber::normalizeBusiness('022 4800 1571'))->toBe('622248001571')
+        ->and(PhoneNumber::normalizeBusiness('622248001571'))->toBe('622248001571')
+        ->and(PhoneNumber::normalizeBusiness('082248001571'))->toBe('6282248001571');
+});

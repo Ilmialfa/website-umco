@@ -73,3 +73,12 @@ Keputusan di bawah ini menggantikan Decision 02 dan Decision 04 di atas.
   1. `MenuController` menyajikan data terstruktur (varian, suhu, URL AVIF/WebP 480/800/1200, flag placeholder) sekali ke Alpine agar pencarian dan tab kategori jalan 0 ms di sisi klien; default di HP `<640px` adalah tampilan Daftar bergaya nota agar compact, sedangkan Tablet/Desktop default ke grid Foto.
   2. Sheet detail item di `/menu` mengizinkan pemilihan varian & suhu lalu menyinkronkan ke `localStorage` (`umco_nota_v1`) yang terhubung ke `/reservasi`.
   3. `/cerita` menampilkan pembuka, daftar ketinggian biji kopi (`BeanOrigin`) dengan modul lazy `altimeter.js` (`0,35 KB` gzip), tiga hal yang kami pegang, daftar teman jajan gaya tabel nota, serta ajakan kolaborasi WhatsApp.
+
+### Decision 13 (Fase 5): Mesin Reservasi Server, Halaman Status Karcis, & WA Dual-Lapis
+- **Konteks:** Aturan reservasi (minimal 2 orang, minimal belanja bertingkat dari `SpendTier`, DP minimal 50% dibulatkan ke atas ke ribuan terdekat, QRIS statis + unggah bukti wajib) harus berjalan identik untuk publik maupun wizard admin, sementara notifikasi WhatsApp UMCO harus tetap berfungsi baik tanpa biaya pihak ketiga maupun dengan gateway opsional.
+- **Keputusan:**
+  1. Perhitungan kuota dan harga dipusatkan pada `QuoteReservation`, dan seluruh validasi aturan bisnis, penguncian kapasitas slot (`lockForUpdate` untuk MySQL/MariaDB), penyimpanan bukti ke `payment_proofs/`, logging aktivitas, notifikasi database Filament (`NewReservationNotification`), serta job `NotifyUmcoWhatsApp` dipusatkan pada `CreateReservation`.
+  2. `PhoneNumber::normalizeBusiness()` ditambahkan khusus untuk nomor tetap bisnis UMCO (`02248001571 -> 622248001571`) tanpa mengubah ketatnya validasi seluler pelanggan (`PhoneNumber::normalize()`).
+  3. `/reservasi` menggunakan 5 langkah geser horizontal (`ReservationPage`) + 3 tata letak terpisah (Desktop 7+5 sticky karcis, Tablet kartu karcis lipat atas, HP strip bawah 64px + bottom sheet) dengan kompresi gambar <= 1600px dan unduh karcis PNG berbasis `<canvas>` di modul lazy `reservasi-tools.js` (`1,65 KB` gzip).
+  4. `/reservasi/{code}` (`ReservationStatusPage`) mengamankan karcis di balik 4 digit terakhir WA yang tersimpan di session, memakai `wire:poll.30s` untuk pembaruan stempel otomatis, serta mendukung unggah ulang bukti ketika `payment_status === 'rejected'`.
+  5. Placeholder vektor statis `public/images/qris-placeholder.svg` dipakai sebagai fallback bila `payment.qris_image_path` di Settings masih kosong.

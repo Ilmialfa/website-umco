@@ -2,405 +2,689 @@
 
 namespace App\Livewire;
 
-use App\Models\ActivityLog;
+use App\Actions\Reservations\CreateReservation;
+use App\Actions\Reservations\QuoteReservation;
+use App\Jobs\NotifyUmcoWhatsApp;
 use App\Models\ClosedDate;
+use App\Models\MenuCategory;
 use App\Models\MenuItem;
 use App\Models\Reservation;
-use App\Models\ReservationItem;
+use App\Models\Rule;
+use App\Models\SeatingOption;
+use App\Models\SpendTier;
 use App\Support\PhoneNumber;
 use App\Support\Settings;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
-use Livewire\Attributes\Url;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
 #[Layout('components.layouts.public')]
+#[Title('Pesan Meja — UMCO House')]
 class ReservationPage extends Component
 {
     use WithFileUploads;
 
-    // Slide state: 1 = Meja, 2 = Pilihan Menu (Optional), 3 = Tiket Sukses
-    public int $slide = 1;
-    public string $step = 'form'; // 'form' | 'success'
+    public int $step = 1;
+    public int $maxVisitedStep = 1;
 
-    #[Url(as: 'mode')]
-    public string $mode = 'a'; // 'a' = table_only, 'b' = table_menu
-
-    #[Url(as: 'menu')]
-    public ?string $initialMenuSlug = null;
-
-    // Slide 1 Fields (Table reservation)
-    public string $name = '';
-    public string $phone = '';
+    // Step 1: Kapan & orang
     public string $date = '';
-    public string $time = '14:00';
-    public int $party_size = 2;
+    public string $time = '';
+    public int $partySize = 2;
+
+    // Step 2: Mau duduk di mana
+    public ?int $seatingOptionId = null;
+    public string $seatingNote = '';
+
+    // Step 3: Pilih menu
+    /** @var array<string, array{menu_item_id: int, name: string, variant_label: ?string, temperature: ?string, unit_price: int, qty: int}> */
+    public array $selectedItems = [];
+    public int $activeCategoryId = 0;
+    public string $menuSearch = '';
+
+    /** @var array<int, string> */
+    public array $pickedVariants = [];
+
+    /** @var array<int, string> */
+    public array $pickedTemps = [];
+
+    // Step 4: Data kamu
+    public string $name = '';
+    public string $phoneInput = '';
     public string $note = '';
 
-    // Slide 2 Fields (Menu pre-order & payment)
-    public array $selected_items = []; // [item_id => quantity]
-    public $payment_proof = null;
+    // Step 5: Bayar
+    public string $paymentType = 'dp';
+    public $paymentProof = null;
+    public bool $acceptedRules = false;
+    public bool $showRulesDrawer = false;
 
-    // Success State
-    public ?string $created_code = null;
-    public ?Reservation $created_reservation = null;
+    // Step 6: Selesai
+    public ?string $createdCode = null;
+    public ?string $createdWaLink = null;
+    public ?int $createdReservationId = null;
 
-    public function mount(): void
+    public bool $hasQueryItems = false;
+    public bool $mobileSheetOpen = false;
+    public bool $tabletKarcisExpanded = false;
+
+    public function mount(Request $request): void
     {
-        $this->date = now()->format('Y-m-d');
+        $minParty = $this->minParty;
+        $maxParty = $this->maxPartyOnline;
 
-        if ($this->mode === 'b' || $this->initialMenuSlug) {
-            $this->slide = 1; // Start at slide 1, but keep mode b ready
+        $reqParty = (int) $request->query('party', $minParty);
+        $this->partySize = max($minParty, min($maxParty, $reqParty));
+
+        $reqSeating = (int) $request->query('seating', 0);
+        if ($reqSeating > 0 && SeatingOption::where('id', $reqSeating)->where('is_active', true)->exists()) {
+            $this->seatingOptionId = $reqSeating;
         }
 
-        if ($this->initialMenuSlug) {
-            $item = MenuItem::where('slug', $this->initialMenuSlug)
-                ->where('is_active', true)
-                ->where('is_available', true)
-                ->first();
+        // Default tanggal: pakai ?date= kalau valid & buka, else tanggal terbuka pertama
+        $dates = $this->dateOptions;
+        $reqDate = trim((string) $request->query('date', ''));
+        $matchedDate = collect($dates)->first(fn ($d) => $d['date'] === $reqDate && ! $d['closed']);
 
-            if ($item) {
-                $this->mode = 'b';
-                $this->selected_items[$item->id] = 1;
+        if ($matchedDate) {
+            $this->date = $matchedDate['date'];
+        } else {
+            $this->date = '';
+            foreach ($dates as $opt) {
+                if ($opt['closed']) {
+                    continue;
+                }
+                $this->date = $opt['date'];
+                unset($this->timeSlots);
+                if (collect($this->timeSlots)->contains(fn ($s) => $s['available'])) {
+                    break;
+                }
+            }
+            if ($this->date === '') {
+                $firstOpen = collect($dates)->first(fn ($d) => ! $d['closed']);
+                $this->date = $firstOpen['date'] ?? Carbon::now('Asia/Jakarta')->format('Y-m-d');
+            }
+        }
+
+        // Default jam: pakai ?time= kalau tersedia
+        $reqTime = substr(trim((string) $request->query('time', '')), 0, 5);
+        $slots = $this->timeSlots;
+        $matchedSlot = collect($slots)->first(fn ($s) => $s['time'] === $reqTime && $s['available']);
+        if ($matchedSlot) {
+            $this->time = $matchedSlot['time'];
+        } else {
+            $firstAvail = collect($slots)->first(fn ($s) => $s['available']);
+            $this->time = $firstAvail['time'] ?? '';
+        }
+
+        // Prefill dari query ?items=...
+        $rawItemsQuery = $request->query('items');
+        if (! empty($rawItemsQuery)) {
+            $parsed = [];
+            if (is_string($rawItemsQuery)) {
+                $decoded = json_decode($rawItemsQuery, true);
+                if (is_array($decoded)) {
+                    $parsed = $decoded;
+                } else {
+                    foreach (explode(',', $rawItemsQuery) as $pair) {
+                        if (str_contains($pair, ':')) {
+                            [$id, $qty] = explode(':', $pair, 2);
+                            $parsed[] = ['id' => (int) $id, 'qty' => (int) $qty];
+                        }
+                    }
+                }
+            } elseif (is_array($rawItemsQuery)) {
+                $parsed = $rawItemsQuery;
+            }
+
+            if ($parsed !== []) {
+                $this->hydrateNotaItems($parsed);
+                $this->hasQueryItems = true;
             }
         }
     }
 
-    public function goToSlide(int $target): void
+    public function hydrateNotaItems(array $notaItems): void
     {
-        if ($target === 2) {
-            $this->validateSlide1();
-            $this->slide = 2;
-        } elseif ($target === 1) {
-            $this->slide = 1;
+        if ($this->selectedItems !== [] || $this->createdCode !== null) {
+            return;
+        }
+
+        $ids = collect($notaItems)
+            ->map(fn ($row) => (int) ($row['menu_item_id'] ?? $row['id'] ?? 0))
+            ->filter(fn ($id) => $id > 0)
+            ->unique()
+            ->values();
+
+        if ($ids->isEmpty()) {
+            return;
+        }
+
+        $menus = MenuItem::query()
+            ->whereIn('id', $ids)
+            ->where('is_active', true)
+            ->where('is_available', true)
+            ->get()
+            ->keyBy('id');
+
+        foreach ($notaItems as $row) {
+            $menuId = (int) ($row['menu_item_id'] ?? $row['id'] ?? 0);
+            $qty = max(0, (int) ($row['qty'] ?? 1));
+            if ($menuId <= 0 || $qty <= 0 || ! $menus->has($menuId)) {
+                continue;
+            }
+
+            /** @var MenuItem $menu */
+            $menu = $menus->get($menuId);
+            $variant = isset($row['variant_label']) ? trim((string) $row['variant_label']) : (isset($row['variant']) ? trim((string) $row['variant']) : null);
+            $variant = $variant !== '' ? $variant : null;
+            $temp = isset($row['temperature']) ? trim((string) $row['temperature']) : (isset($row['temp']) ? trim((string) $row['temp']) : null);
+            $temp = in_array($temp, ['Panas', 'Es'], true) ? $temp : ($menu->has_temperature ? 'Es' : null);
+
+            $unitPrice = $this->resolveMenuPrice($menu, $variant);
+            $key = $this->lineKey($menu->id, $variant, $temp);
+
+            if (isset($this->selectedItems[$key])) {
+                $this->selectedItems[$key]['qty'] += $qty;
+            } else {
+                $this->selectedItems[$key] = [
+                    'menu_item_id' => $menu->id,
+                    'name' => $menu->name,
+                    'variant_label' => $variant,
+                    'temperature' => $temp,
+                    'unit_price' => $unitPrice,
+                    'qty' => $qty,
+                ];
+            }
         }
     }
 
-    public function validateSlide1(): void
+    #[Computed]
+    public function minParty(): int
     {
-        if (!PhoneNumber::isValid($this->phone)) {
-            $this->addError('phone', 'Nomor WhatsApp belum benar, contoh: 0812 3456 7890');
-            throw ValidationException::withMessages(['phone' => 'Nomor WhatsApp belum benar, contoh: 0812 3456 7890']);
+        return max(2, (int) Settings::get('reservation.min_party', 2));
+    }
+
+    #[Computed]
+    public function maxPartyOnline(): int
+    {
+        return max($this->minParty, (int) Settings::get('reservation.max_party_size_online', 12));
+    }
+
+    #[Computed]
+    public function fullPaymentEnabled(): bool
+    {
+        return (bool) Settings::get('reservation.full_payment_enabled', true);
+    }
+
+    #[Computed]
+    public function menuRequired(): bool
+    {
+        return (bool) Settings::get('reservation.menu_required', true);
+    }
+
+    #[Computed]
+    public function dateOptions(): array
+    {
+        $now = Carbon::now('Asia/Jakarta')->startOfDay();
+        $maxDays = max(1, (int) Settings::get('reservation.max_advance_days', 14));
+        $end = $now->copy()->addDays($maxDays);
+
+        $closedDates = ClosedDate::query()
+            ->whereBetween('date', [$now->format('Y-m-d'), $end->format('Y-m-d')])
+            ->get()
+            ->keyBy(fn ($c) => $c->date->format('Y-m-d'));
+
+        $list = [];
+        for ($i = 0; $i <= $maxDays; $i++) {
+            $d = $now->copy()->addDays($i)->locale('id');
+            $key = $d->format('Y-m-d');
+            $closed = $closedDates->get($key);
+
+            $list[] = [
+                'date' => $key,
+                'day_short' => $i === 0 ? 'Hari ini' : $d->isoFormat('ddd'),
+                'date_short' => $d->isoFormat('D MMM'),
+                'full_label' => $d->isoFormat('ddd, D MMM YYYY'),
+                'closed' => (bool) $closed,
+                'reason' => $closed?->reason,
+            ];
         }
 
-        $this->validate([
-            'name' => ['required', 'string', 'min:2', 'max:100'],
-            'phone' => ['required', 'string'],
-            'date' => ['required', 'date', 'after_or_equal:today', 'before_or_equal:' . now()->addDays(14)->format('Y-m-d')],
-            'time' => ['required', 'string'],
-            'party_size' => ['required', 'integer', 'min:1', 'max:12'],
-            'note' => ['nullable', 'string', 'max:500'],
-        ], [
-            'name.required' => 'Nama lengkap wajib diisi.',
-            'name.min' => 'Nama minimal 2 karakter.',
-            'date.required' => 'Tanggal kedatangan wajib dipilih.',
-            'date.after_or_equal' => 'Tanggal tidak boleh di masa lampau.',
-            'date.before_or_equal' => 'Maksimal booking 14 hari ke depan.',
-            'time.required' => 'Jam wajib dipilih.',
-            'party_size.min' => 'Jumlah orang minimal 1.',
-            'party_size.max' => 'Untuk di atas 12 orang, silakan hubungi WhatsApp kami langsung.',
-        ]);
+        return $list;
+    }
 
-        if ($this->closedDateNotice) {
-            $reason = $this->closedDateNotice->reason ?: 'Operasional Libur';
-            throw ValidationException::withMessages([
-                'date' => "Mohon maaf, UM.CO House tutup pada tanggal ini: {$reason}.",
-            ]);
+    #[Computed]
+    public function timeSlots(): array
+    {
+        if ($this->date === '') {
+            return [];
+        }
+
+        $openStr = substr((string) Settings::get('hours.opening_time', '08:00'), 0, 5);
+        $closeStr = substr((string) Settings::get('hours.closing_time', '22:00'), 0, 5);
+        $interval = max(15, (int) Settings::get('reservation.slot_interval', 30));
+        $lastBeforeClose = max(0, (int) Settings::get('reservation.last_slot_before_close', 60));
+        $capacity = max(1, (int) Settings::get('reservation.capacity_per_slot', 40));
+        $minAdvance = max(0, (int) Settings::get('reservation.min_advance_minutes', 60));
+
+        $now = Carbon::now('Asia/Jakarta');
+        $cutoff = $now->copy()->addMinutes($minAdvance);
+
+        try {
+            $cursor = Carbon::createFromFormat('Y-m-d H:i', $this->date . ' ' . $openStr, 'Asia/Jakarta');
+            $last = Carbon::createFromFormat('Y-m-d H:i', $this->date . ' ' . $closeStr, 'Asia/Jakarta')
+                ->subMinutes($lastBeforeClose);
+        } catch (\Throwable) {
+            return [];
+        }
+
+        $bookedByTime = Reservation::query()
+            ->selectRaw('time, SUM(party_size) as total_guests')
+            ->whereDate('date', $this->date)
+            ->whereIn('status', ['pending', 'confirmed', 'arrived'])
+            ->groupBy('time')
+            ->pluck('total_guests', 'time');
+
+        $slots = [];
+        while ($cursor->lte($last)) {
+            $timeStr = $cursor->format('H:i');
+            $booked = (int) ($bookedByTime[$timeStr] ?? 0);
+            $remaining = max(0, $capacity - $booked);
+            $tooSoon = $cursor->lt($cutoff);
+            $available = ! $tooSoon && $remaining >= $this->partySize;
+
+            $slots[] = [
+                'time' => $timeStr,
+                'label' => str_replace(':', '.', $timeStr),
+                'remaining' => $remaining,
+                'too_soon' => $tooSoon,
+                'full' => $remaining < $this->partySize,
+                'available' => $available,
+            ];
+
+            $cursor->addMinutes($interval);
+        }
+
+        return $slots;
+    }
+
+    #[Computed]
+    public function seatingOptions(): Collection
+    {
+        return SeatingOption::query()
+            ->where('is_active', true)
+            ->orderBy('sort')
+            ->orderBy('id')
+            ->get();
+    }
+
+    #[Computed]
+    public function categories(): Collection
+    {
+        return MenuCategory::query()
+            ->where('is_active', true)
+            ->orderBy('sort')
+            ->orderBy('id')
+            ->get();
+    }
+
+    #[Computed]
+    public function menus(): Collection
+    {
+        $query = MenuItem::query()
+            ->with('category')
+            ->where('is_active', true)
+            ->where('is_available', true);
+
+        if ($this->activeCategoryId > 0) {
+            $query->where('category_id', $this->activeCategoryId);
+        }
+
+        $search = trim($this->menuSearch);
+        if ($search !== '') {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        return $query->orderByDesc('is_favorite')->orderBy('sort')->orderBy('id')->get();
+    }
+
+    #[Computed]
+    public function quote(): array
+    {
+        return QuoteReservation::calculate(
+            $this->partySize,
+            array_values($this->selectedItems),
+            $this->paymentType
+        );
+    }
+
+    #[Computed]
+    public function normalizedPhonePreview(): ?string
+    {
+        try {
+            $clean = PhoneNumber::normalize($this->phoneInput);
+        } catch (\InvalidArgumentException) {
+            return null;
+        }
+
+        $local = substr($clean, 2);
+        return '+62 ' . substr($local, 0, 3) . '-' . substr($local, 3, 4) . '-' . substr($local, 7);
+    }
+
+    #[Computed]
+    public function rulesList(): Collection
+    {
+        return Rule::query()->orderBy('sort')->orderBy('id')->get();
+    }
+
+    #[Computed]
+    public function qrisUrl(): string
+    {
+        $path = trim((string) Settings::get('payment.qris_image_path', ''));
+        if ($path === '') {
+            return asset('/images/qris-placeholder.svg');
+        }
+        if (str_starts_with($path, 'http') || str_starts_with($path, '/')) {
+            return $path;
+        }
+
+        return asset('storage/' . ltrim($path, '/'));
+    }
+
+    #[Computed]
+    public function bankAccounts(): array
+    {
+        $raw = Settings::get('payment.bank_accounts', []);
+        if (is_string($raw)) {
+            $decoded = json_decode($raw, true);
+            return is_array($decoded) ? $decoded : [];
+        }
+
+        return is_array($raw) ? $raw : [];
+    }
+
+    #[Computed]
+    public function floorPlanUrl(): ?string
+    {
+        $path = trim((string) Settings::get('reservation.floor_plan_image_path', ''));
+        if ($path === '') {
+            return null;
+        }
+        if (str_starts_with($path, 'http') || str_starts_with($path, '/')) {
+            return $path;
+        }
+
+        return asset('storage/' . ltrim($path, '/'));
+    }
+
+    public function selectDate(string $date): void
+    {
+        $this->date = $date;
+        unset($this->timeSlots);
+
+        $slots = $this->timeSlots;
+        $stillValid = collect($slots)->contains(fn ($s) => $s['time'] === $this->time && $s['available']);
+        if (! $stillValid) {
+            $first = collect($slots)->first(fn ($s) => $s['available']);
+            $this->time = $first['time'] ?? '';
         }
     }
 
-    public function addItem(int $itemId): void
+    public function incrementParty(): void
     {
-        $item = MenuItem::where('id', $itemId)
+        if ($this->partySize < $this->maxPartyOnline) {
+            $this->partySize++;
+            unset($this->timeSlots, $this->quote);
+        }
+    }
+
+    public function decrementParty(): void
+    {
+        if ($this->partySize > $this->minParty) {
+            $this->partySize--;
+            unset($this->timeSlots, $this->quote);
+        }
+    }
+
+    public function setMenuOption(int $menuId, ?string $variant = null, ?string $temp = null): void
+    {
+        if ($variant !== null) {
+            $this->pickedVariants[$menuId] = $variant;
+        }
+        if ($temp !== null) {
+            $this->pickedTemps[$menuId] = $temp;
+        }
+    }
+
+    public function addMenu(int $menuId): void
+    {
+        $menu = MenuItem::query()
+            ->where('id', $menuId)
             ->where('is_active', true)
             ->where('is_available', true)
             ->first();
 
-        if ($item) {
-            $current = $this->selected_items[$itemId] ?? 0;
-            $this->selected_items[$itemId] = $current + 1;
-            $this->mode = 'b';
-        }
-    }
-
-    public function removeItem(int $itemId): void
-    {
-        if (isset($this->selected_items[$itemId])) {
-            if ($this->selected_items[$itemId] > 1) {
-                $this->selected_items[$itemId]--;
-            } else {
-                unset($this->selected_items[$itemId]);
-            }
-        }
-
-        if (empty($this->selected_items) || array_sum($this->selected_items) === 0) {
-            $this->mode = 'a';
-        }
-    }
-
-    public function getSubtotalProperty(): int
-    {
-        if (empty($this->selected_items)) {
-            return 0;
-        }
-
-        $items = MenuItem::whereIn('id', array_keys($this->selected_items))->get();
-        $subtotal = 0;
-        foreach ($items as $item) {
-            $qty = $this->selected_items[$item->id] ?? 0;
-            $subtotal += ($item->price * $qty);
-        }
-
-        return $subtotal;
-    }
-
-    public function getDpAmountProperty(): int
-    {
-        if ($this->subtotal === 0) {
-            return 0;
-        }
-
-        $rawDp = $this->subtotal * 0.30;
-        $rounded = ceil($rawDp / 1000) * 1000;
-
-        return (int) max(25000, $rounded);
-    }
-
-    public function getAvailableSlotsProperty(): array
-    {
-        $openStr = Settings::get('hours.opening_time', '08:00');
-        $closeStr = Settings::get('hours.closing_time', '21:00');
-
-        $openHour = (int) explode(':', $openStr)[0];
-        $closeHour = (int) explode(':', $closeStr)[0];
-
-        $slots = [];
-        for ($h = $openHour; $h < $closeHour; $h++) {
-            $slots[] = sprintf('%02d:00', $h);
-            $slots[] = sprintf('%02d:30', $h);
-        }
-
-        $usedBySlot = Reservation::where('date', $this->date)
-            ->where('status', '!=', 'cancelled')
-            ->select('time', DB::raw('SUM(party_size) as total_pax'))
-            ->groupBy('time')
-            ->pluck('total_pax', 'time')
-            ->toArray();
-
-        $maxCapacity = 40;
-        $result = [];
-        foreach ($slots as $slot) {
-            $used = (int) ($usedBySlot[$slot] ?? 0);
-            $remaining = max(0, $maxCapacity - $used);
-            $result[] = [
-                'time' => $slot,
-                'remaining' => $remaining,
-                'is_full' => ($remaining < $this->party_size),
-            ];
-        }
-
-        return $result;
-    }
-
-    public function getClosedDateNoticeProperty(): ?ClosedDate
-    {
-        if (empty($this->date)) {
-            return null;
-        }
-
-        return ClosedDate::where('date', $this->date)->first();
-    }
-
-    /**
-     * Submit action for Table-Only (Instant without DP)
-     */
-    public function confirmTableOnly(): void
-    {
-        $this->mode = 'a';
-        $this->selected_items = [];
-        $this->executeReservation();
-    }
-
-    /**
-     * Submit action with Pre-ordered Menu and Proof Upload
-     */
-    public function confirmWithMenu(): void
-    {
-        $this->mode = 'b';
-
-        if (empty($this->selected_items) || array_sum($this->selected_items) === 0) {
-            $this->addError('selected_items', 'Silakan pilih minimal 1 menu sebelum melanjutkan.');
+        if (! $menu) {
             return;
         }
 
-        $this->validate([
-            'payment_proof' => ['required', 'file', 'mimes:jpeg,png,jpg,webp,pdf', 'max:4096'],
-        ], [
-            'payment_proof.required' => 'Bukti transfer DP 30% wajib diunggah.',
-            'payment_proof.max' => 'Ukuran file maksimal 4 MB.',
-        ]);
+        $variants = is_array($menu->variants) ? $menu->variants : [];
+        $variant = $this->pickedVariants[$menuId]
+            ?? ($variants !== [] && isset($variants[0]['label']) ? (string) $variants[0]['label'] : null);
+        $temp = $menu->has_temperature ? ($this->pickedTemps[$menuId] ?? 'Es') : null;
+        $price = $this->resolveMenuPrice($menu, $variant);
+        $key = $this->lineKey($menu->id, $variant, $temp);
 
-        $this->executeReservation();
+        if (isset($this->selectedItems[$key])) {
+            $this->selectedItems[$key]['qty']++;
+        } else {
+            $this->selectedItems[$key] = [
+                'menu_item_id' => $menu->id,
+                'name' => $menu->name,
+                'variant_label' => $variant,
+                'temperature' => $temp,
+                'unit_price' => $price,
+                'qty' => 1,
+            ];
+        }
+
+        unset($this->quote);
     }
 
-    /**
-     * Universal submit method (backward compatible with Pest test calls)
-     */
-    public function submit(): void
+    public function incrementLine(string $key): void
     {
-        $this->validateSlide1();
-
-        if ($this->mode === 'b') {
-            $this->confirmWithMenu();
-        } else {
-            $this->confirmTableOnly();
+        if (isset($this->selectedItems[$key])) {
+            $this->selectedItems[$key]['qty']++;
+            unset($this->quote);
         }
     }
 
-    protected function executeReservation(): void
+    public function decrementLine(string $key): void
     {
-        $this->validateSlide1();
-        $normalizedPhone = PhoneNumber::normalize($this->phone);
+        if (! isset($this->selectedItems[$key])) {
+            return;
+        }
+
+        if ($this->selectedItems[$key]['qty'] <= 1) {
+            unset($this->selectedItems[$key]);
+        } else {
+            $this->selectedItems[$key]['qty']--;
+        }
+
+        unset($this->quote);
+    }
+
+    public function goToStep(int $target): void
+    {
+        if ($this->createdCode !== null) {
+            return;
+        }
+        if ($target >= 1 && $target <= $this->maxVisitedStep) {
+            $this->step = $target;
+            $this->resetErrorBag();
+        }
+    }
+
+    public function nextStep(): void
+    {
+        $this->resetErrorBag();
+
+        if ($this->step === 1) {
+            $this->validateStep1();
+            $this->step = 2;
+        } elseif ($this->step === 2) {
+            $this->step = 3;
+        } elseif ($this->step === 3) {
+            $this->validateStep3();
+            $this->step = 4;
+        } elseif ($this->step === 4) {
+            $this->validateStep4();
+            $this->step = 5;
+        }
+
+        $this->maxVisitedStep = max($this->maxVisitedStep, $this->step);
+    }
+
+    public function prevStep(): void
+    {
+        if ($this->step > 1 && $this->createdCode === null) {
+            $this->step--;
+            $this->resetErrorBag();
+        }
+    }
+
+    public function submitReservation(): void
+    {
+        $this->resetErrorBag();
+        $this->validateStep1();
+        $this->validateStep3();
+        $this->validateStep4();
+
+        if (! $this->acceptedRules) {
+            $this->addError('acceptedRules', 'Centang dulu tanda sudah baca aturan kedai.');
+            return;
+        }
 
         try {
-            DB::transaction(function () use ($normalizedPhone) {
-                // Concurrency lock on requested slot (applied on MySQL/Postgres)
-                $query = Reservation::where('date', $this->date)
-                    ->where('time', $this->time)
-                    ->where('status', '!=', 'cancelled');
-
-                if (DB::getDriverName() !== 'sqlite') {
-                    $query->lockForUpdate();
-                }
-
-                $existingPax = $query->sum('party_size');
-
-                $maxCapacity = 40;
-                if (($existingPax + $this->party_size) > $maxCapacity) {
-                    $remaining = max(0, $maxCapacity - $existingPax);
-                    throw ValidationException::withMessages([
-                        'time' => "Kapasitas meja untuk jam {$this->time} sudah penuh ({$remaining} kursi tersisa). Silakan pilih jam lain.",
-                    ]);
-                }
-
-                $proofPath = null;
-                if ($this->mode === 'b' && $this->payment_proof) {
-                    $proofPath = $this->payment_proof->store('payment-proofs', 'public');
-                }
-
-                $reservation = Reservation::create([
-                    'code' => Reservation::generateUniqueCode(),
-                    'name' => trim($this->name),
-                    'phone_input' => trim($this->phone),
-                    'phone_wa' => $normalizedPhone,
-                    'date' => $this->date,
-                    'time' => $this->time,
-                    'party_size' => $this->party_size,
-                    'note' => $this->note ?: null,
-                    'mode' => ($this->mode === 'b') ? 'table_menu' : 'table_only',
-                    'status' => 'pending',
-                    'payment_status' => ($this->mode === 'b') ? 'proof_uploaded' : 'none',
-                    'subtotal' => ($this->mode === 'b') ? $this->subtotal : 0,
-                    'dp_amount' => ($this->mode === 'b') ? $this->dp_amount : 0,
-                    'payment_proof_path' => $proofPath,
-                ]);
-
-                if ($this->mode === 'b') {
-                    $itemIds = array_keys($this->selected_items);
-                    $menuItems = MenuItem::whereIn('id', $itemIds)->get()->keyBy('id');
-
-                    foreach ($this->selected_items as $itemId => $qty) {
-                        if ($qty > 0 && isset($menuItems[$itemId])) {
-                            $item = $menuItems[$itemId];
-                            ReservationItem::create([
-                                'reservation_id' => $reservation->id,
-                                'menu_item_id' => $item->id,
-                                'name_snapshot' => $item->name,
-                                'price_snapshot' => $item->price,
-                                'quantity' => $qty,
-                                'line_total' => $item->price * $qty,
-                            ]);
-                        }
-                    }
-                }
-
-                ActivityLog::record(
-                    action: 'reservasi_dibuat_pelanggan',
-                    subjectType: Reservation::class,
-                    subjectId: $reservation->id,
-                    details: [
-                        'code' => $reservation->code,
-                        'customer' => $reservation->name,
-                        'date' => $reservation->date->format('Y-m-d'),
-                        'time' => $reservation->time,
-                        'pax' => $reservation->party_size,
-                        'mode' => $reservation->mode,
-                        'dp' => $reservation->dp_amount,
-                    ]
-                );
-
-                $this->created_code = $reservation->code;
-                $this->created_reservation = $reservation->load('items');
-                $this->slide = 3;
-                $this->step = 'success';
-            });
+            $reservation = CreateReservation::execute([
+                'source' => 'web',
+                'date' => $this->date,
+                'time' => $this->time,
+                'party_size' => $this->partySize,
+                'seating_option_id' => $this->seatingOptionId,
+                'seating_note' => $this->seatingNote,
+                'name' => $this->name,
+                'phone_input' => $this->phoneInput,
+                'note' => $this->note,
+                'payment_type' => $this->paymentType,
+                'items' => array_values($this->selectedItems),
+            ], $this->paymentProof);
         } catch (ValidationException $e) {
-            throw $e;
-        } catch (\Throwable $e) {
-            report($e);
-            $this->addError('general', 'Terjadi kendala sistem. Silakan coba kembali atau hubungi WhatsApp kasir.');
+            foreach ($e->errors() as $field => $messages) {
+                $mappedField = match ($field) {
+                    'phone_input' => 'phoneInput',
+                    'payment_proof' => 'paymentProof',
+                    'party_size' => 'partySize',
+                    default => $field,
+                };
+                $this->addError($mappedField, $messages[0] ?? 'Periksa isian ini.');
+            }
+            return;
+        }
+
+        $this->createdReservationId = $reservation->id;
+        $this->createdCode = $reservation->code;
+        $this->createdWaLink = NotifyUmcoWhatsApp::waLink($reservation);
+        $this->step = 6;
+        $this->maxVisitedStep = 6;
+
+        $this->dispatch('umco-open-wa', url: $this->createdWaLink);
+    }
+
+    private function validateStep1(): void
+    {
+        if ($this->date === '') {
+            throw ValidationException::withMessages(['date' => 'Pilih tanggal kedatangan dulu.']);
+        }
+        $closed = ClosedDate::whereDate('date', $this->date)->first();
+        if ($closed) {
+            throw ValidationException::withMessages(['date' => "Tanggal ini tutup: {$closed->reason}"]);
+        }
+        if ($this->time === '') {
+            throw ValidationException::withMessages(['time' => 'Pilih jam kedatangan yang tersedia.']);
+        }
+        $slot = collect($this->timeSlots)->first(fn ($s) => $s['time'] === $this->time);
+        if (! $slot || ! $slot['available']) {
+            throw ValidationException::withMessages(['time' => 'Slot jam ini tidak tersedia. Pilih jam lain ya.']);
+        }
+        if ($this->partySize < $this->minParty) {
+            throw ValidationException::withMessages(['partySize' => "Minimal {$this->minParty} orang untuk reservasi."]);
         }
     }
 
-    public function resetBooking(): void
+    private function validateStep3(): void
     {
-        $this->reset([
-            'slide',
-            'step',
-            'created_code',
-            'created_reservation',
-            'name',
-            'phone',
-            'note',
-            'selected_items',
-            'payment_proof',
-        ]);
-        $this->date = now()->format('Y-m-d');
-        $this->time = '14:00';
-        $this->party_size = 2;
-        $this->mode = 'a';
+        $quote = $this->quote;
+        if ($this->menuRequired) {
+            if (empty($quote['items'])) {
+                throw ValidationException::withMessages(['items' => 'Pilih minimal satu menu dulu ya.']);
+            }
+            if (! $quote['meets_min_spend']) {
+                $minFmt = 'Rp ' . number_format($quote['min_spend'], 0, ',', '.');
+                $kurangFmt = 'Rp ' . number_format($quote['shortfall'], 0, ',', '.');
+                throw ValidationException::withMessages([
+                    'items' => "Minimal belanja {$this->partySize} orang adalah {$minFmt} (kurang {$kurangFmt}).",
+                ]);
+            }
+        }
+    }
+
+    private function validateStep4(): void
+    {
+        if (mb_strlen(trim($this->name)) < 2) {
+            throw ValidationException::withMessages(['name' => 'Tulis namamu minimal 2 huruf.']);
+        }
+        try {
+            PhoneNumber::normalize($this->phoneInput);
+        } catch (\InvalidArgumentException) {
+            throw ValidationException::withMessages(['phoneInput' => 'Nomor WhatsApp belum valid. Contoh: 082212345678.']);
+        }
+    }
+
+    private function resolveMenuPrice(MenuItem $menu, ?string $variantLabel): int
+    {
+        if ($variantLabel && is_array($menu->variants)) {
+            foreach ($menu->variants as $v) {
+                if (is_array($v) && isset($v['label']) && mb_strtolower((string) $v['label']) === mb_strtolower($variantLabel)) {
+                    return (int) ($v['price'] ?? $menu->price);
+                }
+            }
+        }
+
+        return (int) $menu->price;
+    }
+
+    private function lineKey(int $menuId, ?string $variant, ?string $temp): string
+    {
+        return $menuId . '|' . ($variant ?? '') . '|' . ($temp ?? '');
     }
 
     public function render()
     {
-        $menuItems = MenuItem::where('is_active', true)
-            ->where('is_available', true)
-            ->with('category')
-            ->orderBy('sort')
-            ->get()
-            ->groupBy('category.name');
-
-        $bankAccounts = Settings::get('payment.bank_accounts', [
-            ['bank' => 'Bank Mandiri', 'account_number' => '1080023456789', 'account_name' => 'UMCO HOUSE PEKANBARU'],
-            ['bank' => 'Bank BCA', 'account_number' => '8420198765', 'account_name' => 'UMCO HOUSE PEKANBARU'],
-            ['bank' => 'Bank Syariah Indonesia (BSI)', 'account_number' => '7182930415', 'account_name' => 'UMCO HOUSE PEKANBARU'],
-        ]);
-
-        if (is_string($bankAccounts)) {
-            $bankAccounts = json_decode($bankAccounts, true) ?: [];
-        }
-
-        $qrisImage = Settings::get('payment.qris_image', '/images/qris-placeholder.svg');
+        $minSpend = SpendTier::minSpendFor($this->partySize);
 
         return view('livewire.reservation-page', [
-            'menuCategories' => $menuItems,
-            'bankAccounts' => $bankAccounts,
-            'qrisImage' => $qrisImage,
-            'availableSlots' => $this->availableSlots,
-            'closedDate' => $this->closedDateNotice,
+            'minSpendForParty' => $minSpend,
         ]);
     }
 }

@@ -10,7 +10,7 @@ class ReservationCalendarController extends Controller
 {
     public function download(string $code): Response
     {
-        $reservation = Reservation::where('code', $code)->firstOrFail();
+        $reservation = Reservation::with('seatingOption')->where('code', $code)->firstOrFail();
 
         // Calculate start and end datetime
         $start = Carbon::parse($reservation->date->format('Y-m-d') . ' ' . $reservation->time, 'Asia/Jakarta');
@@ -20,11 +20,11 @@ class ReservationCalendarController extends Controller
         $dtEnd = $end->copy()->utc()->format('Ymd\THis\Z');
         $nowUtc = gmdate('Ymd\THis\Z');
 
-        $modeLabel = ($reservation->mode === 'table_menu') ? 'Meja + Pesan Menu' : 'Meja Saja (Tanpa DP)';
+        $seatingLabel = $reservation->seatingOption?->label ?? 'Area bebas';
 
         $ics = "BEGIN:VCALENDAR\r\n" .
             "VERSION:2.0\r\n" .
-            "PRODID:-//UM.CO House//Reservasi//ID\r\n" .
+            "PRODID:-//UMCO House//Reservasi//ID\r\n" .
             "CALSCALE:GREGORIAN\r\n" .
             "METHOD:PUBLISH\r\n" .
             "BEGIN:VEVENT\r\n" .
@@ -32,9 +32,9 @@ class ReservationCalendarController extends Controller
             "DTSTAMP:{$nowUtc}\r\n" .
             "DTSTART:{$dtStart}\r\n" .
             "DTEND:{$dtEnd}\r\n" .
-            "SUMMARY:Reservasi UM.CO House ({$reservation->code})\r\n" .
-            "DESCRIPTION:Reservasi meja {$reservation->party_size} orang atas nama {$reservation->name}. Mode: {$modeLabel}. Kode Booking: {$reservation->code}\r\n" .
-            "LOCATION:UM.CO House, Kampus UMRI, Jl. Tuanku Tambusai No.2, Pekanbaru\r\n" .
+            "SUMMARY:Reservasi UMCO House ({$reservation->code})\r\n" .
+            "DESCRIPTION:Reservasi meja {$reservation->party_size} orang ({$seatingLabel}) atas nama {$reservation->name}. Kode Booking: {$reservation->code}\r\n" .
+            "LOCATION:UMCO House, Kampus 2 UMRI, Jl. Tuanku Tambusai No.2, Pekanbaru\r\n" .
             "STATUS:CONFIRMED\r\n" .
             "END:VEVENT\r\n" .
             "END:VCALENDAR\r\n";

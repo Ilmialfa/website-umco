@@ -19,6 +19,7 @@ const modules = {
     'testimonials-slider': () => import('./sections/testimonials-slider.js'),
     'gallery-mosaic': () => import('./sections/gallery-mosaic.js'),
     'altimeter': () => import('./sections/altimeter.js'),
+    'reservasi-tools': () => import('./sections/reservasi-tools.js'),
 };
 
 let io = null;

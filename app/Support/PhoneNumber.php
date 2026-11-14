@@ -78,6 +78,33 @@ class PhoneNumber
     }
 
     /**
+     * Normalizes an Indonesian business/landline OR mobile phone number (e.g. 02248001571 -> 622248001571).
+     * Dedicated for business contact numbers; does not relax customer mobile validation in normalize().
+     */
+    public static function normalizeBusiness(?string $phone): string
+    {
+        $digits = preg_replace('/\D+/', '', (string) $phone);
+
+        if ($digits === '') {
+            throw new InvalidArgumentException('Nomor WhatsApp bisnis tidak boleh kosong.');
+        }
+
+        if (str_starts_with($digits, '620')) {
+            $digits = '62' . substr($digits, 3);
+        } elseif (str_starts_with($digits, '0')) {
+            $digits = '62' . substr($digits, 1);
+        } elseif (! str_starts_with($digits, '62')) {
+            $digits = '62' . $digits;
+        }
+
+        if (! str_starts_with($digits, '62') || strlen($digits) < 9 || strlen($digits) > 15) {
+            throw new InvalidArgumentException('Format nomor bisnis tidak valid.');
+        }
+
+        return $digits;
+    }
+
+    /**
      * Formats normalized or raw phone to human-readable format: +62 822-4800-1571.
      */
     public static function format(?string $phone): string

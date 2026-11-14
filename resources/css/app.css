@@ -47,13 +47,23 @@
     --kertas-terang: #FCFBF7;
     --tinta: #22263A;
     --tinta-70: #4E5266;
+    --tinta-muted: #4E5266;
     --tinta-40: #9396A3;
     --garis: #DCD7CB;
+    --garis-kuwat: #9396A3;
     --mentega: #EFC94C;
     --mentega-tua: #D9AF2B;
     --matcha: #C8D5AE;
+    --zaitun: #C8D5AE;
     --susu-stroberi: #F0D2C9;
+    --blush: #F0D2C9;
     --stempel: #C4472E;
+    --cabai: #C4472E;
+
+    --font-display: 'Anybody', 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+    --font-sans: 'Familjen Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-hand: 'Reenie Beanie', 'Segoe Print', cursive;
+    --font-led: 'Doto', ui-monospace, SFMono-Regular, Menlo, monospace;
 
     --ease-out: cubic-bezier(.22, 1, .36, 1);
     --ease-in-out: cubic-bezier(.65, 0, .35, 1);
@@ -397,6 +407,63 @@
 /* Reveal helper initial state */
 [data-reveal] {
     will-change: opacity, transform;
+}
+
+.scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+    display: none;
+}
+
+.rule-notebook {
+    background-image: repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 31px,
+        rgba(34, 38, 58, 0.14) 31px,
+        rgba(34, 38, 58, 0.14) 32px
+    );
+}
+
+.umco-range {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    background-color: rgba(34, 38, 58, 0.25);
+    border-radius: 9999px;
+    outline: none;
+}
+.umco-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 9999px;
+    background-color: var(--tinta);
+    border: 3px solid var(--kertas-terang);
+    cursor: pointer;
+    transition: transform var(--dur-1) var(--ease-out);
+}
+.umco-range::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+}
+.umco-range::-moz-range-thumb {
+    width: 28px;
+    height: 28px;
+    border-radius: 9999px;
+    background-color: var(--tinta);
+    border: 3px solid var(--kertas-terang);
+    cursor: pointer;
+}
+
+.karcis-stub {
+    transition: transform var(--dur-2) var(--ease-out);
+}
+.karcis-stub.is-torn {
+    transform: translateY(12px) rotate(3deg);
 }
 
 @media (prefers-reduced-motion: reduce) {

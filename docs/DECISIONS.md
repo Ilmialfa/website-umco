@@ -59,3 +59,10 @@ Keputusan di bawah ini menggantikan Decision 02 dan Decision 04 di atas.
   1. Seluruh skema baru ditambahkan lewat migrasi aditif `2026_11_14_000001_add_redesign_2026_tables_and_columns.php`.
   2. `App\Support\MenuImageProcessor` otomatis memperbaiki orientasi EXIF kamera dan menghasilkan varian **WebP + AVIF** (480px, 800px, 1200px) idempoten ke `storage/app/public/menu/` (234 berkas untuk 39 menu), dengan nilai koma (misal `25,5k`) tersimpan sebagai integer rupiah (`25500`).
   3. Nilai default Bagian 16 diterapkan: jam buka `08:00–22:00`, minimal belanja bertingkat (`2 -> 50k`, `3 -> 100k`, `4 -> 125k`, `5 -> 150k`, `6+ -> 150k + 25k/orang`), kebijakan DP pindah jadwal 1x maksimal 2 jam sebelum datang, serta nomor uji bisnis `02248001571` (`622248001571`).
+
+### Decision 11 (Fase 3): 13 Section Landing Modular, Lazy Chunk GSAP, & Penyaluran Nota ke Reservasi
+- **Konteks:** Halaman utama memerlukan 13 ritme visual yang berbeda tanpa melebihi anggaran muatan awal `app.js` <= 60 KB gzip serta harus berbeda penataannya pada layar HP (`<640px`), Tablet (`640–1023px`), dan Desktop (`>=1024px`).
+- **Keputusan:**
+  1. Setiap interaksi section (`hero`, `led-board`, `story-line`, `signature-reel`, `brew-toy`, `crowd-chart`, `testimonials-slider`, `gallery-mosaic`) dipisah menjadi modul Vite dinamis (`0.3–1.5 KB` gzip) yang dimuat lewat `IntersectionObserver` `[data-module]`, sehingga `app.js` awal tetap ~50,6 KB gzip.
+  2. Urutan dan visibilitas 13 section dikendalikan lewat `PageSection` di basis data; ketika tabel kosong saat uji unit/fitur, fallback urutan default tetap menampilkan ketigabelas section.
+  3. S04 Nota menyimpan item pilihan pengunjung di `localStorage` (`umco_nota_v1`) sekaligus mengirimkan parameter query (`?items=...`) maupun `?tanggal=&orang=` dari S09 Karcis Teaser menuju `/reservasi`.

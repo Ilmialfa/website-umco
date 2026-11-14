@@ -2,12 +2,22 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { initReveal, cleanupReveal } from './motion/reveal.js';
 import { initNav } from './motion/nav.js';
+import { terbilang, formatRupiah, formatRibu, loadNota, saveNota } from './lib/formatters.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
+window.umcoFormatters = { terbilang, formatRupiah, formatRibu, loadNota, saveNota };
+
 const modules = {
     'scroll-meter': () => import('./sections/scroll-meter.js'),
-    // Modul section interaktif Fase 3–5 didaftarkan di sini saat dibangun
+    'hero': () => import('./sections/hero.js'),
+    'led-board': () => import('./sections/led-board.js'),
+    'signature-reel': () => import('./sections/signature-reel.js'),
+    'story-line': () => import('./sections/story-line.js'),
+    'brew-toy': () => import('./sections/brew-toy.js'),
+    'crowd-chart': () => import('./sections/crowd-chart.js'),
+    'testimonials-slider': () => import('./sections/testimonials-slider.js'),
+    'gallery-mosaic': () => import('./sections/gallery-mosaic.js'),
 };
 
 let io = null;

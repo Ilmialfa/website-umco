@@ -14,7 +14,7 @@ class PlaceholderAuditWidget extends Widget
 
     public static function canView(): bool
     {
-        return auth()->user()?->isAdmin() ?? false;
+        return auth()->user()?->isOwner() ?? false;
     }
 
     protected string $view = 'filament.widgets.placeholder-audit-widget';
@@ -41,7 +41,7 @@ class PlaceholderAuditWidget extends Widget
             $items[] = [
                 'type' => 'critical',
                 'title' => 'Nomor Rekening Bank Masih Kosong',
-                'description' => 'Rekening transfer DP belum diisi nomor rekening riil. Pelanggan Mode B akan diarahkan menghubungi WA admin.',
+                'description' => 'Rekening alternatif transfer DP/Lunas belum diisi nomor rekening riil.',
                 'action_url' => url('/admin/manage-settings'),
                 'action_label' => 'Isi Rekening Bank',
             ];
@@ -71,15 +71,20 @@ class PlaceholderAuditWidget extends Widget
             ];
         }
 
-        // 4. Menu Items without photo
-        $menusWithoutPhoto = MenuItem::whereNull('image_path')->where('is_active', true)->count();
+        // 4. Placeholder Detector: Menu tanpa foto / berstatus placeholder
+        $menusWithoutPhoto = MenuItem::where('is_active', true)
+            ->where(function ($q) {
+                $q->where('is_placeholder', true)
+                    ->orWhereNull('image_path');
+            })
+            ->count();
         if ($menusWithoutPhoto > 0) {
             $items[] = [
                 'type' => 'info',
-                'title' => "{$menusWithoutPhoto} Menu Belum Memiliki Foto Produk Asli",
-                'description' => 'Menu tetap tampil rapi dengan placeholder estetik, namun foto sajian asli UMCO akan meningkatkan konversi pemesanan.',
+                'title' => "{$menusWithoutPhoto} Menu Masih Memakai Placeholder Tipografi",
+                'description' => 'Menu tetap rapi dengan placeholder jujur ("foto menyusul"), namun unggah foto sajian asli UMCO akan melengkapi halaman menu.',
                 'action_url' => url('/admin/menu-items'),
-                'action_label' => 'Unggah Foto Menu',
+                'action_label' => 'Kelola Foto Menu',
             ];
         }
 

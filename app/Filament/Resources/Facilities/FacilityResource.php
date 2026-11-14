@@ -31,6 +31,11 @@ class FacilityResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'label';
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->isOwner() ?? false;
+    }
+
     public static function form(Schema $schema): Schema
     {
         return FacilityForm::configure($schema);

@@ -44,7 +44,8 @@ class MenuItemsTable
                     ->label('Tersedia'),
 
                 ToggleColumn::make('is_favorite')
-                    ->label('Favorit'),
+                    ->label('Favorit')
+                    ->disabled(fn (): bool => ! (auth()->user()?->isAdmin() ?? false)),
 
                 TextColumn::make('favorite_order')
                     ->label('Urut Favorit')
@@ -52,10 +53,12 @@ class MenuItemsTable
                     ->alignCenter(),
 
                 ToggleColumn::make('is_new')
-                    ->label('Baru'),
+                    ->label('Baru')
+                    ->disabled(fn (): bool => ! (auth()->user()?->isAdmin() ?? false)),
 
                 ToggleColumn::make('is_active')
-                    ->label('Aktif'),
+                    ->label('Aktif')
+                    ->disabled(fn (): bool => ! (auth()->user()?->isAdmin() ?? false)),
             ])
             ->filters([
                 SelectFilter::make('category_id')

@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Support\Settings;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -10,7 +11,6 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Widgets\AccountWidget;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -29,30 +29,59 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->brandName('UM.CO House')
+            ->brandName('UMCO')
             ->favicon('/favicon.svg')
+            ->databaseNotifications()
+            ->databaseNotificationsPolling('30s')
             ->renderHook(
                 PanelsRenderHook::HEAD_END,
-                fn (): HtmlString => new HtmlString('
-                    <link rel="preconnect" href="https://fonts.googleapis.com">
-                    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-                    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap">
-                    <link rel="stylesheet" href="/css/filament-theme.css">
-                ')
+                fn (): HtmlString => new HtmlString('<link rel="stylesheet" href="/css/filament-theme.css">')
+            )
+            ->renderHook(
+                PanelsRenderHook::BODY_END,
+                function (): HtmlString {
+                    $soundEnabled = Settings::get('reservation.sound_on_notification', false) ? '1' : '0';
+                    return new HtmlString("<script>
+(function(){
+    if ('{$soundEnabled}' !== '1') return;
+    let lastCount = null;
+    const checkBell = () => {
+        const badge = document.querySelector('[aria-label*=\"Notifikasi\"], .fi-topbar-database-notifications-btn .fi-badge');
+        const txt = badge ? badge.textContent.trim() : '';
+        const count = txt ? parseInt(txt, 10) || 0 : 0;
+        if (lastCount !== null && count > lastCount) {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(880, ctx.currentTime);
+                gain.gain.setValueAtTime(0.08, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+                osc.connect(gain); gain.connect(ctx.destination);
+                osc.start(); osc.stop(ctx.currentTime + 0.25);
+            } catch (e) {}
+        }
+        lastCount = count;
+    };
+    setInterval(checkBell, 5000);
+})();
+</script>");
+                }
             )
             ->colors([
                 'primary' => [
-                    50 => '#fdfaf2',
-                    100 => '#fbf3de',
-                    200 => '#f7e4b5',
-                    300 => '#f2d085',
-                    400 => '#eebc55',
-                    500 => '#F5B82E', // Warm Yellow
-                    600 => '#D99B16',
-                    700 => '#a87311',
-                    800 => '#855913',
-                    900 => '#6e4813',
-                    950 => '#3f2506',
+                    50 => '#fdfaf0',
+                    100 => '#fbf2d4',
+                    200 => '#f7e4a8',
+                    300 => '#f3d476',
+                    400 => '#EFC94C',
+                    500 => '#D9AF2B',
+                    600 => '#b58d1c',
+                    700 => '#8f6c17',
+                    800 => '#6e5214',
+                    900 => '#523d11',
+                    950 => '#22263A',
                 ],
                 'gray' => Color::Zinc,
             ])

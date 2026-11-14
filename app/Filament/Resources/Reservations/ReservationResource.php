@@ -33,6 +33,11 @@ class ReservationResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'code';
 
+    public static function canAccess(): bool
+    {
+        return in_array(auth()->user()?->role, ['owner', 'admin', 'cashier'], true);
+    }
+
     public static function getNavigationBadge(): ?string
     {
         $count = Reservation::where('status', 'pending')->count();

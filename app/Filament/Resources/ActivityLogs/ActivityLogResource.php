@@ -27,7 +27,7 @@ class ActivityLogResource extends Resource
 
     public static function canAccess(): bool
     {
-        return auth()->user()?->isAdmin() ?? false;
+        return auth()->user()?->isOwner() ?? false;
     }
 
     public static function canCreate(): bool

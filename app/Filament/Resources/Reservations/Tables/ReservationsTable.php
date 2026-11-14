@@ -2,18 +2,13 @@
 
 namespace App\Filament\Resources\Reservations\Tables;
 
-use App\Models\ActivityLog;
+use App\Filament\Resources\Reservations\Actions\ReservationActions;
 use App\Models\Reservation;
 use App\Support\PhoneNumber;
-use App\Support\Settings;
-use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Notifications\Notification;
-use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -33,7 +28,7 @@ class ReservationsTable
                     ->weight('bold'),
 
                 TextColumn::make('name')
-                    ->label('Nama Pelanggan')
+                    ->label('Nama Tamu')
                     ->searchable()
                     ->sortable(),
 
@@ -50,23 +45,32 @@ class ReservationsTable
 
                 TextColumn::make('time')
                     ->label('Jam')
-                    ->formatStateUsing(fn ($state) => "{$state} WIB")
+                    ->formatStateUsing(fn ($state) => str_replace(':', '.', substr((string) $state, 0, 5)) . ' WIB')
                     ->sortable(),
 
                 TextColumn::make('party_size')
-                    ->label('Pax')
+                    ->label('Orang')
                     ->numeric()
                     ->alignCenter()
                     ->sortable(),
 
-                TextColumn::make('mode')
-                    ->label('Tipe')
+                TextColumn::make('seatingOption.label')
+                    ->label('Tempat')
+                    ->placeholder('Bebas'),
+
+                TextColumn::make('source')
+                    ->label('Asal')
                     ->badge()
-                    ->formatStateUsing(fn ($state) => $state === 'table_menu' ? 'Meja + Menu' : 'Meja Saja')
-                    ->color(fn ($state) => $state === 'table_menu' ? 'info' : 'gray'),
+                    ->formatStateUsing(fn ($state) => match ($state) {
+                        'walk_in' => 'Datang langsung',
+                        'whatsapp' => 'WhatsApp',
+                        'phone' => 'Telepon',
+                        default => 'Website',
+                    })
+                    ->color('gray'),
 
                 TextColumn::make('status')
-                    ->label('Status Meja')
+                    ->label('Status')
                     ->badge()
                     ->formatStateUsing(fn (Reservation $record) => $record->status_label)
                     ->color(fn ($state) => match ($state) {
@@ -78,11 +82,10 @@ class ReservationsTable
                     }),
 
                 TextColumn::make('payment_status')
-                    ->label('Status DP')
+                    ->label('Pembayaran')
                     ->badge()
                     ->formatStateUsing(fn (Reservation $record) => $record->payment_status_label)
                     ->color(fn ($state) => match ($state) {
-                        'none' => 'gray',
                         'waiting_proof' => 'warning',
                         'proof_uploaded' => 'info',
                         'verified' => 'success',
@@ -90,8 +93,8 @@ class ReservationsTable
                         default => 'gray',
                     }),
 
-                TextColumn::make('dp_amount')
-                    ->label('Nominal DP')
+                TextColumn::make('amount_due')
+                    ->label('Tagihan')
                     ->money('IDR')
                     ->sortable(),
             ])
@@ -106,87 +109,26 @@ class ReservationsTable
                     ]),
 
                 SelectFilter::make('payment_status')
-                    ->label('Status Pembayaran DP')
+                    ->label('Status Pembayaran')
                     ->options([
-                        'none' => 'Tanpa DP (Meja Saja)',
-                        'waiting_proof' => 'Menunggu Bukti Transfer',
-                        'proof_uploaded' => 'Bukti Telah Diunggah',
-                        'verified' => 'DP Terverifikasi',
-                        'rejected' => 'Bukti Ditolak',
+                        'waiting_proof' => 'Menunggu Bukti',
+                        'proof_uploaded' => 'Bukti Diunggah',
+                        'verified' => 'Terverifikasi',
+                        'rejected' => 'Ditolak',
                     ]),
 
-                SelectFilter::make('mode')
-                    ->label('Mode Reservasi')
+                SelectFilter::make('source')
+                    ->label('Sumber')
                     ->options([
-                        'table_only' => 'Hanya Meja',
-                        'table_menu' => 'Meja + Menu',
+                        'web' => 'Website',
+                        'walk_in' => 'Datang langsung',
+                        'whatsapp' => 'WhatsApp',
+                        'phone' => 'Telepon',
                     ]),
             ])
             ->recordActions([
-                // Smart WhatsApp Engine Action Group
-                ActionGroup::make([
-                    Action::make('confirm_wa')
-                        ->label('Chat Konfirmasi WA')
-                        ->icon('heroicon-o-chat-bubble-left-ellipsis')
-                        ->color('success')
-                        ->openUrlInNewTab()
-                        ->url(function (Reservation $record) {
-                            $template = Settings::get('whatsapp_templates.confirmation', 'Halo Kak {nama}, kami dari Admin UM.CO House mengonfirmasi reservasi Kakak (Kode: {kode}) untuk {jumlah} orang pada {tanggal} pukul {jam} WIB. Ditunggu kehadirannya di UM.CO House ya!');
-                            $msg = self::renderTemplate($template, $record);
-
-                            return PhoneNumber::waLink($record->phone_wa, $msg);
-                        }),
-
-                    Action::make('cancel_wa')
-                        ->label('Chat Pembatalan / Menu Kosong')
-                        ->icon('heroicon-o-x-circle')
-                        ->color('danger')
-                        ->openUrlInNewTab()
-                        ->url(function (Reservation $record) {
-                            $template = Settings::get('whatsapp_templates.cancellation', 'Halo Kak {nama}, mohon maaf dari Admin UM.CO House terkait reservasi {kode} pada {tanggal} {jam} WIB ada penyesuaian jadwal / menu habis. Silakan hubungi kami untuk opsi meja pengganti.');
-                            $msg = self::renderTemplate($template, $record);
-
-                            return PhoneNumber::waLink($record->phone_wa, $msg);
-                        }),
-
-                    Action::make('custom_wa')
-                        ->label('Chat Bebas Langsung')
-                        ->icon('heroicon-o-paper-airplane')
-                        ->color('primary')
-                        ->openUrlInNewTab()
-                        ->url(function (Reservation $record) {
-                            return PhoneNumber::waLink($record->phone_wa, '');
-                        }),
-                ])
-                ->label('WhatsApp')
-                ->icon('heroicon-o-chat-bubble-bottom-center-text')
-                ->color('success'),
-
-                // Quick Status Confirmation
-                Action::make('mark_confirmed')
-                    ->label('Konfirmasi Meja')
-                    ->icon('heroicon-o-check-circle')
-                    ->color('success')
-                    ->visible(fn (Reservation $record) => $record->status === 'pending')
-                    ->requiresConfirmation()
-                    ->modalHeading('Konfirmasi Reservasi Ini?')
-                    ->modalDescription('Status reservasi akan diubah menjadi Dikonfirmasi dan kapasitas kursi diamankan.')
-                    ->action(function (Reservation $record) {
-                        $record->update([
-                            'status' => 'confirmed',
-                            'confirmed_at' => now(),
-                        ]);
-
-                        ActivityLog::record('status_change', Reservation::class, $record->id, [
-                            'new_status' => 'confirmed',
-                        ]);
-
-                        Notification::make()
-                            ->title('Reservasi Berhasil Dikonfirmasi')
-                            ->success()
-                            ->send();
-                    }),
-
+                ReservationActions::whatsappGroup(),
+                ...ReservationActions::statusActions(),
                 ViewAction::make(),
                 EditAction::make(),
             ])
@@ -195,24 +137,5 @@ class ReservationsTable
                     DeleteBulkAction::make(),
                 ]),
             ]);
-    }
-
-    /**
-     * Helper to render WhatsApp template placeholders.
-     */
-    protected static function renderTemplate(string $template, Reservation $record): string
-    {
-        $dateFormatted = date('d/m/Y', strtotime((string) $record->date));
-
-        return strtr($template, [
-            '{nama}' => $record->name,
-            '{kode}' => $record->code,
-            '{jumlah}' => (string) $record->party_size,
-            '{tanggal}' => $dateFormatted,
-            '{jam}' => $record->time,
-            '{total}' => 'Rp ' . number_format($record->subtotal, 0, ',', '.'),
-            '{dp}' => 'Rp ' . number_format($record->dp_amount, 0, ',', '.'),
-            '{catatan}' => $record->note ?? '-',
-        ]);
     }
 }

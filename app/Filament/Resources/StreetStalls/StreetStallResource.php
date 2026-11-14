@@ -31,6 +31,11 @@ class StreetStallResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->isOwner() ?? false;
+    }
+
     public static function form(Schema $schema): Schema
     {
         return StreetStallForm::configure($schema);

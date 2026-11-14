@@ -20,20 +20,22 @@ class GalleryItemForm
                 Grid::make(['default' => 1, 'lg' => 3])
                     ->schema([
                         Group::make([
-                            Section::make('Aset Galeri Suasana Kafe')
-                                ->description('Dokumentasi visual area indoor, outdoor, dan fasilitas.')
+                            Section::make('Aset Galeri Suasana Kedai')
+                                ->description('Dokumentasi visual suasana kedai, kopi, bar seduh, dan kegiatan.')
                                 ->icon('heroicon-o-photo')
                                 ->schema([
                                     Grid::make(2)
                                         ->schema([
                                             Select::make('group')
-                                                ->label('Zona Area Suasana')
+                                                ->label('Tag / Kategori Foto')
                                                 ->options([
-                                                    'indoor' => 'Indoor Wing Barat (Full AC & Nugas)',
-                                                    'outdoor' => 'Outdoor Wing Timur (Courtyard & Santai)',
-                                                    'general' => 'Umum / Gedung H UMRI',
+                                                    'umum' => 'Umum',
+                                                    'suasana' => 'Suasana Kedai',
+                                                    'kopi' => 'Kopi & Bar',
+                                                    'makanan' => 'Makanan & Camilan',
+                                                    'komunitas' => 'Komunitas & Acara',
                                                 ])
-                                                ->default('general')
+                                                ->default('umum')
                                                 ->required(),
 
                                             Select::make('type')
@@ -56,7 +58,7 @@ class GalleryItemForm
 
                                     TextInput::make('caption')
                                         ->label('Keterangan / Teks Foto (Caption)')
-                                        ->placeholder('Contoh: Meja panjang nugas dengan stopkontak berlimpah di Wing Barat.')
+                                        ->placeholder('Contoh: Meja panjang untuk diskusi dan laptopan di dekat bar.')
                                         ->columnSpanFull(),
                                 ]),
                         ])->columnSpan(['default' => 1, 'lg' => 2]),

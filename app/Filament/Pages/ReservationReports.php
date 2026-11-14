@@ -22,6 +22,11 @@ class ReservationReports extends Page
 
     protected static ?int $navigationSort = 3;
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
+    }
+
     protected string $view = 'filament.pages.reservation-reports';
 
     public string $startDate = '';

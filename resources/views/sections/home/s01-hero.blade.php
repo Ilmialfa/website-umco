@@ -7,6 +7,15 @@
     $subheading = $section?->subheading ?: 'Kampus 2 UMRI, Pekanbaru. Buka tiap hari jam 08.00 sampai 22.00.';
     $ctaLabel = $section?->cta_label ?: 'Pesan meja';
     $ctaUrl = $section?->cta_url ?: '/reservasi';
+
+    $desktopWebp = preg_replace('/\.(jpe?g|png)$/i', '.webp', $desktopImg);
+    $desktopAvif = preg_replace('/\.(jpe?g|png)$/i', '.avif', $desktopImg);
+    $mobileWebp = preg_replace('/\.(jpe?g|png)$/i', '.webp', $mobileImg);
+    $mobileAvif = preg_replace('/\.(jpe?g|png)$/i', '.avif', $mobileImg);
+    $hasDesktopAvif = $desktopAvif !== $desktopImg && is_file(public_path(ltrim($desktopAvif, '/')));
+    $hasDesktopWebp = $desktopWebp !== $desktopImg && is_file(public_path(ltrim($desktopWebp, '/')));
+    $hasMobileAvif = $mobileAvif !== $mobileImg && is_file(public_path(ltrim($mobileAvif, '/')));
+    $hasMobileWebp = $mobileWebp !== $mobileImg && is_file(public_path(ltrim($mobileWebp, '/')));
 @endphp
 
 <section
@@ -19,7 +28,19 @@
     <div class="relative h-[64svh] sm:h-auto sm:min-h-[84svh] lg:min-h-[100svh] w-full bg-[var(--tinta)] overflow-hidden flex flex-col justify-end">
         <div data-hero-media class="absolute inset-0 will-change-transform">
             <picture class="block w-full h-full">
+                @if ($hasMobileAvif)
+                    <source media="(max-width: 639px)" srcset="{{ asset($mobileAvif) }}" type="image/avif">
+                @endif
+                @if ($hasMobileWebp)
+                    <source media="(max-width: 639px)" srcset="{{ asset($mobileWebp) }}" type="image/webp">
+                @endif
                 <source media="(max-width: 639px)" srcset="{{ asset($mobileImg) }}">
+                @if ($hasDesktopAvif)
+                    <source srcset="{{ asset($desktopAvif) }}" type="image/avif">
+                @endif
+                @if ($hasDesktopWebp)
+                    <source srcset="{{ asset($desktopWebp) }}" type="image/webp">
+                @endif
                 <img
                     src="{{ asset($desktopImg) }}"
                     alt="Suasana kedai kopi UMCO di Kampus UMRI Pekanbaru"
@@ -51,20 +72,21 @@
         <div class="hidden sm:block relative z-10 w-full pb-12 lg:pb-16 pt-32">
             <div class="umco-container">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
-                    <div class="lg:col-span-8 space-y-5">
+                    <div class="lg:col-span-7 space-y-5">
                         <h1 data-reveal="lines" class="type-h1 font-display font-extrabold text-[var(--kertas)] max-w-2xl">
                             {{ $heading }}
                         </h1>
                         <div
                             data-hero-wordmark
                             data-reveal="chars-wdth"
+                            aria-hidden="true"
                             class="font-display font-extrabold text-[13vw] lg:text-[9.5rem] leading-[0.84] tracking-[-0.04em] text-[var(--kertas)] select-none"
                         >
                             UMCO
                         </div>
                     </div>
 
-                    <div class="lg:col-span-4 space-y-5 lg:pb-3">
+                    <div class="lg:col-span-5 lg:pr-52 xl:pr-56 space-y-5 lg:pb-3">
                         <p data-reveal="fade" class="type-body text-[var(--kertas)]/85">
                             {{ $subheading }}
                         </p>
@@ -84,11 +106,11 @@
             </div>
         </div>
 
-        {{-- Desktop kanan bawah: karcis kecil miring mengintip --}}
+        {{-- Desktop kanan bawah: karcis kecil miring mengintip (bebas dari kolom CTA) --}}
         <a
             href="#karcis-teaser"
             aria-label="Coba isi karcis reservasi di halaman utama"
-            class="hidden lg:block absolute -bottom-12 right-6 z-20 w-56 rotate-[6deg] hover:rotate-[2deg] transition-transform duration-200 focus:outline-none"
+            class="hidden lg:block absolute -bottom-16 right-6 xl:right-10 z-20 w-44 xl:w-48 rotate-[5deg] hover:rotate-[1deg] transition-transform duration-200 focus:outline-none"
         >
             <x-umco.karcis code="No. ——" title="Karcis meja" compact>
                 <x-umco.karcis-line label="Hari" value="Hari ini" />

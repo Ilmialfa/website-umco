@@ -28,7 +28,7 @@ class TestimonialsTable
 
                 TextColumn::make('rating')
                     ->label('Bintang')
-                    ->formatStateUsing(fn ($state) => str_repeat('★', $state))
+                    ->formatStateUsing(fn ($state) => "{$state} / 5")
                     ->color('warning'),
 
                 TextColumn::make('body')

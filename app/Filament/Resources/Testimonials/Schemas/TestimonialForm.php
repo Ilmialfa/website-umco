@@ -56,9 +56,9 @@ class TestimonialForm
                                     Select::make('rating')
                                         ->label('Bintang Rating')
                                         ->options([
-                                            5 => '5 Bintang ★★★★★ (Sempurna)',
-                                            4 => '4 Bintang ★★★★☆ (Sangat Baik)',
-                                            3 => '3 Bintang ★★★☆☆ (Cukup)',
+                                            5 => '5 Bintang (Sempurna)',
+                                            4 => '4 Bintang (Sangat Baik)',
+                                            3 => '3 Bintang (Cukup)',
                                         ])
                                         ->default(5)
                                         ->required(),

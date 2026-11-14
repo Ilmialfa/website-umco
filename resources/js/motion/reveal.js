@@ -50,7 +50,7 @@ export function initReveal() {
             });
 
             const yIn = isMobile ? 12 : 24;
-            gsap.set(children, { autoAlpha: 0, y: yIn });
+            gsap.set(children, { opacity: 0, y: yIn });
 
             ScrollTrigger.create({
                 trigger: parent,
@@ -58,7 +58,7 @@ export function initReveal() {
                 end: 'bottom 15%',
                 onEnter: () => {
                     gsap.to(children, {
-                        autoAlpha: 1,
+                        opacity: 1,
                         y: 0,
                         duration: 0.42,
                         stagger: 0.06,
@@ -68,7 +68,7 @@ export function initReveal() {
                 },
                 onLeave: () => {
                     gsap.to(children, {
-                        autoAlpha: 0,
+                        opacity: 0,
                         y: isMobile ? -6 : -12,
                         duration: 0.32,
                         stagger: 0.03,
@@ -78,7 +78,7 @@ export function initReveal() {
                 },
                 onEnterBack: () => {
                     gsap.to(children, {
-                        autoAlpha: 1,
+                        opacity: 1,
                         y: 0,
                         duration: 0.42,
                         stagger: 0.06,
@@ -88,7 +88,7 @@ export function initReveal() {
                 },
                 onLeaveBack: () => {
                     gsap.to(children, {
-                        autoAlpha: 0,
+                        opacity: 0,
                         y: yIn,
                         duration: 0.32,
                         stagger: 0.03,
@@ -112,9 +112,9 @@ export function initReveal() {
             if (type === 'fade') {
                 gsap.fromTo(
                     el,
-                    { autoAlpha: 0 },
+                    { opacity: 0 },
                     {
-                        autoAlpha: 1,
+                        opacity: 1,
                         duration: 0.42,
                         ease: 'power3.out',
                         scrollTrigger: { ...stBase, toggleActions: 'play reverse play reverse' },
@@ -123,43 +123,43 @@ export function initReveal() {
             } else if (type === 'rise') {
                 const yIn = isMobile ? 12 : 24;
                 const yOut = isMobile ? -6 : -12;
-                gsap.set(el, { autoAlpha: 0, y: yIn });
+                gsap.set(el, { opacity: 0, y: yIn });
                 ScrollTrigger.create({
                     ...stBase,
-                    onEnter: () => gsap.to(el, { autoAlpha: 1, y: 0, duration: 0.42, ease: 'power3.out', overwrite: 'auto' }),
-                    onLeave: () => gsap.to(el, { autoAlpha: 0, y: yOut, duration: 0.32, ease: 'power2.inOut', overwrite: 'auto' }),
-                    onEnterBack: () => gsap.to(el, { autoAlpha: 1, y: 0, duration: 0.42, ease: 'power3.out', overwrite: 'auto' }),
-                    onLeaveBack: () => gsap.to(el, { autoAlpha: 0, y: yIn, duration: 0.32, ease: 'power2.inOut', overwrite: 'auto' }),
+                    onEnter: () => gsap.to(el, { opacity: 1, y: 0, duration: 0.42, ease: 'power3.out', overwrite: 'auto' }),
+                    onLeave: () => gsap.to(el, { opacity: 0, y: yOut, duration: 0.32, ease: 'power2.inOut', overwrite: 'auto' }),
+                    onEnterBack: () => gsap.to(el, { opacity: 1, y: 0, duration: 0.42, ease: 'power3.out', overwrite: 'auto' }),
+                    onLeaveBack: () => gsap.to(el, { opacity: 0, y: yIn, duration: 0.32, ease: 'power2.inOut', overwrite: 'auto' }),
                 });
             } else if (type === 'lines') {
-                const split = SplitText.create(el, { type: 'lines', mask: 'lines' });
+                const split = SplitText.create(el, { type: 'lines', mask: 'lines', aria: 'none' });
                 splits.push(split);
                 gsap.set(split.lines, { yPercent: 100 });
                 ScrollTrigger.create({
                     ...stBase,
-                    onEnter: () => gsap.to(split.lines, { yPercent: 0, autoAlpha: 1, duration: 0.8, stagger: 0.08, ease: 'power3.out', overwrite: 'auto' }),
-                    onLeave: () => gsap.to(el, { autoAlpha: 0, duration: 0.3, ease: 'power2.inOut', overwrite: 'auto' }),
-                    onEnterBack: () => gsap.to(el, { autoAlpha: 1, duration: 0.4, ease: 'power3.out', overwrite: 'auto' }),
-                    onLeaveBack: () => gsap.to(el, { autoAlpha: 0, duration: 0.3, ease: 'power2.inOut', overwrite: 'auto' }),
+                    onEnter: () => gsap.to(split.lines, { yPercent: 0, opacity: 1, duration: 0.8, stagger: 0.08, ease: 'power3.out', overwrite: 'auto' }),
+                    onLeave: () => gsap.to(el, { opacity: 0, duration: 0.3, ease: 'power2.inOut', overwrite: 'auto' }),
+                    onEnterBack: () => gsap.to(el, { opacity: 1, duration: 0.4, ease: 'power3.out', overwrite: 'auto' }),
+                    onLeaveBack: () => gsap.to(el, { opacity: 0, duration: 0.3, ease: 'power2.inOut', overwrite: 'auto' }),
                 });
             } else if (type === 'chars-wdth') {
-                const split = SplitText.create(el, { type: 'chars' });
+                const split = SplitText.create(el, { type: 'chars', aria: 'none' });
                 splits.push(split);
-                gsap.set(split.chars, { autoAlpha: 0, fontVariationSettings: '"wdth" 50, "wght" 800' });
+                gsap.set(split.chars, { opacity: 0, fontVariationSettings: '"wdth" 50, "wght" 800' });
                 ScrollTrigger.create({
                     ...stBase,
                     onEnter: () =>
                         gsap.to(split.chars, {
-                            autoAlpha: 1,
+                            opacity: 1,
                             fontVariationSettings: '"wdth" 75, "wght" 800',
                             duration: 0.65,
                             stagger: 0.02,
                             ease: 'power3.out',
                             overwrite: 'auto',
                         }),
-                    onLeave: () => gsap.to(el, { autoAlpha: 0, duration: 0.3, overwrite: 'auto' }),
-                    onEnterBack: () => gsap.to(el, { autoAlpha: 1, duration: 0.4, overwrite: 'auto' }),
-                    onLeaveBack: () => gsap.to(el, { autoAlpha: 0, duration: 0.3, overwrite: 'auto' }),
+                    onLeave: () => gsap.to(el, { opacity: 0, duration: 0.3, overwrite: 'auto' }),
+                    onEnterBack: () => gsap.to(el, { opacity: 1, duration: 0.4, overwrite: 'auto' }),
+                    onLeaveBack: () => gsap.to(el, { opacity: 0, duration: 0.3, overwrite: 'auto' }),
                 });
             } else if (type === 'mask') {
                 const img = el.querySelector('img');

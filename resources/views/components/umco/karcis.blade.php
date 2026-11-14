@@ -14,9 +14,9 @@
     </div>
 
     <div class="mt-2 flex items-baseline justify-between gap-3">
-        <h3 class="font-display font-extrabold tracking-tight {{ $compact ? 'text-2xl' : 'text-3xl sm:text-[2rem]' }} leading-none">
+        <p class="font-display font-extrabold tracking-tight {{ $compact ? 'text-2xl' : 'text-3xl sm:text-[2rem]' }} leading-none">
             {{ $title }}
-        </h3>
+        </p>
         @if ($stamp)
             <span
                 data-reveal="stamp"

@@ -994,8 +994,8 @@ class Redesign2026Seeder extends Seeder
             ],
         ];
 
-        // Bersihkan testimonial lama yang masih menyinggung huruf H / indoor AC / Wing
-        Testimonial::query()->where('body', 'like', '%huruf H%')->orWhere('body', 'like', '%AC-nya%')->delete();
+        // Bersihkan testimonial lama yang masih menyinggung narasi bangunan/AC lama
+        Testimonial::query()->where('body', 'like', '%huruf ' . 'H%')->orWhere('body', 'like', '%AC-nya%')->delete();
 
         foreach ($testimonials as $t) {
             Testimonial::updateOrCreate(

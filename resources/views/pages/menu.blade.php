@@ -133,7 +133,7 @@
         @keydown.escape.window="selectedItem = null; notaOpen = false"
     >
         {{-- Hero pendek --}}
-        <section data-nav-theme="light" class="bg-[var(--kertas)] text-[var(--tinta)] pt-28 sm:pt-36 pb-10 sm:pb-14">
+        <section data-nav-theme="light" class="bg-[var(--kertas)] text-[var(--tinta)] pt-24 sm:pt-28 pb-6 sm:pb-8">
             <div class="umco-container">
                 <div class="flex flex-wrap items-baseline gap-4">
                     <h1 data-reveal="chars-wdth" class="type-display font-display font-extrabold">
@@ -220,7 +220,7 @@
         </section>
 
         {{-- Katalog Daftar & Foto --}}
-        <section class="umco-section bg-[var(--kertas)] text-[var(--tinta)]">
+        <section class="py-8 sm:py-12 lg:py-14 bg-[var(--kertas)] text-[var(--tinta)]">
             <div class="umco-container space-y-14">
                 <template x-for="group in groupedCategories()" :key="group.slug">
                     <div :id="'kat-' + group.slug" class="space-y-6">

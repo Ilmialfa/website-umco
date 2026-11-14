@@ -23,7 +23,7 @@
                             :aria-expanded="openId === {{ $idx + 1 }}"
                             class="w-full flex items-baseline gap-4 sm:gap-7 text-left cursor-pointer group"
                         >
-                            <span class="font-display font-extrabold text-[2.5rem] sm:text-[3.5rem] lg:text-[4rem] leading-none text-[var(--tinta)]/25 group-hover:text-[var(--cabai)] transition-colors tabular-nums shrink-0">
+                            <span class="font-display font-extrabold text-[2.5rem] sm:text-[3.5rem] lg:text-[4rem] leading-none text-[var(--tinta)]/55 group-hover:text-[var(--cabai)] transition-colors tabular-nums shrink-0">
                                 {{ str_pad((string) ($idx + 1), 2, '0', STR_PAD_LEFT) }}
                             </span>
                             <span class="flex-1 font-display font-bold text-xl sm:text-2xl leading-snug">

@@ -28,7 +28,7 @@
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
             <!-- FILTER & SEARCH BAR -->
-            <div class="sticky top-20 z-30 bg-[#FAF7EE]/95 backdrop-blur-md py-4 mb-10 transition">
+            <div class="sticky top-20 z-30 bg-[#F5F2EA] py-4 mb-10 transition">
                 <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
                     <!-- Search Input -->
                     <div class="relative w-full sm:w-80 flex-shrink-0">
@@ -38,17 +38,18 @@
                             placeholder="Cari menu kopi, makanan..."
                             class="w-full pl-10 pr-10 py-3 bg-white rounded-full text-xs sm:text-sm text-[#0D3B2E] placeholder:text-[#0D3B2E]/40 focus:outline-none focus:ring-2 focus:ring-[#F5B82E]"
                         />
-                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#0D3B2E]/40">
-                            🔍
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[var(--tinta-muted)]">
+                            <svg class="w-4 h-4"><use href="#icon-search"/></svg>
                         </div>
                         <button
                             type="button"
                             x-show="search.length > 0"
                             @click="search = ''"
-                            class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#0D3B2E]/40 hover:text-[#0D3B2E]"
+                            class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[var(--tinta-muted)] hover:text-[var(--tinta)]"
                             style="display: none;"
+                            aria-label="Hapus pencarian"
                         >
-                            ✕
+                            <svg class="w-4 h-4"><use href="#icon-x"/></svg>
                         </button>
                     </div>
 

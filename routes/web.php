@@ -9,10 +9,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
 Route::get('/menu', MenuController::class)->name('menu');
-Route::get('/about', AboutController::class)->name('about');
+Route::get('/cerita', AboutController::class)->name('cerita');
+Route::redirect('/about', '/cerita', 301);
 Route::get('/reservasi', ReservationPage::class)->name('reservation');
 Route::get('/reservasi/calendar/{code}', [ReservationCalendarController::class, 'download'])->name('reservation.calendar');
-Route::view('/specimen', 'specimen')->name('specimen');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');

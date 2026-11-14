@@ -35,3 +35,20 @@ Dokumen ini mencatat seluruh keputusan penting, alternatif yang dipertimbangkan,
 ## Decision 07: Database Driver Fallback
 - **Konteks:** Dev environment menggunakan MySQL (port 3306) di Herd. Pada beberapa shared hosting, Redis mungkin tidak tersedia.
 - **Keputusan:** Sistem dikonfigurasi menggunakan driver database / file sebagai fallback default yang aman dan teruji di lingkungan Laravel Herd, dengan opsi switch mudah ke Redis melalui `.env`.
+
+---
+
+## Redesain Total 2026 (Sumber Kebenaran: `docs/REDESIGN-2026.md`)
+
+Keputusan di bawah ini menggantikan Decision 02 dan Decision 04 di atas.
+
+### Decision 08 (Fase 1): Identitas Kertas-Tinta-Karcis & Penghapusan Motif Huruf H
+- **Konteks:** Konsep lama ("satu gedung dua suasana berbeda", Wing Barat/Timur, denah huruf H, palet hijau gelap, kartu berikon, serta `backdrop-blur`) terasa kaku dan generik.
+- **Keputusan:** Seluruh tampilan publik diganti ke palet kalem `--kertas` (`#F5F2EA`), `--tinta` (`#22263A`), `--mentega` (`#EFC94C`), `--zaitun` (`#C8D5AE`), `--blush` (`#F0D2C9`), `--cabai` (`#C4472E`) tanpa emoji, tanpa bayangan dekoratif, tanpa blur latar, dan rute `/about` dialihkan permanen (301) ke `/cerita`. `/specimen` dihapus.
+
+### Decision 09 (Fase 1): Font Self-Hosted & Anggaran JS Awal <= 60 KB Gzip
+- **Konteks:** Menggantungkan font ke CDN Google/Bunny memperlambat LCP seluler, dan bundler lama menyertakan JS berat di muatan awal.
+- **Keputusan:**
+  1. Empat font (`Anybody` variable `wdth`/`wght`, `Familjen Grotesk`, `Reenie Beanie`, `Doto`) disimpan lokal di `public/fonts/`. Hanya `anybody-latin.woff2` dan `familjen-grotesk-latin.woff2` yang di-preload; CSS font aksen dimuat asinkron.
+  2. Smooth scroll (`Lenis`) dimatikan secara default (`motion.smooth_scroll = false`) dan hanya di-import dinamis bila owner mengaktifkannya dari panel.
+  3. Asset gambar dekoratif footer (`public/images/footer-cutout.webp`, 34 KB WebP transparan) di-render bersih dari potongan gelas kopi tanpa kotak bayangan lantai.

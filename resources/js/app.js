@@ -1,55 +1,157 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { initReveal, cleanupReveal } from './motion/reveal.js';
+import { initNav } from './motion/nav.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
-let mm = null;
+const modules = {
+    'scroll-meter': () => import('./sections/scroll-meter.js'),
+    // Modul section interaktif Fase 3–5 didaftarkan di sini saat dibangun
+};
 
-function initAnimations() {
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReducedMotion) return;
+let io = null;
+let cleanups = [];
+let lenisInstance = null;
+let rafCallback = null;
 
-    if (mm) {
-        mm.revert();
-    }
-    mm = gsap.matchMedia();
+function initFooter() {
+    const footer = document.getElementById('public-footer');
+    if (!footer) return;
 
-    mm.add('(min-width: 768px)', () => {
-        // Footer Parallax on transparent photographic cutout
-        const signatureDrink = document.querySelector('.footer-signature-drink');
-        if (signatureDrink) {
-            gsap.to(signatureDrink, {
-                y: -25,
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) return;
+
+    const wordmark = footer.querySelector('[data-footer-wordmark]');
+    if (wordmark) {
+        gsap.fromTo(
+            wordmark,
+            { fontVariationSettings: '"wdth" 60, "wght" 800' },
+            {
+                fontVariationSettings: '"wdth" 100, "wght" 800',
                 ease: 'none',
                 scrollTrigger: {
-                    trigger: '#public-footer',
+                    trigger: footer,
                     start: 'top bottom',
                     end: 'bottom bottom',
-                    scrub: 1,
+                    scrub: 0.6,
                 },
-            });
-        }
-    });
-}
+            }
+        );
+    }
 
-function cleanupAnimations() {
-    ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-    if (mm) {
-        mm.revert();
-        mm = null;
+    const cutout = footer.querySelector('[data-footer-cutout]');
+    if (cutout && window.innerWidth >= 1024) {
+        gsap.fromTo(
+            cutout,
+            { y: 18 },
+            {
+                y: -16,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: footer,
+                    start: 'top bottom',
+                    end: 'bottom bottom',
+                    scrub: 0.8,
+                },
+            }
+        );
     }
 }
 
-// Livewire Navigation Lifecycle Hooks
+async function initLenisIfEnabled() {
+    const enabled = document.documentElement.dataset.smoothScroll === '1';
+    const desktopFinePointer = window.matchMedia('(min-width: 1024px) and (pointer: fine)').matches;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!enabled || !desktopFinePointer || reduced) return;
+
+    const { default: Lenis } = await import('lenis');
+    lenisInstance = new Lenis({ lerp: 0.1 });
+    lenisInstance.on('scroll', ScrollTrigger.update);
+    rafCallback = (time) => lenisInstance?.raf(time * 1000);
+    gsap.ticker.add(rafCallback);
+    gsap.ticker.lagSmoothing(0);
+}
+
+function initSectionModules() {
+    const targets = document.querySelectorAll('[data-module]');
+    if (!targets.length) return;
+
+    io = new IntersectionObserver(
+        (entries) => {
+            entries.forEach(async (entry) => {
+                if (!entry.isIntersecting) return;
+                const el = entry.target;
+                io?.unobserve(el);
+
+                const key = el.dataset.module;
+                const loader = modules[key];
+                if (!loader) return;
+
+                try {
+                    const mod = await loader();
+                    const destroy = mod?.default?.(el);
+                    if (typeof destroy === 'function') {
+                        cleanups.push(destroy);
+                    }
+                } catch {}
+            });
+        },
+        { rootMargin: '400px 0px' }
+    );
+
+    targets.forEach((el) => io.observe(el));
+}
+
+function bootPage() {
+    const navDestroy = initNav();
+    if (typeof navDestroy === 'function') cleanups.push(navDestroy);
+
+    initReveal();
+    initFooter();
+    initSectionModules();
+    initLenisIfEnabled();
+}
+
+function teardownPage() {
+    if (io) {
+        io.disconnect();
+        io = null;
+    }
+
+    cleanups.forEach((fn) => {
+        try {
+            fn();
+        } catch {}
+    });
+    cleanups = [];
+
+    if (lenisInstance) {
+        if (rafCallback) gsap.ticker.remove(rafCallback);
+        lenisInstance.destroy();
+        lenisInstance = null;
+        rafCallback = null;
+    }
+
+    cleanupReveal();
+    ScrollTrigger.getAll().forEach((t) => t.kill());
+}
+
 document.addEventListener('livewire:navigating', () => {
-    cleanupAnimations();
+    const skel = document.getElementById('umco-nav-skeleton');
+    if (skel) skel.hidden = false;
+    teardownPage();
 });
 
 document.addEventListener('livewire:navigated', () => {
-    initAnimations();
+    const skel = document.getElementById('umco-nav-skeleton');
+    if (skel) skel.hidden = true;
+    bootPage();
     ScrollTrigger.refresh();
 });
 
-document.addEventListener('DOMContentLoaded', () => {
-    initAnimations();
-});
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootPage);
+} else {
+    bootPage();
+}

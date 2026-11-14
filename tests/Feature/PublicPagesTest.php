@@ -4,10 +4,16 @@ use App\Models\MenuCategory;
 use App\Models\MenuItem;
 use App\Models\Reservation;
 
-it('renders home page successfully', function () {
+it('renders home page without legacy copy, emojis, or external fonts', function () {
     $response = $this->get('/');
     $response->assertStatus(200);
-    $response->assertSee('UM.CO');
+    $response->assertSee('UMCO');
+    $response->assertDontSee('Wing Barat');
+    $response->assertDontSee('Wing Timur');
+    $response->assertDontSee('huruf H');
+    $response->assertDontSee('fonts.googleapis.com');
+    $response->assertDontSee('fonts.bunny.net');
+    expect($response->getContent())->not->toMatch('/[\x{1F300}-\x{1FAFF}]/u');
 });
 
 it('renders menu page with items and categories', function () {
@@ -31,20 +37,29 @@ it('renders menu page with items and categories', function () {
     $response->assertStatus(200);
     $response->assertSee('Katalog');
     $response->assertSee('Kopi Pandan UMCO');
+    expect($response->getContent())->not->toMatch('/[\x{1F300}-\x{1FAFF}]/u');
 });
 
-it('renders about page with architectural story and location', function () {
-    $response = $this->get('/about');
+it('renders cerita page and permanently redirects /about to /cerita', function () {
+    $this->get('/about')->assertRedirect('/cerita')->assertStatus(301);
+
+    $response = $this->get('/cerita');
     $response->assertStatus(200);
-    $response->assertSee('Arsitektur');
-    $response->assertSee('Wing Barat');
-    $response->assertSee('Peta Interaktif');
+    $response->assertSee('Kampus 2 UMRI');
+    $response->assertDontSee('Wing Barat');
+    $response->assertDontSee('Arsitektur');
+    expect($response->getContent())->not->toMatch('/[\x{1F300}-\x{1FAFF}]/u');
+});
+
+it('does not expose legacy specimen route', function () {
+    $this->get('/specimen')->assertNotFound();
 });
 
 it('renders reservation page successfully', function () {
     $response = $this->get('/reservasi');
     $response->assertStatus(200);
     $response->assertSee('Pilih Meja');
+    $response->assertDontSee('Wing Barat');
 });
 
 it('downloads ics calendar event for a valid reservation', function () {

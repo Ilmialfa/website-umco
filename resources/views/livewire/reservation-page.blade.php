@@ -178,7 +178,7 @@
                         type="text"
                         id="note"
                         wire:model="note"
-                        placeholder="Misal: Meja dekat stopkontak di Wing Barat"
+                        placeholder="Misal: Meja dekat colokan atau tepi jendela"
                         class="w-full px-4 py-3 bg-[#FAF7EE] rounded-2xl text-sm text-[#0D3B2E] placeholder:text-[#0D3B2E]/40 focus:outline-none focus:ring-2 focus:ring-[#F5B82E]"
                     />
                 </div>
@@ -393,7 +393,7 @@
         <!-- SLIDE 3: TIKET RESERVASI SELESAI -->
         @elseif ($slide === 3)
             <div class="max-w-2xl mx-auto" x-data="{ codeCopied: false }">
-                <div class="bg-white rounded-3xl overflow-hidden shadow-sm">
+                <div class="bg-white rounded-3xl overflow-hidden border border-[var(--garis)]">
                     <!-- Ticket Header -->
                     <div class="bg-[#0D3B2E] text-white p-8 text-center relative">
                         <div class="w-14 h-14 rounded-full bg-[#F5B82E] text-[#07241C] mx-auto mb-3 flex items-center justify-center font-bold text-xl">

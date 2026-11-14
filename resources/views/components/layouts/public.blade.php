@@ -1,3 +1,37 @@
+@props([
+    'title' => null,
+    'description' => null,
+    'page' => 'default',
+    'initialNavTheme' => 'light',
+])
+
+@php
+    $brandName = \App\Support\Settings::get('brand.brand_name', 'UMCO');
+    $metaTitle = $title ?? \App\Support\Settings::get('seo.meta_title', 'UMCO — Kedai Kopi di Kampus UMRI Pekanbaru');
+    $metaDescription = $description ?? \App\Support\Settings::get('seo.meta_description', 'Kedai kopi di Kampus 2 UMRI Pekanbaru. Tempat nongkrong, nugas, dan pesan meja dengan menu siap saji.');
+    $rawWa = \App\Support\Settings::get('contact.phone_wa', '02248001571');
+    $waDigits = method_exists(\App\Support\PhoneNumber::class, 'normalizeBusiness')
+        ? \App\Support\PhoneNumber::normalizeBusiness($rawWa)
+        : preg_replace('/\D+/', '', (string) $rawWa);
+    if ($waDigits && str_starts_with($waDigits, '0')) {
+        $waDigits = '62' . substr($waDigits, 1);
+    }
+    $waLink = $waDigits ? 'https://wa.me/' . $waDigits : '#';
+    $mapsUrl = \App\Support\Settings::get('contact.google_maps_url', 'https://maps.google.com/?q=UMRI+Pekanbaru');
+    $instagramUrl = \App\Support\Settings::get('contact.instagram_url', 'https://instagram.com/umco.house');
+    $openTime = \App\Support\Settings::get('hours.opening_time', '08.00');
+    $closeTime = \App\Support\Settings::get('hours.closing_time', '21.00');
+    $address = \App\Support\Settings::get('contact.address', 'Kampus 2 UMRI, Jl. Tuanku Tambusai Ujung, Delima, Pekanbaru');
+    $smoothScroll = \App\Support\Settings::get('motion.smooth_scroll', false) ? '1' : '0';
+
+    $navItems = [
+        ['label' => 'Menu', 'href' => url('/menu'), 'active' => request()->is('menu*')],
+        ['label' => 'Biji', 'href' => url('/#biji'), 'active' => false],
+        ['label' => 'Seduh', 'href' => url('/#seduh'), 'active' => false],
+        ['label' => 'Cerita', 'href' => url('/cerita'), 'active' => request()->is('cerita*')],
+    ];
+@endphp
+
 <!DOCTYPE html>
 <html lang="id" class="h-full">
 <head>
@@ -5,295 +39,314 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ $title ?? \App\Support\Settings::get('seo.meta_title', 'UM.CO House — Coffee & Communal Space Kampus UMRI') }}</title>
-    <meta name="description" content="{{ $description ?? \App\Support\Settings::get('seo.meta_description', 'Coffee shop & ruang santai di Kampus UMRI Pekanbaru. Suasana teduh indoor AC & outdoor street food malam hari.') }}">
+    <title>{{ $metaTitle }}</title>
+    <meta name="description" content="{{ $metaDescription }}">
 
-    <!-- Open Graph / Social Media -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url()->current() }}">
-    <meta property="og:title" content="{{ $title ?? 'UM.CO House' }}">
-    <meta property="og:description" content="{{ $description ?? 'Coffee shop di Kampus UMRI Pekanbaru.' }}">
+    <meta property="og:title" content="{{ $metaTitle }}">
+    <meta property="og:description" content="{{ $metaDescription }}">
     <meta property="og:image" content="{{ asset('/images/hero-photo.jpg') }}">
 
-    <!-- Favicon -->
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/favicon.svg">
-
-    <!-- Canonical URL -->
     <link rel="canonical" href="{{ url()->current() }}">
 
-    <!-- JSON-LD Local SEO Schema -->
+    <link rel="preload" href="/fonts/anybody-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/familjen-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="/fonts/fonts-accent.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="/fonts/fonts-accent.css"></noscript>
+
     <script type="application/ld+json">
     {
         "@@context": "https://schema.org",
         "@@type": "CafeOrCoffeeShop",
-        "name": "{{ \App\Support\Settings::get('brand.brand_name', 'UM.CO House') }}",
+        "name": "{{ $brandName }}",
         "image": "{{ asset('/images/hero-photo.jpg') }}",
         "url": "{{ url('/') }}",
-        "telephone": "{{ \App\Support\Settings::get('contact.phone_wa', '082248001571') }}",
-        "priceRange": "Rp 15.000 – Rp 35.000",
+        "telephone": "{{ $rawWa }}",
+        "priceRange": "Rp 18.000 - Rp 36.000",
         "address": {
             "@@type": "PostalAddress",
-            "streetAddress": "KAMPUS UMRI, Jl. Tuanku Tambusai No.2, Delima, Binawidya",
+            "streetAddress": "Kampus 2 UMRI, Jl. Tuanku Tambusai Ujung, Delima, Binawidya",
             "addressLocality": "Pekanbaru",
             "addressRegion": "Riau",
             "postalCode": "28291",
             "addressCountry": "ID"
         },
-        "geo": {
-            "@@type": "GeoCoordinates",
-            "latitude": 0.4999292,
-            "longitude": 101.4155284
-        },
         "openingHoursSpecification": [
             {
                 "@@type": "OpeningHoursSpecification",
                 "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-                "opens": "{{ \App\Support\Settings::get('hours.opening_time', '08:00') }}",
-                "closes": "{{ \App\Support\Settings::get('hours.closing_time', '21:00') }}"
+                "opens": "{{ str_replace('.', ':', $openTime) }}",
+                "closes": "{{ str_replace('.', ':', $closeTime) }}"
             }
-        ],
-        "aggregateRating": {
-            "@@type": "AggregateRating",
-            "ratingValue": "{{ \App\Support\Settings::get('rating.google_rating', '4.9') }}",
-            "reviewCount": "86"
-        }
+        ]
     }
     </script>
-
-    <!-- Google Fonts: Outfit (Spacious Geometric Sans, Zero Berdempetan) & Plus Jakarta Sans (Clean Sans) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
-<body class="bg-[#FAF7EE] text-[#122018] font-sans antialiased selection:bg-[#F5B82E] selection:text-[#07241C] min-h-full flex flex-col">
+<body
+    data-page="{{ $page }}"
+    data-smooth-scroll="{{ $smoothScroll }}"
+    class="min-h-full flex flex-col bg-[var(--kertas)] text-[var(--tinta)] font-sans antialiased overflow-x-hidden"
+>
+    @include('partials.icons-sprite')
 
-    <!-- MINIMALIST RESPONSIVE NAVBAR: FLOATING PILL / TRANSPARENT OVER HERO (MELLOW STYLE) -->
-    <header
-        x-data="{
-            scrolled: false,
-            mobileOpen: false,
-            init() {
-                this.scrolled = window.pageYOffset > 30;
-                window.addEventListener('scroll', () => {
-                    this.scrolled = window.pageYOffset > 30;
-                }, { passive: true });
-            }
-        }"
-        class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 pointer-events-none py-3 sm:py-4 px-4 sm:px-6"
+    <div
+        id="umco-nav-skeleton"
+        class="hidden fixed inset-0 z-[70] bg-[var(--kertas)] pt-24 px-5 sm:px-8 pointer-events-none"
+        aria-hidden="true"
     >
-        <div
-            class="max-w-5xl mx-auto transition-all duration-300 pointer-events-auto rounded-full px-5 sm:px-7 py-2.5 sm:py-3 text-white"
-            :class="scrolled
-                ? 'bg-[#07241C]/95 backdrop-blur-md shadow-none'
-                : '{{ request()->is('/') ? 'bg-[#07241C]/80 backdrop-blur-md md:bg-transparent md:backdrop-blur-none' : 'bg-[#07241C]/95 backdrop-blur-md' }}'"
-        >
-            <div class="flex items-center justify-between">
+        <div class="umco-container space-y-6">
+            <div class="skeleton-block h-10 w-56 sm:w-80"></div>
+            <div class="space-y-3 max-w-xl">
+                <div class="skeleton-block h-5 w-full"></div>
+                <div class="skeleton-block h-5 w-3/4"></div>
+            </div>
+            <div class="skeleton-block h-56 sm:h-72 w-full"></div>
+        </div>
+    </div>
 
-                <!-- Left Navigation (Desktop) & Hamburger (Mobile) -->
-                <div class="flex items-center">
-                    <!-- Mobile Hamburger -->
+    <header
+        id="umco-navbar"
+        data-page="{{ $page }}"
+        data-initial-theme="{{ $initialNavTheme }}"
+        data-theme="{{ $initialNavTheme }}"
+        data-scrolled="0"
+        data-hidden="0"
+        x-data="{ mobileMenuOpen: false }"
+        @keydown.escape.window="mobileMenuOpen = false"
+        class="fixed top-0 inset-x-0 z-50 pointer-events-none"
+    >
+        {{-- Desktop (>=1024px): 3 separated pills --}}
+        <div class="hidden lg:block pt-4">
+            <div class="umco-container flex items-center justify-between gap-4">
+                <a
+                    href="{{ url('/') }}"
+                    wire:navigate
+                    class="nav-pill pointer-events-auto inline-flex items-center px-5 h-11 rounded-full font-display font-bold text-lg tracking-tight"
+                >
+                    UMCO
+                </a>
+
+                <nav class="nav-pill pointer-events-auto inline-flex items-center gap-7 px-6 h-11 rounded-full text-[15px] font-medium" aria-label="Navigasi utama">
+                    @foreach ($navItems as $item)
+                        <a
+                            href="{{ $item['href'] }}"
+                            @if (!str_contains($item['href'], '#')) wire:navigate @endif
+                            class="nav-link-line"
+                            @if ($item['active']) aria-current="page" @endif
+                        >
+                            {{ $item['label'] }}
+                        </a>
+                    @endforeach
+                </nav>
+
+                <a
+                    href="{{ url('/reservasi') }}"
+                    wire:navigate
+                    class="btn-umco btn-umco-primary pointer-events-auto h-11 min-h-0 px-5 text-[15px]"
+                >
+                    <span class="btn-roll">
+                        <span>Pesan meja</span>
+                        <span aria-hidden="true">Pesan meja</span>
+                    </span>
+                </a>
+            </div>
+        </div>
+
+        {{-- Tablet (640px-1023px): single compact bar --}}
+        <div class="hidden sm:block lg:hidden pt-3">
+            <div class="umco-container">
+                <div class="nav-pill pointer-events-auto flex items-center justify-between h-12 px-5 rounded-full">
+                    <a href="{{ url('/') }}" wire:navigate class="font-display font-bold text-lg tracking-tight">
+                        UMCO
+                    </a>
+
+                    <nav class="flex items-center gap-6 text-[15px] font-medium" aria-label="Navigasi tablet">
+                        <a href="{{ url('/menu') }}" wire:navigate class="nav-link-line" @if (request()->is('menu*')) aria-current="page" @endif>Menu</a>
+                        <a href="{{ url('/cerita') }}" wire:navigate class="nav-link-line" @if (request()->is('cerita*')) aria-current="page" @endif>Cerita</a>
+                    </nav>
+
+                    <div class="flex items-center gap-3">
+                        <a href="{{ url('/reservasi') }}" wire:navigate class="btn-umco btn-umco-primary min-h-0 h-9 px-4 text-sm">
+                            Pesan meja
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Mobile (<640px): thin 56px top bar with pure text trigger --}}
+        <div class="sm:hidden">
+            <div class="nav-pill pointer-events-auto flex items-center justify-between h-14 px-5">
+                <a href="{{ url('/') }}" wire:navigate class="font-display font-bold text-lg tracking-tight">
+                    UMCO
+                </a>
+
+                <div class="flex items-center gap-3">
+                    <a
+                        href="{{ url('/reservasi') }}"
+                        wire:navigate
+                        class="inline-flex items-center justify-center h-9 px-3.5 rounded-full bg-[var(--mentega)] text-[var(--tinta)] text-sm font-semibold"
+                    >
+                        Pesan
+                    </a>
                     <button
                         type="button"
-                        @click="mobileOpen = !mobileOpen"
-                        class="md:hidden inline-flex items-center justify-center w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 transition text-white"
-                        aria-label="Toggle Menu"
+                        @click="mobileMenuOpen = true"
+                        class="inline-flex items-center justify-center h-9 px-2 text-sm font-semibold underline underline-offset-4"
+                        aria-label="Buka menu navigasi"
                     >
-                        <svg x-show="!mobileOpen" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        </svg>
-                        <svg x-show="mobileOpen" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: none;">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
+                        Menu
                     </button>
-
-                    <!-- Desktop Nav Links -->
-                    <nav class="hidden md:flex items-center gap-7 text-xs font-bold tracking-wider uppercase">
-                        <a
-                            href="/"
-                            wire:navigate
-                            class="transition-colors hover:text-[#F5B82E] {{ request()->is('/') ? 'text-[#F5B82E]' : 'text-white/90' }}"
-                        >
-                            Beranda
-                        </a>
-                        <a
-                            href="/menu"
-                            wire:navigate
-                            class="transition-colors hover:text-[#F5B82E] {{ request()->is('menu*') ? 'text-[#F5B82E]' : 'text-white/90' }}"
-                        >
-                            Menu
-                        </a>
-                        <a
-                            href="/about"
-                            wire:navigate
-                            class="transition-colors hover:text-[#F5B82E] {{ request()->is('about*') ? 'text-[#F5B82E]' : 'text-white/90' }}"
-                        >
-                            Cerita &amp; Lokasi
-                        </a>
-                    </nav>
-                </div>
-
-                <!-- Center Logo -->
-                <div class="flex-shrink-0">
-                    <a href="/" wire:navigate class="inline-flex items-center gap-1.5 focus:outline-none group">
-                        <span class="font-display text-2xl sm:text-3xl font-black tracking-widest text-white group-hover:text-[#F5B82E] transition">
-                            UM.CO
-                        </span>
-                        <span class="w-2 h-2 rounded-full bg-[#F5B82E]"></span>
-                    </a>
-                </div>
-
-                <!-- Right Action Buttons -->
-                <div class="flex items-center gap-2 sm:gap-3">
-                    @php
-                        $waNumber = \App\Support\Settings::get('contact.phone_wa', '082248001571');
-                        $waLink = \App\Support\PhoneNumber::waLink($waNumber, 'Halo UM.CO House, saya ingin bertanya seputar kafe dan reservasi meja.');
-                    @endphp
-
-                    <a
-                        href="{{ $waLink }}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="hidden sm:inline-flex items-center justify-center px-4 py-2 rounded-full text-xs font-bold tracking-wider uppercase text-white/90 hover:text-white hover:bg-white/10 transition"
-                    >
-                        WhatsApp
-                    </a>
-
-                    <a
-                        href="/reservasi"
-                        wire:navigate
-                        class="inline-flex items-center justify-center px-5 py-2 rounded-full text-xs font-black tracking-wider uppercase bg-[#F5B82E] text-[#07241C] hover:bg-[#D99B16] transition active:scale-95 shadow-none"
-                    >
-                        Reservasi Meja
-                    </a>
-                </div>
-            </div>
-        </div>
-                        Reservasi Meja
-                    </a>
                 </div>
             </div>
         </div>
 
-        <!-- Mobile Drawer Overlay -->
+        {{-- Full-screen Mobile Drawer (--mentega solid, zero shadow/blur) --}}
         <div
-            x-show="mobileOpen"
+            x-show="mobileMenuOpen"
             x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 -translate-y-2"
+            x-transition:enter-start="opacity-0 translate-y-2"
             x-transition:enter-end="opacity-100 translate-y-0"
             x-transition:leave="transition ease-in duration-150"
             x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 -translate-y-2"
-            class="md:hidden fixed inset-x-4 top-20 bg-[#07241C]/95 backdrop-blur-xl rounded-3xl p-6 text-white pointer-events-auto"
+            x-transition:leave-end="opacity-0 translate-y-2"
             style="display: none;"
+            class="sm:hidden fixed inset-0 z-[60] bg-[var(--mentega)] text-[var(--tinta)] pointer-events-auto flex flex-col justify-between px-6 py-5 overflow-y-auto"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Menu UMCO"
         >
-            <div class="flex flex-col gap-4 font-display text-lg">
-                <a href="/" wire:navigate @click="mobileOpen = false" class="py-2 border-b border-white/10 {{ request()->is('/') ? 'text-[#F5B82E] font-bold' : 'text-white' }}">
-                    Beranda
+            <div class="flex items-center justify-between h-10">
+                <a href="{{ url('/') }}" wire:navigate @click="mobileMenuOpen = false" class="font-display font-bold text-lg">
+                    UMCO
                 </a>
-                <a href="/menu" wire:navigate @click="mobileOpen = false" class="py-2 border-b border-white/10 {{ request()->is('menu*') ? 'text-[#F5B82E] font-bold' : 'text-white' }}">
-                    Katalog Menu
-                </a>
-                <a href="/about" wire:navigate @click="mobileOpen = false" class="py-2 border-b border-white/10 {{ request()->is('about*') ? 'text-[#F5B82E] font-bold' : 'text-white' }}">
-                    Cerita Arsitektur &amp; Lokasi
-                </a>
-                <a href="/reservasi" wire:navigate @click="mobileOpen = false" class="py-2 text-[#F5B82E] font-bold">
-                    Reservasi Meja
-                </a>
+                <button
+                    type="button"
+                    @click="mobileMenuOpen = false"
+                    class="inline-flex items-center gap-1.5 h-10 px-2 text-sm font-semibold underline underline-offset-4"
+                >
+                    Tutup
+                </button>
             </div>
 
-            <div class="mt-6 pt-4 border-t border-white/10">
-                <a
-                    href="{{ $waLink }}"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="w-full inline-flex items-center justify-center py-3 rounded-full bg-[#F5B82E] text-[#07241C] font-bold text-xs"
-                >
-                    Chat WhatsApp Kasir
+            <nav class="my-auto py-8 flex flex-col gap-3 font-display font-bold" aria-label="Tautan utama">
+                <a href="{{ url('/') }}" wire:navigate @click="mobileMenuOpen = false" class="text-[2.6rem] leading-[0.95] tracking-tight py-1">
+                    Beranda
                 </a>
+                <a href="{{ url('/menu') }}" wire:navigate @click="mobileMenuOpen = false" class="text-[2.6rem] leading-[0.95] tracking-tight py-1">
+                    Daftar menu
+                </a>
+                <a href="{{ url('/cerita') }}" wire:navigate @click="mobileMenuOpen = false" class="text-[2.6rem] leading-[0.95] tracking-tight py-1">
+                    Cerita kami
+                </a>
+                <a href="{{ url('/reservasi') }}" wire:navigate @click="mobileMenuOpen = false" class="text-[2.6rem] leading-[0.95] tracking-tight py-1 text-[var(--cabai)]">
+                    Pesan meja
+                </a>
+            </nav>
+
+            <div class="pt-5 border-t border-[var(--tinta)]/15 space-y-3 text-sm">
+                <div class="inline-flex items-center gap-2 font-medium">
+                    <span class="w-2 h-2 rounded-full bg-[var(--cabai)]"></span>
+                    <span>Buka tiap hari, {{ $openTime }} - {{ $closeTime }} WIB</span>
+                </div>
+                <p class="text-[var(--tinta)]/80">{{ $address }}</p>
+                <div class="flex flex-wrap gap-4 pt-1 font-semibold">
+                    <a href="{{ $waLink }}" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4">
+                        Chat WhatsApp
+                    </a>
+                    <a href="{{ $mapsUrl }}" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4">
+                        Peta lokasi
+                    </a>
+                </div>
             </div>
         </div>
     </header>
 
-    <!-- MAIN CONTENT SLOT -->
-    <main class="flex-grow">
+    <main class="flex-1">
         {{ $slot }}
     </main>
 
-    <!-- FOOTER: CLEAN, SPACIOUS, MODERN (ZERO OVERLAPPING, ZERO COLLISION) -->
-    <footer id="public-footer" class="bg-[#07241C] text-white relative overflow-hidden pt-16 sm:pt-20 pb-12">
-        
-        <!-- Subtle Ambient Background Wordmark (Background Layer Only, Never Colliding With Text) -->
-        <div class="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden opacity-[0.03]">
-            <span class="font-display font-black text-[22vw] tracking-[0.2em] text-white whitespace-nowrap">
-                UM.CO
-            </span>
-        </div>
+    <div
+        data-module="scroll-meter"
+        class="hidden lg:flex fixed bottom-5 right-6 z-40 items-center px-3.5 h-9 rounded-full bg-[var(--kertas-terang)] text-[var(--tinta)] border border-[var(--garis-kuwat)] text-xs font-medium tabular-nums select-none pointer-events-none"
+        aria-hidden="true"
+    >
+        0 cm
+    </div>
 
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <!-- Footer Content Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-white/10">
-                <!-- Brand Info -->
-                <div class="md:col-span-5 space-y-4">
-                    <div class="flex items-center gap-2">
-                        <span class="font-display text-3xl font-black tracking-wider text-white">UM.CO</span>
-                        <span class="w-2.5 h-2.5 rounded-full bg-[#F5B82E]"></span>
-                    </div>
-                    <p class="text-sm text-[#9AB4A6] leading-relaxed max-w-sm font-medium">
-                        Ruang temu hangat di Kampus UMRI Pekanbaru. Dari seduhan kopi harian hingga street food malam hari di courtyard terbuka.
+    <footer id="public-footer" class="relative bg-[var(--tinta)] text-[var(--kertas)] pt-14 sm:pt-20 pb-0 overflow-hidden">
+        <div class="umco-container">
+            <div class="grid grid-cols-1 sm:grid-cols-12 gap-8 sm:gap-10 pb-12 border-b border-white/15">
+                <div class="sm:col-span-5 space-y-3">
+                    <p class="font-display font-bold text-xl tracking-tight">UMCO</p>
+                    <p class="text-sm sm:text-[15px] text-[var(--kertas)]/80 leading-relaxed max-w-sm">
+                        {{ $address }}. Buka setiap hari pukul {{ $openTime }} - {{ $closeTime }} WIB.
                     </p>
-                    <div class="pt-1">
-                        <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 text-xs text-[#F5B82E] font-medium border border-white/10">
-                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                            <span>Buka Setiap Hari: 08.00 – 21.00 WIB</span>
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Navigation Links -->
-                <div class="md:col-span-3 space-y-3">
-                    <p class="text-xs uppercase tracking-widest text-[#F5B82E] font-bold">Navigasi</p>
-                    <ul class="space-y-2.5 text-sm text-white/80 font-medium">
-                        <li><a href="/" wire:navigate class="hover:text-[#F5B82E] transition">Beranda</a></li>
-                        <li><a href="/menu" wire:navigate class="hover:text-[#F5B82E] transition">Katalog Menu</a></li>
-                        <li><a href="/about" wire:navigate class="hover:text-[#F5B82E] transition">Cerita &amp; Lokasi Kampus</a></li>
-                        <li><a href="/reservasi" wire:navigate class="hover:text-[#F5B82E] transition">Reservasi Meja</a></li>
-                    </ul>
-                </div>
-
-                <!-- Location & Contact -->
-                <div class="md:col-span-4 space-y-3">
-                    <p class="text-xs uppercase tracking-widest text-[#F5B82E] font-bold">Lokasi Kampus</p>
-                    <p class="text-sm text-white/80 leading-relaxed font-medium">
-                        Kampus 2 UMRI, Jl. Tuanku Tambusai Ujung, Delima, Pekanbaru, Riau.
-                    </p>
-                    <div class="pt-2 flex items-center gap-3">
-                        <a
-                            href="{{ \App\Support\Settings::get('contact.google_maps_url', 'https://maps.google.com/?q=UMRI+Pekanbaru') }}"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="inline-flex items-center gap-1.5 text-xs font-semibold text-[#F5B82E] hover:underline"
-                        >
-                            <span>Buka di Google Maps</span>
-                            <span>&rarr;</span>
+                    <div class="flex flex-wrap items-center gap-4 pt-1 text-sm font-medium">
+                        <a href="{{ $mapsUrl }}" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4 hover:text-[var(--mentega)] transition-colors">
+                            Buka di Google Maps
                         </a>
-                        <span class="text-white/30">•</span>
-                        <a href="/admin" class="text-xs text-white/40 hover:text-white transition">Panel Staf</a>
+                        <a href="{{ $waLink }}" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4 hover:text-[var(--mentega)] transition-colors">
+                            WhatsApp kasir
+                        </a>
                     </div>
+                </div>
+
+                <div class="sm:col-span-4 grid grid-cols-2 gap-6 text-sm">
+                    <div class="space-y-2.5">
+                        <p class="font-semibold text-[var(--kertas)]">Halaman</p>
+                        <ul class="space-y-2 text-[var(--kertas)]/75">
+                            <li><a href="{{ url('/') }}" wire:navigate class="hover:text-[var(--mentega)] transition-colors">Beranda</a></li>
+                            <li><a href="{{ url('/menu') }}" wire:navigate class="hover:text-[var(--mentega)] transition-colors">Menu</a></li>
+                            <li><a href="{{ url('/cerita') }}" wire:navigate class="hover:text-[var(--mentega)] transition-colors">Cerita kami</a></li>
+                            <li><a href="{{ url('/reservasi') }}" wire:navigate class="hover:text-[var(--mentega)] transition-colors">Pesan meja</a></li>
+                        </ul>
+                    </div>
+                    <div class="space-y-2.5">
+                        <p class="font-semibold text-[var(--kertas)]">Kontak</p>
+                        <ul class="space-y-2 text-[var(--kertas)]/75">
+                            <li><a href="{{ $instagramUrl }}" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--mentega)] transition-colors">Instagram</a></li>
+                            <li><a href="{{ $waLink }}" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--mentega)] transition-colors">WhatsApp</a></li>
+                            <li><a href="{{ url('/admin') }}" class="hover:text-[var(--mentega)] transition-colors">Staf</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="sm:col-span-3 sm:text-right space-y-2 text-sm text-[var(--kertas)]/70">
+                    <p>&copy; {{ date('Y') }} UMCO House</p>
+                    <p>Kampus 2 UMRI, Pekanbaru</p>
                 </div>
             </div>
 
-            <!-- Bottom Copyright (Unobstructed, Clean, Spacious) -->
-            <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#9AB4A6] gap-4 font-medium">
-                <p>&copy; {{ date('Y') }} UM.CO House Kampus UMRI. All rights reserved.</p>
-                <p>Designed for Campus Living &amp; Coffee Lovers</p>
+            <div class="relative pt-10 sm:pt-14 flex flex-col items-center justify-end overflow-hidden select-none">
+                <div
+                    data-footer-wordmark
+                    class="font-display font-extrabold text-[30vw] sm:text-[22vw] leading-[0.8] tracking-[-0.04em] text-[var(--kertas)] text-center whitespace-nowrap"
+                >
+                    UMCO
+                </div>
+
+                <img
+                    data-footer-cutout
+                    src="{{ asset('/images/footer-cutout.webp') }}"
+                    alt="Segelas kopi susu dingin UMCO"
+                    width="418"
+                    height="540"
+                    loading="lazy"
+                    decoding="async"
+                    class="relative z-10 -mt-[22vw] sm:-mt-[17vw] w-36 sm:w-48 lg:w-56 h-auto pointer-events-none"
+                >
             </div>
         </div>
     </footer>
 
     @livewireScripts
+    @stack('scripts')
 </body>
 </html>

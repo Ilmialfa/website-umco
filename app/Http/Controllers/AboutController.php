@@ -11,7 +11,7 @@ class AboutController extends Controller
 {
     public function __invoke()
     {
-        return view('pages.about', [
+        return view('pages.cerita', [
             'storyBlocks' => StoryBlock::orderBy('sort')->get(),
             'facilities' => Facility::where('is_active', true)
                 ->orderBy('sort')

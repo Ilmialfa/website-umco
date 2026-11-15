@@ -40,10 +40,10 @@ export function initReveal() {
             const heroVisible = isNearTopViewport(parent);
 
             if (heroVisible) {
-                gsap.fromTo(children, { opacity: 0, y: yIn, scale: 0.98 }, { opacity: 1, y: 0, scale: 1, duration: 0.8, stagger: 0.08, ease: 'power3.out' });
-            } else {
-                gsap.set(children, { opacity: 0, y: yIn, scale: 0.98 });
+                gsap.set(children, { opacity: 1, y: 0, scale: 1 });
+                return;
             }
+            gsap.set(children, { opacity: 0, y: yIn, scale: 0.98 });
 
             ScrollTrigger.create({
                 trigger: parent,
@@ -61,11 +61,11 @@ export function initReveal() {
             const yIn = isMobile ? 18 : 28;
             const heroVisible = isNearTopViewport(el);
             if (heroVisible) {
-                gsap.fromTo(el, { opacity: 0, y: yIn }, { opacity: 1, y: 0, duration: 0.85, ease: 'power3.out', delay: 0.08 });
-            } else {
-                gsap.set(el, { opacity: 0, y: yIn });
-                if (img) gsap.set(img, { scale: 1.05 });
+                gsap.set(el, { opacity: 1, y: 0 });
+                return;
             }
+            gsap.set(el, { opacity: 0, y: yIn });
+            if (img) gsap.set(img, { scale: 1.05 });
 
             ScrollTrigger.create({
                 trigger: el,
@@ -95,12 +95,12 @@ export function initReveal() {
             };
 
             if (type === 'fade') {
-                const yIn = isMobile ? 10 : 14;
                 if (heroVisible) {
-                    gsap.fromTo(el, { opacity: 0, y: yIn }, { opacity: 1, y: 0, duration: 0.78, ease: 'power3.out', delay: 0.1 });
-                } else {
-                    gsap.set(el, { opacity: 0, y: yIn });
+                    gsap.set(el, { opacity: 1, y: 0 });
+                    return;
                 }
+                const yIn = isMobile ? 10 : 14;
+                gsap.set(el, { opacity: 0, y: yIn });
                 ScrollTrigger.create({
                     ...stBounds,
                     onEnter: () => gsap.to(el, { opacity: 1, y: 0, duration: 0.75, ease: 'power3.out', overwrite: 'auto' }),
@@ -108,12 +108,12 @@ export function initReveal() {
                     onLeaveBack: () => gsap.to(el, { opacity: 0, y: yIn, duration: 0.35, overwrite: 'auto' }),
                 });
             } else if (type === 'rise') {
-                const yIn = isMobile ? 16 : 26;
                 if (heroVisible) {
-                    gsap.fromTo(el, { opacity: 0, y: yIn }, { opacity: 1, y: 0, duration: 0.82, ease: 'power3.out' });
-                } else {
-                    gsap.set(el, { opacity: 0, y: yIn });
+                    gsap.set(el, { opacity: 1, y: 0 });
+                    return;
                 }
+                const yIn = isMobile ? 16 : 26;
+                gsap.set(el, { opacity: 0, y: yIn });
                 ScrollTrigger.create({
                     ...stBounds,
                     onEnter: () => gsap.to(el, { opacity: 1, y: 0, duration: 0.78, ease: 'power3.out', overwrite: 'auto' }),
@@ -121,13 +121,13 @@ export function initReveal() {
                     onLeaveBack: () => gsap.to(el, { opacity: 0, y: yIn, duration: 0.35, ease: 'power2.out', overwrite: 'auto' }),
                 });
             } else if (type === 'lines') {
+                if (heroVisible) {
+                    gsap.set(el, { opacity: 1, y: 0 });
+                    return;
+                }
                 const split = SplitText.create(el, { type: 'lines', aria: 'none' });
                 splits.push(split);
-                if (heroVisible) {
-                    gsap.fromTo(split.lines, { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.85, stagger: 0.08, ease: 'power3.out' });
-                } else {
-                    gsap.set(split.lines, { y: 24, opacity: 0 });
-                }
+                gsap.set(split.lines, { y: 24, opacity: 0 });
                 ScrollTrigger.create({
                     ...stBounds,
                     onEnter: () => gsap.to(split.lines, { y: 0, opacity: 1, duration: 0.82, stagger: 0.08, ease: 'power3.out', overwrite: 'auto' }),
@@ -135,14 +135,14 @@ export function initReveal() {
                     onLeaveBack: () => gsap.to(split.lines, { opacity: 0, y: 24, duration: 0.35, overwrite: 'auto' }),
                 });
             } else if (type === 'mask') {
+                if (heroVisible) {
+                    gsap.set(el, { opacity: 1, y: 0 });
+                    return;
+                }
                 const img = el.querySelector('img');
                 const yIn = isMobile ? 16 : 24;
-                if (heroVisible) {
-                    gsap.fromTo(el, { opacity: 0, y: yIn }, { opacity: 1, y: 0, duration: 0.85, ease: 'power3.out' });
-                } else {
-                    gsap.set(el, { opacity: 0, y: yIn });
-                    if (img) gsap.set(img, { scale: 1.05 });
-                }
+                gsap.set(el, { opacity: 0, y: yIn });
+                if (img) gsap.set(img, { scale: 1.05 });
 
                 ScrollTrigger.create({
                     ...stBounds,

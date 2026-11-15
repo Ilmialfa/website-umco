@@ -27,24 +27,24 @@
         <div class="grid grid-cols-1 sm:grid-cols-12 items-center gap-6 sm:gap-6 lg:gap-8 min-h-[68svh] sm:min-h-[64svh] lg:min-h-[76svh]">
             {{-- Kiri: Eyebrow, Judul Condensed Tinggi, Deskripsi, Catatan Tangan, & Dual CTA --}}
             <div class="sm:col-span-5 lg:col-span-5 py-4 sm:py-6 space-y-5 sm:space-y-6 relative z-10">
-                <div data-reveal="rise" class="inline-flex items-center gap-2 text-xs sm:text-sm font-medium text-white/90">
+                <div class="inline-flex items-center gap-2 text-xs sm:text-sm font-medium text-white/90">
                     <span class="w-2 h-2 rounded-full bg-[var(--aksen-soft)]"></span>
                     <span>{{ $eyebrow }}</span>
                 </div>
 
-                <h1 data-reveal="lines" class="font-display font-bold [font-size:clamp(3.2rem,5.8vw,5.8rem)] leading-[0.90] tracking-[-0.025em] text-white max-w-xl">
+                <h1 class="font-display font-bold [font-size:clamp(3.2rem,5.8vw,5.8rem)] leading-[0.90] tracking-[-0.025em] text-white max-w-xl">
                     {{ $heading }}
                 </h1>
 
-                <p data-reveal="fade" class="type-body sm:type-body-l text-white/90 max-w-md leading-relaxed">
+                <p class="type-body sm:type-body-l text-white/90 max-w-md leading-relaxed">
                     {{ $subheading }}
                 </p>
 
-                <p data-reveal="fade" class="font-hand text-2xl sm:text-[28px] leading-none text-[#E2F1E7]">
+                <p class="font-hand text-2xl sm:text-[28px] leading-none text-[#E2F1E7]">
                     {{ $handNote }}
                 </p>
 
-                <div data-reveal="rise" class="flex flex-wrap items-center gap-3 pt-1">
+                <div class="flex flex-wrap items-center gap-3 pt-1">
                     <a
                         href="{{ url($ctaUrl) }}"
                         wire:navigate
@@ -66,7 +66,7 @@
             </div>
 
             {{-- Kanan: Gambar Gedung UMCO Tanpa Latar + Kabut/Awan Lembut Penutup Potongan Bawah --}}
-            <div data-reveal="mask" class="relative sm:col-span-7 lg:col-span-7 flex justify-center sm:justify-end items-end self-end">
+            <div class="relative sm:col-span-7 lg:col-span-7 flex justify-center sm:justify-end items-end self-end">
                 <img
                     data-hero-cutout
                     src="{{ asset($cutoutSrc) }}"

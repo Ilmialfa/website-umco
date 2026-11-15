@@ -24,6 +24,9 @@
 
     <link rel="preload" href="/fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="/fonts/plus-jakarta-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+    @if (($page ?? 'default') === 'home' && trim((string) \App\Support\Settings::get('brand.hero_cutout_image', '')) === '')
+        <link rel="preload" as="image" href="/images/hero-cutout-640.webp" imagesrcset="/images/hero-cutout-640.webp 640w, /images/hero-cutout-960.webp 960w, /images/hero-cutout.webp 1200w" imagesizes="(max-width: 640px) 92vw, 50vw" fetchpriority="high">
+    @endif
     <style>
         @font-face {
             font-family: 'Barlow Condensed';

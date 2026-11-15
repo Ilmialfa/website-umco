@@ -19,7 +19,7 @@ class RemindUpcomingReservations extends Command
 
     public function handle(): int
     {
-        $now = Carbon::now('Asia/Jakarta');
+        $now = Carbon::now();
         $remindBeforeMinutes = max(5, (int) Settings::get('reservation.remind_before_minutes', 15));
         $graceMinutes = max(5, (int) Settings::get('reservation.grace_minutes', 15));
 
@@ -40,7 +40,7 @@ class RemindUpcomingReservations extends Command
         foreach ($candidates as $reservation) {
             $arrivalStr = $reservation->date->format('Y-m-d') . ' ' . substr((string) $reservation->time, 0, 5);
             try {
-                $arrivalAt = Carbon::createFromFormat('Y-m-d H:i', $arrivalStr, 'Asia/Jakarta');
+                $arrivalAt = Carbon::createFromFormat('Y-m-d H:i', $arrivalStr);
             } catch (\Throwable) {
                 continue;
             }

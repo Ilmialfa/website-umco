@@ -115,7 +115,7 @@ class ReservationPage extends Component
             }
             if ($this->date === '') {
                 $firstOpen = collect($dates)->first(fn ($d) => ! $d['closed']);
-                $this->date = $firstOpen['date'] ?? Carbon::now('Asia/Jakarta')->format('Y-m-d');
+                $this->date = $firstOpen['date'] ?? Carbon::now()->format('Y-m-d');
             }
         }
 
@@ -266,7 +266,7 @@ class ReservationPage extends Component
     #[Computed]
     public function dateOptions(): array
     {
-        $now = Carbon::now('Asia/Jakarta')->startOfDay();
+        $now = Carbon::now()->startOfDay();
         $maxDays = max(1, (int) Settings::get('reservation.max_advance_days', 14));
         $end = $now->copy()->addDays($maxDays);
 
@@ -308,12 +308,12 @@ class ReservationPage extends Component
         $capacity = max(1, (int) Settings::get('reservation.capacity_per_slot', 40));
         $minAdvance = max(0, (int) Settings::get('reservation.min_advance_minutes', 60));
 
-        $now = Carbon::now('Asia/Jakarta');
+        $now = Carbon::now();
         $cutoff = $now->copy()->addMinutes($minAdvance);
 
         try {
-            $cursor = Carbon::createFromFormat('Y-m-d H:i', $this->date . ' ' . $openStr, 'Asia/Jakarta');
-            $last = Carbon::createFromFormat('Y-m-d H:i', $this->date . ' ' . $closeStr, 'Asia/Jakarta')
+            $cursor = Carbon::createFromFormat('Y-m-d H:i', $this->date . ' ' . $openStr);
+            $last = Carbon::createFromFormat('Y-m-d H:i', $this->date . ' ' . $closeStr)
                 ->subMinutes($lastBeforeClose);
         } catch (\Throwable) {
             return [];

@@ -1,6 +1,6 @@
 @php
     $quoteData = $this->quote;
-    $dateObj = $this->date ? \Carbon\Carbon::createFromFormat('Y-m-d', $this->date, 'Asia/Jakarta')->locale('id') : null;
+    $dateObj = $this->date ? \Carbon\Carbon::createFromFormat('Y-m-d', $this->date)->locale('id') : null;
     $dateDisplay = $dateObj ? $dateObj->isoFormat('ddd, D MMM') : 'Belum dipilih';
     $timeDisplay = $this->time ? str_replace(':', '.', $this->time) . ' WIB' : 'Belum dipilih';
     $selectedSeating = $this->seatingOptions->firstWhere('id', $this->seatingOptionId);

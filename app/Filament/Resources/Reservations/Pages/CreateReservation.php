@@ -54,7 +54,7 @@ class CreateReservation extends CreateRecord
 
                     DatePicker::make('date')
                         ->label('Tanggal datang')
-                        ->default(now('Asia/Jakarta')->format('Y-m-d'))
+                        ->default(now()->format('Y-m-d'))
                         ->native(false)
                         ->required(),
 
@@ -239,9 +239,9 @@ class CreateReservation extends CreateRecord
         $interval = max(15, (int) Settings::get('reservation.slot_interval', 30));
         $lastBeforeClose = max(0, (int) Settings::get('reservation.last_slot_before_close', 60));
 
-        $today = Carbon::now('Asia/Jakarta')->format('Y-m-d');
-        $cursor = Carbon::createFromFormat('Y-m-d H:i', $today . ' ' . $openStr, 'Asia/Jakarta');
-        $last = Carbon::createFromFormat('Y-m-d H:i', $today . ' ' . $closeStr, 'Asia/Jakarta')->subMinutes($lastBeforeClose);
+        $today = Carbon::now()->format('Y-m-d');
+        $cursor = Carbon::createFromFormat('Y-m-d H:i', $today . ' ' . $openStr);
+        $last = Carbon::createFromFormat('Y-m-d H:i', $today . ' ' . $closeStr)->subMinutes($lastBeforeClose);
 
         $opts = [];
         while ($cursor->lte($last)) {

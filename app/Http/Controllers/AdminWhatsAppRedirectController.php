@@ -21,7 +21,7 @@ class AdminWhatsAppRedirectController extends Controller
         $timeShort = substr((string) $reservation->time, 0, 5);
         $graceMinutes = max(5, (int) Settings::get('reservation.grace_minutes', 15));
 
-        $hangusTime = Carbon::createFromFormat('Y-m-d H:i', $reservation->date->format('Y-m-d') . ' ' . $timeShort, 'Asia/Jakarta')
+        $hangusTime = Carbon::createFromFormat('Y-m-d H:i', $reservation->date->format('Y-m-d') . ' ' . $timeShort)
             ->addMinutes($graceMinutes)
             ->format('H.i');
 

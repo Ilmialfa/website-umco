@@ -13,7 +13,7 @@ class ReservationCalendarController extends Controller
         $reservation = Reservation::with('seatingOption')->where('code', $code)->firstOrFail();
 
         // Calculate start and end datetime
-        $start = Carbon::parse($reservation->date->format('Y-m-d') . ' ' . $reservation->time, 'Asia/Jakarta');
+        $start = Carbon::parse($reservation->date->format('Y-m-d') . ' ' . $reservation->time);
         $end = $start->copy()->addHours(2);
 
         $dtStart = $start->copy()->utc()->format('Ymd\THis\Z');

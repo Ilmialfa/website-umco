@@ -75,7 +75,7 @@ class CreateReservation
         // Validasi tanggal & hari tutup
         $dateRaw = trim((string) ($data['date'] ?? ''));
         try {
-            $dateObj = Carbon::createFromFormat('Y-m-d', $dateRaw, 'Asia/Jakarta')->startOfDay();
+            $dateObj = Carbon::createFromFormat('Y-m-d', $dateRaw)->startOfDay();
         } catch (\Throwable) {
             throw ValidationException::withMessages([
                 'date' => 'Tanggal kedatangan belum valid.',
@@ -90,7 +90,7 @@ class CreateReservation
             ]);
         }
 
-        $now = Carbon::now('Asia/Jakarta');
+        $now = Carbon::now();
         $maxDays = max(1, (int) Settings::get('reservation.max_advance_days', 14));
         if (! $isAdminSource) {
             if ($dateObj->lt($now->copy()->startOfDay()) || $dateObj->gt($now->copy()->startOfDay()->addDays($maxDays))) {
@@ -108,7 +108,7 @@ class CreateReservation
             ]);
         }
 
-        $slotDateTime = Carbon::createFromFormat('Y-m-d H:i', $dateObj->format('Y-m-d') . ' ' . $timeRaw, 'Asia/Jakarta');
+        $slotDateTime = Carbon::createFromFormat('Y-m-d H:i', $dateObj->format('Y-m-d') . ' ' . $timeRaw);
         $minAdvanceMinutes = max(0, (int) Settings::get('reservation.min_advance_minutes', 60));
 
         if (! $isAdminSource && $slotDateTime->lt($now->copy()->addMinutes($minAdvanceMinutes))) {
@@ -121,8 +121,8 @@ class CreateReservation
         $closeStr = (string) Settings::get('hours.closing_time', '22:00');
         $lastBeforeClose = max(0, (int) Settings::get('reservation.last_slot_before_close', 60));
 
-        $openTime = Carbon::createFromFormat('Y-m-d H:i', $dateObj->format('Y-m-d') . ' ' . substr($openStr, 0, 5), 'Asia/Jakarta');
-        $lastSlot = Carbon::createFromFormat('Y-m-d H:i', $dateObj->format('Y-m-d') . ' ' . substr($closeStr, 0, 5), 'Asia/Jakarta')
+        $openTime = Carbon::createFromFormat('Y-m-d H:i', $dateObj->format('Y-m-d') . ' ' . substr($openStr, 0, 5));
+        $lastSlot = Carbon::createFromFormat('Y-m-d H:i', $dateObj->format('Y-m-d') . ' ' . substr($closeStr, 0, 5))
             ->subMinutes($lastBeforeClose);
 
         if ($slotDateTime->lt($openTime) || $slotDateTime->gt($lastSlot)) {

@@ -145,15 +145,15 @@ export function initReveal() {
             } else if (type === 'chars-wdth') {
                 const split = SplitText.create(el, { type: 'chars', aria: 'none' });
                 splits.push(split);
-                gsap.set(split.chars, { opacity: 0, fontVariationSettings: '"wdth" 50, "wght" 800' });
+                gsap.set(split.chars, { opacity: 0, y: 14 });
                 ScrollTrigger.create({
                     ...stBase,
                     onEnter: () =>
                         gsap.to(split.chars, {
                             opacity: 1,
-                            fontVariationSettings: '"wdth" 75, "wght" 800',
-                            duration: 0.65,
-                            stagger: 0.02,
+                            y: 0,
+                            duration: 0.55,
+                            stagger: 0.015,
                             ease: 'power3.out',
                             overwrite: 'auto',
                         }),

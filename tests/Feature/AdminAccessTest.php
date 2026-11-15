@@ -181,3 +181,42 @@ test('logged WhatsApp redirect route records ActivityLog and redirects to wa.me'
         ->where('subject_id', $reservation->id)
         ->exists())->toBeTrue();
 });
+
+test('enforces policy boundaries, owner-only deletion, last-owner protection, and hides BeanOriginResource nav', function () {
+    $owner = User::factory()->create(['role' => 'owner']);
+    $admin = User::factory()->create(['role' => 'admin']);
+    $cashier = User::factory()->create(['role' => 'cashier']);
+
+    $reservation = Reservation::create([
+        'name' => 'Rina Test',
+        'phone_input' => '081234567890',
+        'date' => now('Asia/Jakarta')->addDay()->format('Y-m-d'),
+        'time' => '15:00',
+        'party_size' => 2,
+    ]);
+
+    expect(BeanOriginResource::shouldRegisterNavigation())->toBeFalse();
+
+    $this->actingAs($cashier);
+    expect(ReservationResource::canDelete($reservation))->toBeFalse()
+        ->and(ReservationResource::canDeleteAny())->toBeFalse()
+        ->and($cashier->can('delete', $reservation))->toBeFalse();
+
+    $this->actingAs($admin);
+    expect(ReservationResource::canDelete($reservation))->toBeFalse()
+        ->and($admin->can('delete', $reservation))->toBeFalse();
+
+    $this->actingAs($owner);
+    expect(ReservationResource::canDelete($reservation))->toBeTrue()
+        ->and($owner->can('delete', $reservation))->toBeTrue()
+        ->and($owner->can('delete', $owner))->toBeFalse()
+        ->and($owner->can('delete', $cashier))->toBeTrue();
+});
+
+test('sends HTTP security headers on public responses', function () {
+    $response = $this->get('/');
+    $response->assertStatus(200)
+        ->assertHeader('X-Frame-Options', 'SAMEORIGIN')
+        ->assertHeader('X-Content-Type-Options', 'nosniff')
+        ->assertHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+});

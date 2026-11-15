@@ -17,6 +17,8 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
+use Illuminate\Support\Facades\Cache;
+
 class ReservationResource extends Resource
 {
     protected static ?string $model = Reservation::class;
@@ -38,9 +40,24 @@ class ReservationResource extends Resource
         return in_array(auth()->user()?->role, ['owner', 'admin', 'cashier'], true);
     }
 
+    public static function canDelete(\Illuminate\Database\Eloquent\Model $record): bool
+    {
+        return auth()->user()?->isOwner() ?? false;
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return auth()->user()?->isOwner() ?? false;
+    }
+
     public static function getNavigationBadge(): ?string
     {
-        $count = Reservation::where('status', 'pending')->count();
+        $count = Cache::remember(
+            'filament.reservations.pending_count',
+            15,
+            fn (): int => Reservation::where('status', 'pending')->count(),
+        );
+
         return $count > 0 ? (string) $count : null;
     }
 

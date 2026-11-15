@@ -6,18 +6,18 @@
     id="galeri"
     data-nav-theme="light"
     data-module="gallery-mosaic"
-    class="umco-section bg-[var(--kertas-terang)] text-[var(--tinta)] border-t border-[var(--garis)]"
+    class="umco-section bg-[var(--kertas-terang)] text-[var(--tinta)]"
 >
     <div class="umco-container space-y-8">
         <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-            <h2 data-reveal="rise" class="type-h2 font-display font-bold">
+            <h2 data-reveal="rise" class="type-h2 font-display font-semibold">
                 {{ $section?->heading ?: 'Potret ruang dan cangkir' }}
             </h2>
             <p class="text-sm text-[var(--tinta-70)]">Klik foto untuk melihat lebih besar.</p>
         </div>
 
-        {{-- Mosaik editorial: 2 kolom di HP/Tablet (maks 6 dulu di HP), 4 kolom asimetris di desktop --}}
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-2 auto-rows-[160px] sm:auto-rows-[210px] lg:auto-rows-[220px]">
+        {{-- Mosaik editorial --}}
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 auto-rows-[160px] sm:auto-rows-[210px] lg:auto-rows-[220px]">
             @foreach ($tiles as $idx => $g)
                 @php
                     $spanClass = match ($idx) {
@@ -37,7 +37,7 @@
                     @if ($idx >= 6) data-gallery-extra @endif
                     data-src="{{ $imgSrc }}"
                     data-caption="{{ $g->caption ?: 'UMCO Kampus UMRI' }}"
-                    class="relative overflow-hidden bg-[var(--garis)]/40 group cursor-pointer text-left {{ $spanClass }} {{ $hiddenMobile }}"
+                    class="relative rounded-2xl overflow-hidden bg-[var(--batu)] group cursor-pointer text-left {{ $spanClass }} {{ $hiddenMobile }}"
                 >
                     <img
                         src="{{ $imgSrc }}"
@@ -47,7 +47,7 @@
                         class="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500"
                     >
                     @if ($g->caption && in_array($idx, [0, 3, 5]))
-                        <span class="absolute left-3 bottom-2.5 bg-[var(--kertas-terang)] px-2.5 py-0.5 font-hand text-xl text-[var(--tinta)]">
+                        <span class="absolute left-3 bottom-3 rounded-lg bg-[var(--kertas-terang)]/95 px-3 py-1 text-xs sm:text-sm font-medium text-[var(--tinta)]">
                             {{ $g->caption }}
                         </span>
                     @endif

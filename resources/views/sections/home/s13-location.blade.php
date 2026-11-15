@@ -27,24 +27,24 @@
 <section
     id="lokasi"
     data-nav-theme="light"
-    class="umco-section bg-[var(--kertas)] text-[var(--tinta)] border-t border-[var(--garis)]"
+    class="umco-section bg-[var(--kertas)] text-[var(--tinta)]"
     x-data="{ interactiveMap: false }"
 >
     <div class="umco-container">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
             <div class="lg:col-span-6 space-y-6">
                 <div class="space-y-3">
-                    <h2 data-reveal="rise" class="type-h2 font-display font-bold">
+                    <h2 data-reveal="rise" class="type-h2 font-display font-semibold">
                         {{ $section?->heading ?: 'Singgah ke UMCO' }}
                     </h2>
-                    <p class="font-display font-semibold text-xl sm:text-2xl leading-snug">
+                    <p class="font-display font-medium text-xl sm:text-2xl leading-snug">
                         {{ $address }}
                     </p>
                 </div>
 
                 <div class="border-t border-[var(--garis)] pt-4 max-w-sm space-y-1.5 text-sm">
                     @foreach ($weekDays as $iso => $dayLabel)
-                        <div class="flex justify-between py-1 {{ $iso === $todayIso ? 'font-bold text-[var(--tinta)]' : 'text-[var(--tinta-70)]' }}">
+                        <div class="flex justify-between py-1 {{ $iso === $todayIso ? 'font-semibold text-[var(--tinta)]' : 'text-[var(--tinta-70)]' }}">
                             <span>{{ $dayLabel }}{{ $iso === $todayIso ? ' (hari ini)' : '' }}</span>
                             <span class="tabular-nums">{{ $openTime }} - {{ $closeTime }} WIB</span>
                         </div>
@@ -62,7 +62,7 @@
             </div>
 
             <div class="lg:col-span-6 space-y-3">
-                <div class="relative aspect-[16/10] w-full bg-[var(--garis)]/40 overflow-hidden border border-[var(--garis)]">
+                <div class="relative aspect-[16/10] w-full rounded-2xl bg-[var(--batu)] overflow-hidden">
                     <template x-if="!interactiveMap">
                         <div class="relative w-full h-full">
                             <img
@@ -72,12 +72,12 @@
                                 decoding="async"
                                 class="w-full h-full object-cover"
                             >
-                            <div class="absolute inset-x-4 bottom-4 flex flex-wrap items-center justify-between gap-3 bg-[var(--kertas-terang)] border border-[var(--tinta)] px-4 py-3">
+                            <div class="absolute inset-x-4 bottom-4 rounded-xl flex flex-wrap items-center justify-between gap-3 bg-[var(--kertas-terang)] px-4 py-3">
                                 <span class="text-xs sm:text-sm font-medium tabular-nums">Koordinat: {{ $coords }}</span>
                                 <button
                                     type="button"
                                     @click="interactiveMap = true"
-                                    class="text-sm font-semibold underline underline-offset-4 cursor-pointer"
+                                    class="text-sm font-semibold text-[var(--mentega-tua)] underline underline-offset-4 cursor-pointer"
                                 >
                                     Tampilkan peta interaktif
                                 </button>

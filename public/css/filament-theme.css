@@ -1,164 +1,326 @@
-/* UMCO HOUSE FILAMENT ADMIN THEME (KERTAS #F5F2EA + TINTA #22263A + MENTEGA #EFC94C, ZERO SHADOWS) */
-
 @font-face {
-    font-family: 'Anybody';
+    font-family: 'Plus Jakarta Sans';
     font-style: normal;
-    font-weight: 100 900;
-    font-stretch: 50% 150%;
+    font-weight: 200 800;
     font-display: swap;
-    src: url('/fonts/anybody-latin.woff2') format('woff2');
+    src: url('/fonts/plus-jakarta-sans-latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 @font-face {
-    font-family: 'Familjen Grotesk';
+    font-family: 'Instrument Sans';
     font-style: normal;
     font-weight: 400 700;
     font-display: swap;
-    src: url('/fonts/familjen-grotesk-latin.woff2') format('woff2');
+    src: url('/fonts/instrument-sans-latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 :root {
-    --umco-kertas: #F5F2EA;
-    --umco-kertas-terang: #FCFBF7;
-    --umco-tinta: #22263A;
-    --umco-tinta-70: #4E5266;
-    --umco-garis: #DCD7CB;
-    --umco-mentega: #EFC94C;
-    --umco-mentega-tua: #D9AF2B;
-    --umco-stempel: #C4472E;
+    --umco-canvas: #F4F2ED;
+    --umco-surface: #FFFFFF;
+    --umco-surface-alt: #EFECE5;
+    --umco-tinta: #161615;
+    --umco-tinta-70: #52514D;
+    --umco-aksen: #C4933F;
+    --umco-aksen-tua: #A87A2C;
+    --umco-aksen-soft: #F3EDE0;
+    --font-sans: 'Instrument Sans', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
 }
 
-body.fi-body {
-    background-color: var(--umco-kertas) !important;
-    font-family: 'Familjen Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
-    color: var(--umco-tinta);
+body,
+.fi-body {
+    background-color: var(--umco-canvas) !important;
+    color: var(--umco-tinta) !important;
+    font-family: var(--font-sans) !important;
 }
 
-::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-}
-::-webkit-scrollbar-track {
-    background: transparent;
-}
-::-webkit-scrollbar-thumb {
-    background: #DCD7CB;
-    border-radius: 9999px;
-}
-
-.fi-sidebar {
-    background-color: var(--umco-kertas) !important;
-    border-right: 1px solid var(--umco-garis) !important;
-    box-shadow: none !important;
-}
-
-.fi-topbar {
-    background-color: var(--umco-kertas) !important;
-    border-bottom: 1px solid var(--umco-garis) !important;
-    box-shadow: none !important;
-}
-
-.fi-sidebar-header {
-    border-bottom: 1px solid var(--umco-garis) !important;
-}
-
-/* ACTIVE SIDEBAR ITEM: TINTA */
-.fi-sidebar-item-active .fi-sidebar-item-button {
-    background-color: var(--umco-tinta) !important;
-    color: var(--umco-kertas-terang) !important;
-    border-radius: 0.75rem !important;
-}
-
-.fi-sidebar-item-active .fi-sidebar-item-icon {
-    color: var(--umco-mentega) !important;
-}
-
-/* CONTAINERS: ZERO SHADOW + CRISP BORDER */
+/* Matikan seluruh shadow, ring Tailwind v4, dan border keras */
 .fi-section,
 .fi-ta-ctn,
+.fi-wi-stats-overview-stat,
+.fi-stats-overview-stat,
 .fi-wi-widget,
 .fi-card,
+.fi-modal-window,
+.fi-dropdown-panel,
+.fi-sidebar,
+.fi-topbar,
+.fi-input-wrp,
+.fi-btn,
+.fi-badge {
+    box-shadow: none !important;
+    --tw-ring-shadow: 0 0 #0000 !important;
+    --tw-ring-color: transparent !important;
+    --tw-shadow: 0 0 #0000 !important;
+    border-color: transparent !important;
+}
+
+/* Sidebar & Topbar menggunakan elevasi tonal halus tanpa garis tepi */
+.fi-sidebar {
+    background-color: var(--umco-surface-alt) !important;
+    border: none !important;
+    border-right: none !important;
+}
+
+.fi-topbar,
+.fi-topbar > nav {
+    background-color: var(--umco-canvas) !important;
+    border: none !important;
+    border-bottom: none !important;
+}
+
+/* Kartu & Container Putih Bersih Tanpa Garis */
+.fi-section,
+.fi-ta-ctn,
+.fi-wi-stats-overview-stat,
 .fi-stats-overview-stat,
+.fi-card,
 .fi-modal-window,
 .fi-dropdown-panel {
-    box-shadow: none !important;
-    border: 1px solid var(--umco-garis) !important;
-    background-color: var(--umco-kertas-terang) !important;
+    background-color: var(--umco-surface) !important;
+    border: none !important;
+    border-radius: 14px !important;
 }
 
-.fi-section-header {
-    padding: 1.25rem 1.5rem !important;
-    border-bottom: 1px solid var(--umco-garis) !important;
-}
-
-.fi-section-header-heading,
 .fi-header-heading {
-    font-family: 'Anybody', 'Arial Black', sans-serif !important;
-    font-weight: 800 !important;
+    font-family: 'Plus Jakarta Sans', 'Instrument Sans', sans-serif !important;
+    font-weight: 600 !important;
     color: var(--umco-tinta) !important;
-    letter-spacing: -0.02em !important;
+    letter-spacing: -0.025em !important;
+}
+
+/* Navigasi Aktif Minimalis */
+.fi-sidebar-item-active > .fi-sidebar-item-btn {
+    background-color: var(--umco-surface) !important;
+    color: var(--umco-tinta) !important;
+    font-weight: 600 !important;
+    border-radius: 10px !important;
+}
+
+.fi-sidebar-item-btn {
+    border-radius: 10px !important;
+}
+
+/* Input & Form Tonal */
+.fi-input-wrp {
+    background-color: var(--umco-surface-alt) !important;
+    border: none !important;
+    border-radius: 10px !important;
+}
+
+.fi-input-wrp:focus-within {
+    background-color: var(--umco-surface) !important;
+    outline: 2px solid var(--umco-aksen) !important;
+    outline-offset: 0px !important;
 }
 
 .fi-input,
 .fi-select-input,
-input[type="text"],
-input[type="number"],
-input[type="email"],
-input[type="password"],
-textarea,
-select {
-    border-radius: 0.5rem !important;
-    border-color: var(--umco-garis) !important;
-    background-color: var(--umco-kertas-terang) !important;
+textarea {
+    border: none !important;
+    background-color: transparent !important;
+    color: var(--umco-tinta) !important;
 }
 
-.fi-input:focus,
-.fi-select-input:focus,
-input:focus,
-textarea:focus,
-select:focus {
-    background-color: #FFFFFF !important;
-    border-color: var(--umco-tinta) !important;
-    box-shadow: none !important;
+/* Tabel Rapi Tanpa Garis Tepi */
+.fi-ta-header-ctn {
+    border-bottom: none !important;
+    padding-bottom: 0.5rem !important;
 }
 
 .fi-ta-table thead tr {
-    background-color: var(--umco-kertas) !important;
+    background-color: var(--umco-canvas) !important;
 }
 
 .fi-ta-table th {
-    font-weight: 700 !important;
-    color: var(--umco-tinta) !important;
-    border-bottom: 1px solid var(--umco-garis) !important;
+    font-weight: 600 !important;
+    color: var(--umco-tinta-70) !important;
+    border: none !important;
+    padding-inline: 0.75rem !important;
 }
 
 .fi-ta-table td {
-    border-bottom: 1px solid #EBE7DC !important;
+    border: none !important;
+    padding-inline: 0.75rem !important;
 }
 
+.fi-ta-content,
+.fi-ta-content-ctn {
+    overflow-x: auto !important;
+}
+
+.fi-ta-row:nth-child(even) {
+    background-color: #FAF9F6 !important;
+}
+
+/* Tombol Aksi & Badge */
 .fi-btn-color-primary:not(.fi-btn-outlined) {
-    background-color: var(--umco-mentega) !important;
-    color: var(--umco-tinta) !important;
-    font-weight: 700 !important;
+    background-color: var(--umco-aksen) !important;
+    color: #161615 !important;
+    font-weight: 600 !important;
     border: none !important;
-    box-shadow: none !important;
     border-radius: 9999px !important;
 }
 
 .fi-btn-color-primary:not(.fi-btn-outlined):hover {
-    background-color: var(--umco-mentega-tua) !important;
+    background-color: var(--umco-aksen-tua) !important;
 }
 
 .fi-btn-color-gray {
-    background-color: var(--umco-kertas-terang) !important;
-    border: 1px solid var(--umco-garis) !important;
+    background-color: var(--umco-surface-alt) !important;
     color: var(--umco-tinta) !important;
+    border: none !important;
     border-radius: 9999px !important;
-    box-shadow: none !important;
 }
 
 .fi-badge {
+    border: none !important;
     border-radius: 9999px !important;
     font-weight: 600 !important;
-    box-shadow: none !important;
+}
+
+/* Bespoke styling untuk PlaceholderAuditWidget (mandiri di filament-theme.css) */
+.umco-audit-card {
+    background-color: var(--umco-surface);
+    border-radius: 14px;
+    padding: 20px 22px;
+}
+
+.umco-audit-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.umco-audit-title {
+    margin: 0;
+    font-family: 'Plus Jakarta Sans', 'Instrument Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--umco-tinta);
+    letter-spacing: -0.015em;
+}
+
+.umco-audit-subtitle {
+    margin: 3px 0 0;
+    font-size: 13px;
+    color: var(--umco-tinta-70);
+}
+
+.umco-audit-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    background-color: var(--umco-aksen-soft);
+    color: var(--umco-tinta);
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.umco-audit-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+}
+
+@media (min-width: 768px) {
+    .umco-audit-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.umco-audit-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background-color: var(--umco-canvas);
+}
+
+.umco-audit-item--critical {
+    background-color: #F6ECE9;
+}
+
+.umco-audit-item--warning {
+    background-color: var(--umco-aksen-soft);
+}
+
+.umco-audit-item-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.umco-audit-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 9999px;
+    background-color: var(--umco-tinta-70);
+    flex-shrink: 0;
+}
+
+.umco-audit-item--critical .umco-audit-dot {
+    background-color: #9E3B2B;
+}
+
+.umco-audit-item--warning .umco-audit-dot {
+    background-color: var(--umco-aksen);
+}
+
+.umco-audit-level {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--umco-tinta-70);
+}
+
+.umco-audit-item-title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--umco-tinta);
+}
+
+.umco-audit-item-desc {
+    margin: 4px 0 0;
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--umco-tinta-70);
+}
+
+.umco-audit-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: flex-start;
+    padding: 7px 14px;
+    border-radius: 9999px;
+    background-color: var(--umco-tinta);
+    color: #F7F5F0 !important;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 150ms ease;
+}
+
+.umco-audit-btn:hover {
+    background-color: var(--umco-aksen-tua);
+    color: #161615 !important;
+}
+
+.umco-audit-empty {
+    padding: 16px;
+    border-radius: 12px;
+    background-color: var(--umco-canvas);
+    font-size: 14px;
+    color: var(--umco-tinta);
 }

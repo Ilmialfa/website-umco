@@ -25,6 +25,7 @@ class UpcomingReservationsWidget extends BaseWidget
             ->description('Daftar tamu yang akan datang dalam waktu dekat. Gunakan tombol aksi cepat WhatsApp untuk konfirmasi.')
             ->query(
                 Reservation::query()
+                    ->with(['seatingOption'])
                     ->whereDate('date', '>=', now()->toDateString())
                     ->whereIn('status', ['pending', 'confirmed'])
                     ->orderBy('date')
@@ -38,29 +39,18 @@ class UpcomingReservationsWidget extends BaseWidget
                     ->copyable(),
 
                 TextColumn::make('name')
-                    ->label('Nama Tamu'),
-
-                TextColumn::make('phone_wa')
-                    ->label('WhatsApp')
-                    ->formatStateUsing(fn ($state) => PhoneNumber::format($state)),
+                    ->label('Tamu')
+                    ->description(fn (Reservation $record) => PhoneNumber::format($record->phone_wa)),
 
                 TextColumn::make('date')
-                    ->label('Tanggal')
+                    ->label('Jadwal')
                     ->date('d M Y')
+                    ->description(fn (Reservation $record) => "{$record->time} WIB")
                     ->sortable(),
 
-                TextColumn::make('time')
-                    ->label('Jam')
-                    ->formatStateUsing(fn ($state) => "{$state} WIB"),
-
                 TextColumn::make('party_size')
-                    ->label('Pax')
-                    ->alignCenter(),
-
-                TextColumn::make('mode')
-                    ->label('Tipe')
-                    ->badge()
-                    ->formatStateUsing(fn ($state) => $state === 'table_menu' ? 'Meja + Menu' : 'Meja Saja'),
+                    ->label('Pax / Tipe')
+                    ->formatStateUsing(fn (Reservation $record) => $record->party_size . ' org · ' . ($record->mode === 'table_menu' ? 'Meja + Menu' : 'Meja')),
 
                 TextColumn::make('status')
                     ->label('Status')
@@ -74,31 +64,18 @@ class UpcomingReservationsWidget extends BaseWidget
             ])
             ->recordActions([
                 Action::make('confirm_wa')
-                    ->label('WA Konfirmasi')
+                    ->label('WA')
+                    ->tooltip('Kirim konfirmasi WhatsApp')
                     ->icon('heroicon-o-chat-bubble-left-ellipsis')
                     ->color('success')
                     ->openUrlInNewTab()
-                    ->url(function (Reservation $record) {
-                        $template = Settings::get('whatsapp_templates.confirmation', 'Halo Kak {nama}, kami dari Admin UM.CO House mengonfirmasi reservasi Kakak (Kode: {kode}) untuk {jumlah} orang pada {tanggal} pukul {jam} WIB. Ditunggu kehadirannya di UM.CO House ya!');
-                        $dateFormatted = date('d/m/Y', strtotime((string) $record->date));
-                        $msg = strtr($template, [
-                            '{nama}' => $record->name,
-                            '{kode}' => $record->code,
-                            '{jumlah}' => (string) $record->party_size,
-                            '{tanggal}' => $dateFormatted,
-                            '{jam}' => $record->time,
-                            '{total}' => 'Rp ' . number_format($record->subtotal, 0, ',', '.'),
-                            '{dp}' => 'Rp ' . number_format($record->dp_amount, 0, ',', '.'),
-                            '{catatan}' => $record->note ?? '-',
-                        ]);
-
-                        return PhoneNumber::waLink($record->phone_wa, $msg);
-                    }),
+                    ->url(fn (Reservation $record): string => route('admin.wa.redirect', ['reservation' => $record->id, 'template' => 'confirmation'])),
 
                 Action::make('mark_confirmed')
                     ->label('Konfirmasi')
                     ->icon('heroicon-o-check')
                     ->color('primary')
+                    ->authorize(fn (): bool => in_array(auth()->user()?->role, ['owner', 'admin', 'cashier'], true))
                     ->visible(fn (Reservation $record) => $record->status === 'pending')
                     ->requiresConfirmation()
                     ->action(function (Reservation $record) {

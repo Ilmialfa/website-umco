@@ -8,7 +8,7 @@ export function init(el) {
     const desktopMq = window.matchMedia('(min-width: 1024px)');
     const reducedMq = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-    // Video latar hanya dimuat di desktop bila diunggah owner
+    // Video latar hanya dimuat di desktop untuk menjaga ringan di perangkat seluler
     const videoHost = el.querySelector('[data-hero-video-host]');
     const videoSrc = videoHost?.dataset.videoSrc;
     if (videoHost && videoSrc && desktopMq.matches) {
@@ -19,46 +19,26 @@ export function init(el) {
         video.loop = true;
         video.muted = true;
         video.playsInline = true;
-        video.preload = 'none';
-        video.className = 'w-full h-full object-cover';
+        video.preload = 'metadata';
+        video.className = 'w-full h-full object-cover opacity-75';
         videoHost.innerHTML = '';
         videoHost.appendChild(video);
     }
 
     if (!reducedMq.matches && desktopMq.matches) {
         const media = el.querySelector('[data-hero-media]');
-        const wordmark = el.querySelector('[data-hero-wordmark]');
-
         if (media) {
             const tw = gsap.to(media, {
-                yPercent: 15,
+                yPercent: 12,
                 ease: 'none',
                 scrollTrigger: {
                     trigger: el,
                     start: 'top top',
                     end: 'bottom top',
-                    scrub: 0.6,
+                    scrub: 0.8,
                 },
             });
             cleanups.push(() => tw.scrollTrigger?.kill());
-        }
-
-        if (wordmark) {
-            const twW = gsap.fromTo(
-                wordmark,
-                { fontVariationSettings: '"wdth" 75, "wght" 800' },
-                {
-                    fontVariationSettings: '"wdth" 120, "wght" 800',
-                    ease: 'none',
-                    scrollTrigger: {
-                        trigger: el,
-                        start: 'top top',
-                        end: 'bottom top',
-                        scrub: 0.5,
-                    },
-                }
-            );
-            cleanups.push(() => twW.scrollTrigger?.kill());
         }
     }
 

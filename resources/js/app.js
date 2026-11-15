@@ -18,7 +18,6 @@ const modules = {
     'crowd-chart': () => import('./sections/crowd-chart.js'),
     'testimonials-slider': () => import('./sections/testimonials-slider.js'),
     'gallery-mosaic': () => import('./sections/gallery-mosaic.js'),
-    'altimeter': () => import('./sections/altimeter.js'),
     'reservasi-tools': () => import('./sections/reservasi-tools.js'),
 };
 
@@ -38,15 +37,16 @@ function initFooter() {
     if (wordmark) {
         gsap.fromTo(
             wordmark,
-            { fontVariationSettings: '"wdth" 60, "wght" 800' },
+            { scaleX: 0.96, letterSpacing: '-0.02em', transformOrigin: '50% 50%' },
             {
-                fontVariationSettings: '"wdth" 100, "wght" 800',
-                ease: 'none',
+                scaleX: 1.18,
+                letterSpacing: '0.14em',
+                ease: 'power1.out',
                 scrollTrigger: {
                     trigger: footer,
-                    start: 'top bottom',
+                    start: 'top 95%',
                     end: 'bottom bottom',
-                    scrub: 0.6,
+                    scrub: 2.4,
                 },
             }
         );
@@ -102,7 +102,8 @@ function initSectionModules() {
 
                 try {
                     const mod = await loader();
-                    const destroy = mod?.default?.(el);
+                    const initFn = mod?.default || mod?.init;
+                    const destroy = typeof initFn === 'function' ? initFn(el) : undefined;
                     if (typeof destroy === 'function') {
                         cleanups.push(destroy);
                     }

@@ -20,6 +20,8 @@ class BeanOriginResource extends Resource
 {
     protected static ?string $model = BeanOrigin::class;
 
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedGlobeAsiaAustralia;
 
     protected static string|UnitEnum|null $navigationGroup = 'Konten Website';

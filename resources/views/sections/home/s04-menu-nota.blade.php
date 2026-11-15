@@ -69,19 +69,19 @@
             return '{{ url('/reservasi') }}?items=' + encodeURIComponent(encoded);
         }
     }"
-    class="umco-section bg-[var(--mentega)] text-[var(--tinta)] edge-perforated-top"
+    class="umco-section bg-[var(--batu)] text-[var(--tinta)]"
 >
     <div class="umco-container space-y-10">
         <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div class="space-y-2 max-w-2xl">
-                <h2 data-reveal="rise" class="type-h2 font-display font-bold">
+                <h2 data-reveal="rise" class="type-h2 font-display font-semibold">
                     {{ $section?->heading ?: 'Pilih duluan sebelum datang.' }}
                 </h2>
-                <p class="type-body text-[var(--tinta)]/85">
+                <p class="type-body text-[var(--tinta-70)]">
                     {{ $section?->subheading ?: 'Ketuk nama menu, isiannya turun langsung ke nota.' }}
                 </p>
             </div>
-            <a href="{{ url('/menu') }}" wire:navigate class="inline-flex items-center gap-2 font-semibold underline underline-offset-4 shrink-0">
+            <a href="{{ url('/menu') }}" wire:navigate class="inline-flex items-center gap-2 font-semibold text-[var(--tinta)] underline underline-offset-4 hover:text-[var(--mentega-tua)] shrink-0">
                 <span>{{ $section?->cta_label ?: 'Lihat semua menu' }}</span>
                 <svg class="w-4 h-4"><use href="#icon-arrow-right"/></svg>
             </a>
@@ -151,12 +151,12 @@
                 </template>
             </div>
 
-            {{-- Kanan Desktop: Nota lengket bergaris tinta --}}
+            {{-- Kanan Desktop: Nota lembut bergaris halus --}}
             <div class="hidden lg:block lg:col-span-5 lg:sticky lg:top-24 space-y-4">
-                <div class="bg-[var(--kertas-terang)] text-[var(--tinta)] border border-[var(--tinta)] p-6 space-y-4">
+                <div class="rounded-2xl bg-[var(--kertas-terang)] text-[var(--tinta)] border border-[var(--garis)] p-6 sm:p-7 space-y-4">
                     <div class="flex items-baseline justify-between">
-                        <span class="font-display font-extrabold text-xl tracking-tight">NOTA</span>
-                        <span class="font-led text-sm text-[var(--cabai)]">No. 000127</span>
+                        <span class="font-display font-semibold text-lg tracking-wide">NOTA PILIHAN</span>
+                        <span class="font-sans font-semibold text-xs text-[var(--mentega-tua)] tabular-nums">No. 000127</span>
                     </div>
 
                     <div class="text-xs space-y-1 border-b border-[var(--tinta)] pb-3">
@@ -221,10 +221,10 @@
         </div>
     </div>
 
-    {{-- Tablet & HP: Strip nota mengambang di bawah section (atau bottom sheet saat diklik) --}}
+    {{-- Tablet & HP: Strip nota ringkas --}}
     <div x-show="totalQty() > 0" class="lg:hidden mt-8" style="display: none;">
         <div class="umco-container">
-            <div class="bg-[var(--kertas-terang)] border border-[var(--tinta)] px-4 py-3 flex items-center justify-between gap-3">
+            <div class="rounded-2xl bg-[var(--kertas-terang)] border border-[var(--garis)] px-4 py-3 flex items-center justify-between gap-3">
                 <button type="button" @click="sheetOpen = true" class="text-left flex-1">
                     <p class="text-sm font-semibold tabular-nums">
                         <span x-text="totalQty() + ' item'"></span> · <span x-text="formatRupiah(totalAmount())"></span>
@@ -245,7 +245,7 @@
         style="display: none;"
         class="lg:hidden fixed inset-0 z-50 bg-[var(--tinta)]/60 flex items-end justify-center p-3"
     >
-        <div class="w-full max-w-lg bg-[var(--kertas-terang)] border border-[var(--tinta)] p-5 space-y-4 max-h-[82svh] overflow-y-auto">
+        <div class="w-full max-w-lg rounded-2xl bg-[var(--kertas-terang)] p-5 space-y-4 max-h-[82svh] overflow-y-auto">
             <div class="flex items-center justify-between">
                 <span class="font-display font-bold text-xl">Nota pilihanmu</span>
                 <button type="button" @click="sheetOpen = false" class="text-sm font-semibold underline underline-offset-4">Tutup</button>

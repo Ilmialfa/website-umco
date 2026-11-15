@@ -17,6 +17,7 @@ use App\Support\Settings;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
@@ -566,6 +567,15 @@ class ReservationPage extends Component
     public function submitReservation(): void
     {
         $this->resetErrorBag();
+
+        $throttleKey = 'umco:res-submit:' . request()->ip();
+        if (RateLimiter::tooManyAttempts($throttleKey, 10)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+            $this->addError('acceptedRules', "Terlalu banyak kiriman dalam waktu singkat. Coba lagi {$seconds} detik lagi ya.");
+            return;
+        }
+        RateLimiter::hit($throttleKey, 60);
+
         $this->validateStep1();
         $this->validateStep3();
         $this->validateStep4();
@@ -602,6 +612,7 @@ class ReservationPage extends Component
             return;
         }
 
+        session()->put("umco_status_verified_{$reservation->code}", true);
         $this->createdReservationId = $reservation->id;
         $this->createdCode = $reservation->code;
         $this->createdWaLink = NotifyUmcoWhatsApp::waLink($reservation);

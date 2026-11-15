@@ -116,10 +116,10 @@
             </nav>
 
             {{-- TABLET (640px-1023px): Kartu ringkas karcis menempel & bisa dilipat --}}
-            <div class="hidden sm:block lg:hidden sticky top-16 z-30 mt-4 bg-[var(--susu-stroberi)] text-[var(--tinta)] border border-[var(--tinta)]/25 px-5 py-3.5">
+            <div class="hidden sm:block lg:hidden sticky top-16 z-30 mt-4 rounded-2xl bg-[var(--kertas-terang)] text-[var(--tinta)] border-t-[3px] border-t-[var(--mentega)] border border-[var(--garis)] px-5 py-3.5">
                 <div class="flex items-center justify-between gap-4">
                     <div class="min-w-0">
-                        <p class="font-display font-extrabold text-sm truncate">
+                        <p class="font-display font-semibold text-sm truncate">
                             {{ $dateDisplay }} · {{ $timeDisplay }} · {{ $partySize }} orang
                         </p>
                         <p class="text-xs text-[var(--tinta)]/75 truncate">
@@ -363,9 +363,9 @@
                                         </span>
                                     @endif
                                 </div>
-                                <div class="w-full h-2 bg-[var(--garis)] overflow-hidden">
+                                <div class="w-full h-2 rounded-full bg-[var(--batu)] overflow-hidden">
                                     <div
-                                        class="h-full transition-all duration-300 {{ $quoteData['meets_min_spend'] ? 'bg-[var(--matcha)]' : 'bg-[var(--mentega)]' }}"
+                                        class="h-full transition-all duration-300 {{ $quoteData['meets_min_spend'] ? 'bg-[var(--tinta)]' : 'bg-[var(--mentega)]' }}"
                                         style="width: {{ $minSpendPct }}%"
                                     ></div>
                                 </div>
@@ -405,7 +405,7 @@
 
                             {{-- Keranjang aktif saat ini --}}
                             @if (! empty($selectedItems))
-                                <div class="p-4 bg-[var(--susu-stroberi)]/45 border border-[var(--garis)] space-y-2.5">
+                                <div class="p-4 rounded-xl bg-[var(--kertas-terang)] border border-[var(--garis)] space-y-2.5">
                                     <p class="text-xs font-semibold text-[var(--tinta-70)]">Pesananmu sekarang</p>
                                     @foreach ($selectedItems as $key => $line)
                                         <div wire:key="cart-line-{{ $key }}" class="flex items-center justify-between gap-3 text-sm">
@@ -839,7 +839,7 @@
                 <button
                     type="button"
                     @click="mobileSheetOpen = true"
-                    class="w-full h-16 px-4 bg-[var(--susu-stroberi)] text-[var(--tinta)] border-t border-[var(--tinta)]/25 flex items-center justify-between gap-3 text-left"
+                    class="w-full h-16 px-4 bg-[var(--kertas-terang)] text-[var(--tinta)] border-t border-[var(--garis)] flex items-center justify-between gap-3 text-left"
                 >
                     <span class="text-xs font-semibold truncate">
                         {{ $dateDisplay }} · {{ $this->time ? str_replace(':', '.', $this->time) : '-' }} · {{ $partySize }} orang · {{ \App\Support\IndonesianFormat::rupiah($quoteData['subtotal']) }}

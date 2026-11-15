@@ -34,6 +34,8 @@ class CrowdPatternPage extends Page
 
     public function mount(): void
     {
+        abort_unless(auth()->user()?->isOwner() ?? false, 403);
+
         $rows = CrowdPattern::all();
         for ($d = 1; $d <= 7; $d++) {
             for ($h = 7; $h <= 22; $h++) {
@@ -49,6 +51,8 @@ class CrowdPatternPage extends Page
 
     public function fillExample(): void
     {
+        abort_unless(auth()->user()?->isOwner() ?? false, 403);
+
         $weekdayCurve = [
             7 => 12, 8 => 28, 9 => 46, 10 => 62, 11 => 58,
             12 => 72, 13 => 68, 14 => 74, 15 => 86, 16 => 92,
@@ -77,6 +81,8 @@ class CrowdPatternPage extends Page
 
     public function save(): void
     {
+        abort_unless(auth()->user()?->isOwner() ?? false, 403);
+
         for ($d = 1; $d <= 7; $d++) {
             for ($h = 7; $h <= 22; $h++) {
                 $val = max(0, min(100, (int) ($this->grid[$d][$h] ?? 0)));

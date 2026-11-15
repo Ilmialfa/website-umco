@@ -26,8 +26,6 @@
 
     $navItems = [
         ['label' => 'Menu', 'href' => url('/menu'), 'active' => request()->is('menu*')],
-        ['label' => 'Biji', 'href' => url('/#biji'), 'active' => false],
-        ['label' => 'Seduh', 'href' => url('/#seduh'), 'active' => false],
         ['label' => 'Cerita', 'href' => url('/cerita'), 'active' => request()->is('cerita*')],
     ];
 @endphp
@@ -52,24 +50,23 @@
     <link rel="apple-touch-icon" href="/favicon.svg">
     <link rel="canonical" href="{{ url()->current() }}">
 
-    <link rel="preload" href="/fonts/anybody-latin.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="/fonts/familjen-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/plus-jakarta-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/instrument-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
     <style>
         @font-face {
-            font-family: 'Anybody';
+            font-family: 'Plus Jakarta Sans';
             font-style: normal;
-            font-weight: 100 900;
-            font-stretch: 50% 150%;
+            font-weight: 200 800;
             font-display: swap;
-            src: url('/fonts/anybody-latin.woff2') format('woff2');
+            src: url('/fonts/plus-jakarta-sans-latin.woff2') format('woff2');
             unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
         }
         @font-face {
-            font-family: 'Familjen Grotesk';
+            font-family: 'Instrument Sans';
             font-style: normal;
             font-weight: 400 700;
             font-display: swap;
-            src: url('/fonts/familjen-grotesk-latin.woff2') format('woff2');
+            src: url('/fonts/instrument-sans-latin.woff2') format('woff2');
             unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
         }
     </style>
@@ -136,151 +133,82 @@
         data-theme="{{ $initialNavTheme }}"
         data-scrolled="0"
         data-hidden="0"
-        x-data="{ mobileMenuOpen: false }"
-        @keydown.escape.window="mobileMenuOpen = false"
         class="fixed top-0 inset-x-0 z-50 pointer-events-none"
     >
-        {{-- Desktop (>=1024px): 3 separated pills --}}
-        <div class="hidden lg:block pt-4">
-            <div class="umco-container flex items-center justify-between gap-4">
-                <a
-                    href="{{ url('/') }}"
-                    wire:navigate
-                    class="nav-pill pointer-events-auto inline-flex items-center px-5 h-11 rounded-full font-display font-bold text-lg tracking-tight"
-                >
-                    UMCO
-                </a>
-
-                <nav class="nav-pill pointer-events-auto inline-flex items-center gap-7 px-6 h-11 rounded-full text-[15px] font-medium" aria-label="Navigasi utama">
-                    @foreach ($navItems as $item)
-                        <a
-                            href="{{ $item['href'] }}"
-                            @if (!str_contains($item['href'], '#')) wire:navigate @endif
-                            class="nav-link-line"
-                            @if ($item['active']) aria-current="page" @endif
-                        >
-                            {{ $item['label'] }}
-                        </a>
-                    @endforeach
-                </nav>
-
-                <a
-                    href="{{ url('/reservasi') }}"
-                    wire:navigate
-                    class="btn-umco btn-umco-primary pointer-events-auto h-11 min-h-0 px-5 text-[15px]"
-                >
-                    <span class="btn-roll">
-                        <span>Pesan meja</span>
-                        <span aria-hidden="true">Pesan meja</span>
-                    </span>
-                </a>
-            </div>
-        </div>
-
-        {{-- Tablet (640px-1023px): single compact bar --}}
-        <div class="hidden sm:block lg:hidden pt-3">
+        {{-- Desktop & Tablet (>=640px): Strict 3-zone bar — Left (Menu, Cerita) | Center (UMCO) | Right (Reservasi) --}}
+        <div class="hidden sm:block pt-3 lg:pt-4">
             <div class="umco-container">
-                <div class="nav-pill pointer-events-auto flex items-center justify-between h-12 px-5 rounded-full">
-                    <a href="{{ url('/') }}" wire:navigate class="font-display font-bold text-lg tracking-tight">
+                <div class="nav-pill pointer-events-auto grid grid-cols-3 items-center h-12 lg:h-[52px] px-5 lg:px-7 rounded-full">
+                    <nav class="flex items-center gap-5 lg:gap-7 text-[14px] lg:text-[15px] font-medium justify-self-start" aria-label="Navigasi utama">
+                        @foreach ($navItems as $item)
+                            <a
+                                href="{{ $item['href'] }}"
+                                wire:navigate
+                                class="nav-link-line"
+                                @if ($item['active']) aria-current="page" @endif
+                            >
+                                {{ $item['label'] }}
+                            </a>
+                        @endforeach
+                    </nav>
+
+                    <a
+                        href="{{ url('/') }}"
+                        wire:navigate
+                        class="justify-self-center font-display font-semibold text-[17px] lg:text-[19px] tracking-[0.08em]"
+                    >
                         UMCO
                     </a>
 
-                    <nav class="flex items-center gap-6 text-[15px] font-medium" aria-label="Navigasi tablet">
-                        <a href="{{ url('/menu') }}" wire:navigate class="nav-link-line" @if (request()->is('menu*')) aria-current="page" @endif>Menu</a>
-                        <a href="{{ url('/cerita') }}" wire:navigate class="nav-link-line" @if (request()->is('cerita*')) aria-current="page" @endif>Cerita</a>
-                    </nav>
-
-                    <div class="flex items-center gap-3">
-                        <a href="{{ url('/reservasi') }}" wire:navigate class="btn-umco btn-umco-primary min-h-0 h-9 px-4 text-sm">
-                            Pesan meja
+                    <div class="justify-self-end">
+                        <a
+                            href="{{ url('/reservasi') }}"
+                            wire:navigate
+                            class="btn-umco btn-umco-primary min-h-0 h-8 lg:h-9 px-4 lg:px-5 text-[13px] lg:text-[14px]"
+                        >
+                            <span class="btn-roll">
+                                <span>Reservasi</span>
+                                <span aria-hidden="true">Reservasi</span>
+                            </span>
                         </a>
                     </div>
                 </div>
             </div>
         </div>
 
-        {{-- Mobile (<640px): thin 56px top bar with pure text trigger --}}
+        {{-- Mobile (<640px): Compact 3-zone bar — Left (Menu, Cerita) | Center (UMCO) | Right (Reservasi) --}}
         <div class="sm:hidden">
-            <div class="nav-pill pointer-events-auto flex items-center justify-between h-14 px-5">
-                <a href="{{ url('/') }}" wire:navigate class="font-display font-bold text-lg tracking-tight">
+            <div class="nav-pill pointer-events-auto grid grid-cols-3 items-center h-14 px-4">
+                <nav class="flex items-center gap-3 text-[13px] font-medium justify-self-start" aria-label="Navigasi utama">
+                    <a
+                        href="{{ url('/menu') }}"
+                        wire:navigate
+                        class="nav-link-line"
+                        @if (request()->is('menu*')) aria-current="page" @endif
+                    >
+                        Menu
+                    </a>
+                    <a
+                        href="{{ url('/cerita') }}"
+                        wire:navigate
+                        class="nav-link-line"
+                        @if (request()->is('cerita*')) aria-current="page" @endif
+                    >
+                        Cerita
+                    </a>
+                </nav>
+
+                <a href="{{ url('/') }}" wire:navigate class="justify-self-center font-display font-semibold text-base tracking-[0.08em]">
                     UMCO
                 </a>
 
-                <div class="flex items-center gap-3">
+                <div class="justify-self-end">
                     <a
                         href="{{ url('/reservasi') }}"
                         wire:navigate
-                        class="inline-flex items-center justify-center h-9 px-3.5 rounded-full bg-[var(--mentega)] text-[var(--tinta)] text-sm font-semibold"
+                        class="inline-flex items-center justify-center h-8 px-3.5 rounded-full bg-[var(--mentega)] text-[var(--tinta)] text-xs font-semibold tracking-wide"
                     >
-                        Pesan
-                    </a>
-                    <button
-                        type="button"
-                        @click="mobileMenuOpen = true"
-                        class="inline-flex items-center justify-center h-9 px-2 text-sm font-semibold underline underline-offset-4"
-                        aria-label="Buka menu navigasi"
-                    >
-                        Menu
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        {{-- Full-screen Mobile Drawer (--mentega solid, zero shadow/blur) --}}
-        <div
-            x-show="mobileMenuOpen"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 translate-y-2"
-            x-transition:enter-end="opacity-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-150"
-            x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 translate-y-2"
-            style="display: none;"
-            class="sm:hidden fixed inset-0 z-[60] bg-[var(--mentega)] text-[var(--tinta)] pointer-events-auto flex flex-col justify-between px-6 py-5 overflow-y-auto"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Menu UMCO"
-        >
-            <div class="flex items-center justify-between h-10">
-                <a href="{{ url('/') }}" wire:navigate @click="mobileMenuOpen = false" class="font-display font-bold text-lg">
-                    UMCO
-                </a>
-                <button
-                    type="button"
-                    @click="mobileMenuOpen = false"
-                    class="inline-flex items-center gap-1.5 h-10 px-2 text-sm font-semibold underline underline-offset-4"
-                >
-                    Tutup
-                </button>
-            </div>
-
-            <nav class="my-auto py-8 flex flex-col gap-3 font-display font-bold" aria-label="Tautan utama">
-                <a href="{{ url('/') }}" wire:navigate @click="mobileMenuOpen = false" class="text-[2.6rem] leading-[0.95] tracking-tight py-1">
-                    Beranda
-                </a>
-                <a href="{{ url('/menu') }}" wire:navigate @click="mobileMenuOpen = false" class="text-[2.6rem] leading-[0.95] tracking-tight py-1">
-                    Daftar menu
-                </a>
-                <a href="{{ url('/cerita') }}" wire:navigate @click="mobileMenuOpen = false" class="text-[2.6rem] leading-[0.95] tracking-tight py-1">
-                    Cerita kami
-                </a>
-                <a href="{{ url('/reservasi') }}" wire:navigate @click="mobileMenuOpen = false" class="text-[2.6rem] leading-[0.95] tracking-tight py-1 text-[var(--cabai)]">
-                    Pesan meja
-                </a>
-            </nav>
-
-            <div class="pt-5 border-t border-[var(--tinta)]/15 space-y-3 text-sm">
-                <div class="inline-flex items-center gap-2 font-medium">
-                    <span class="w-2 h-2 rounded-full bg-[var(--cabai)]"></span>
-                    <span>Buka tiap hari, {{ $openTime }} - {{ $closeTime }} WIB</span>
-                </div>
-                <p class="text-[var(--tinta)]/80">{{ $address }}</p>
-                <div class="flex flex-wrap gap-4 pt-1 font-semibold">
-                    <a href="{{ $waLink }}" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4">
-                        Chat WhatsApp
-                    </a>
-                    <a href="{{ $mapsUrl }}" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4">
-                        Peta lokasi
+                        Reservasi
                     </a>
                 </div>
             </div>
@@ -343,10 +271,10 @@
                 </div>
             </div>
 
-            <div class="relative pt-10 sm:pt-14 flex flex-col items-center justify-end overflow-hidden select-none">
+            <div class="relative pt-12 sm:pt-16 pb-4 flex flex-col items-center justify-end overflow-hidden select-none">
                 <div
                     data-footer-wordmark
-                    class="font-display font-extrabold text-[30vw] sm:text-[22vw] leading-[0.8] tracking-[-0.04em] text-[var(--kertas)] text-center whitespace-nowrap"
+                    class="w-full font-display font-semibold text-[21vw] sm:text-[18vw] leading-[0.82] tracking-[-0.02em] text-[var(--kertas)] text-center whitespace-nowrap will-change-transform"
                 >
                     UMCO
                 </div>
@@ -355,11 +283,11 @@
                     data-footer-cutout
                     src="{{ asset('/images/footer-cutout.webp') }}"
                     alt="Segelas kopi susu dingin UMCO"
-                    width="418"
-                    height="540"
+                    width="299"
+                    height="629"
                     loading="lazy"
                     decoding="async"
-                    class="relative z-10 -mt-[22vw] sm:-mt-[17vw] w-36 sm:w-48 lg:w-56 h-auto pointer-events-none"
+                    class="relative z-10 -mt-[21vw] sm:-mt-[17vw] w-28 sm:w-40 lg:w-48 h-auto pointer-events-none"
                 >
             </div>
         </div>

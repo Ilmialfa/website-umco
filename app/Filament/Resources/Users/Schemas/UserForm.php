@@ -65,6 +65,8 @@ class UserForm
                                             'cashier' => 'Kasir (Reservasi & Stok Menu)',
                                         ])
                                         ->default('cashier')
+                                        ->disabled(fn ($record): bool => $record !== null && auth()->id() === $record->id)
+                                        ->helperText('Role diri sendiri tidak bisa diturunkan langsung untuk mencegah terkunci.')
                                         ->required(),
 
                                     Toggle::make('must_change_password')

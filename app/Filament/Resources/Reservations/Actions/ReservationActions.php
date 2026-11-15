@@ -74,6 +74,7 @@ class ReservationActions
                 ->label('Verifikasi pembayaran')
                 ->icon('heroicon-o-check-circle')
                 ->color('success')
+                ->authorize(fn (): bool => in_array(auth()->user()?->role, ['owner', 'admin', 'cashier'], true))
                 ->visible(fn (Reservation $record): bool => in_array($record->status, ['pending', 'confirmed'], true) && $record->payment_status !== 'verified')
                 ->form([
                     Select::make('payment_result')
@@ -121,6 +122,7 @@ class ReservationActions
                 ->label('Tolak bukti')
                 ->icon('heroicon-o-exclamation-triangle')
                 ->color('danger')
+                ->authorize(fn (): bool => in_array(auth()->user()?->role, ['owner', 'admin', 'cashier'], true))
                 ->visible(fn (Reservation $record): bool => $record->status === 'pending' && $record->payment_status !== 'rejected')
                 ->form([
                     Textarea::make('payment_rejected_reason')
@@ -152,6 +154,7 @@ class ReservationActions
                 ->label('Tandai datang')
                 ->icon('heroicon-o-user-check')
                 ->color('info')
+                ->authorize(fn (): bool => in_array(auth()->user()?->role, ['owner', 'admin', 'cashier'], true))
                 ->visible(fn (Reservation $record): bool => $record->status === 'confirmed' && $record->arrived_at === null)
                 ->requiresConfirmation()
                 ->action(function (Reservation $record): void {
@@ -171,6 +174,7 @@ class ReservationActions
                 ->label('Tandai selesai')
                 ->icon('heroicon-o-flag')
                 ->color('gray')
+                ->authorize(fn (): bool => in_array(auth()->user()?->role, ['owner', 'admin', 'cashier'], true))
                 ->visible(fn (Reservation $record): bool => $record->status === 'confirmed')
                 ->requiresConfirmation()
                 ->action(function (Reservation $record): void {
@@ -193,6 +197,7 @@ class ReservationActions
                 ->label('Batalkan')
                 ->icon('heroicon-o-x-mark')
                 ->color('danger')
+                ->authorize(fn (): bool => in_array(auth()->user()?->role, ['owner', 'admin', 'cashier'], true))
                 ->visible(fn (Reservation $record): bool => in_array($record->status, ['pending', 'confirmed'], true))
                 ->form([
                     Textarea::make('cancelled_reason')

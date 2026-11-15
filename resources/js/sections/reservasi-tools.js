@@ -62,8 +62,8 @@ export function downloadKarcisPng(data) {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Latar kertas luar
-    ctx.fillStyle = '#F5F2EA';
+    // Latar kertas luar Warm Alabaster
+    ctx.fillStyle = '#F7F5F0';
     ctx.fillRect(0, 0, W, H);
 
     const padX = 48;
@@ -71,49 +71,37 @@ export function downloadKarcisPng(data) {
     const cardW = W - padX * 2;
     const cardH = H - padY * 2;
 
-    // Karcis susu-stroberi dengan gerigi atas & bawah
-    ctx.fillStyle = '#F0D2C9';
-    ctx.beginPath();
-    const teeth = 26;
-    const step = cardW / teeth;
-    ctx.moveTo(padX, padY + 8);
-    for (let i = 0; i < teeth; i++) {
-        ctx.lineTo(padX + i * step + step * 0.5, padY);
-        ctx.lineTo(padX + (i + 1) * step, padY + 8);
-    }
-    ctx.lineTo(padX + cardW, padY + cardH - 8);
-    for (let i = teeth; i > 0; i--) {
-        ctx.lineTo(padX + i * step - step * 0.5, padY + cardH);
-        ctx.lineTo(padX + (i - 1) * step, padY + cardH - 8);
-    }
-    ctx.closePath();
-    ctx.fill();
+    // Karcis Putih Bersih + Aksen Amber Atas
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(padX, padY, cardW, cardH);
+    ctx.fillStyle = '#C4933F';
+    ctx.fillRect(padX, padY, cardW, 8);
 
-    ctx.fillStyle = '#22263A';
-    ctx.font = '800 22px Anybody, Arial, sans-serif';
+    ctx.fillStyle = '#161615';
+    ctx.font = '600 20px "Plus Jakarta Sans", sans-serif';
     ctx.fillText('UMCO HOUSE', padX + 36, padY + 62);
 
-    ctx.fillStyle = '#C4472E';
-    ctx.font = '600 28px "Reenie Beanie", cursive';
+    ctx.fillStyle = '#A87A2C';
+    ctx.font = '600 26px "Reenie Beanie", cursive';
     ctx.textAlign = 'right';
     ctx.fillText(data.code || 'No. ......', padX + cardW - 36, padY + 62);
     ctx.textAlign = 'left';
 
     // Judul karcis
-    ctx.fillStyle = '#22263A';
-    ctx.font = '800 44px Anybody, Arial, sans-serif';
+    ctx.fillStyle = '#161615';
+    ctx.font = '600 40px "Plus Jakarta Sans", sans-serif';
     ctx.fillText('Karcis meja', padX + 36, padY + 116);
 
     // Stempel kanan atas
     if (data.stamp) {
         ctx.save();
         ctx.translate(padX + cardW - 140, padY + 108);
-        ctx.rotate(-0.11);
-        ctx.strokeStyle = data.stampHex || '#C4472E';
-        ctx.lineWidth = 3;
+        ctx.rotate(-0.08);
+        ctx.strokeStyle = data.stampHex || '#A87A2C';
+        ctx.lineWidth = 2.5;
         ctx.strokeRect(-72, -18, 144, 34);
-        ctx.fillStyle = data.stampHex || '#C4472E';
-        ctx.font = '800 13px Anybody, Arial, sans-serif';
+        ctx.fillStyle = data.stampHex || '#A87A2C';
+        ctx.font = '600 13px "Plus Jakarta Sans", sans-serif';
         ctx.textAlign = 'center';
         ctx.fillText(data.stamp, 0, 4);
         ctx.restore();
@@ -133,16 +121,16 @@ export function downloadKarcisPng(data) {
 
     let y = padY + 178;
     lines.forEach(([label, val]) => {
-        ctx.fillStyle = 'rgba(34,38,58,0.65)';
-        ctx.font = '600 15px "Familjen Grotesk", sans-serif';
+        ctx.fillStyle = '#52514D';
+        ctx.font = '600 15px "Instrument Sans", sans-serif';
         ctx.fillText(label, padX + 36, y);
 
-        ctx.fillStyle = '#22263A';
-        ctx.font = '600 22px "Familjen Grotesk", sans-serif';
+        ctx.fillStyle = '#161615';
+        ctx.font = '600 22px "Instrument Sans", sans-serif';
         const text = String(val).slice(0, 36);
         ctx.fillText(text, padX + 132, y);
 
-        ctx.strokeStyle = 'rgba(34,38,58,0.22)';
+        ctx.strokeStyle = 'rgba(22,22,21,0.12)';
         ctx.setLineDash([4, 4]);
         ctx.beginPath();
         ctx.moveTo(padX + 36, y + 14);
@@ -153,8 +141,8 @@ export function downloadKarcisPng(data) {
         y += 60;
     });
 
-    ctx.fillStyle = 'rgba(34,38,58,0.8)';
-    ctx.font = '500 16px "Familjen Grotesk", sans-serif';
+    ctx.fillStyle = '#52514D';
+    ctx.font = '500 15px "Instrument Sans", sans-serif';
     ctx.fillText('Tunjukkan di kasir. Karcis hangus 15 menit setelah jam pesan.', padX + 36, padY + cardH - 52);
 
     const link = document.createElement('a');

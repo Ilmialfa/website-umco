@@ -36,6 +36,8 @@ class ReservationReports extends Page
 
     public function mount(): void
     {
+        abort_unless(auth()->user()?->isAdmin() ?? false, 403);
+
         $this->startDate = now()->startOfMonth()->toDateString();
         $this->endDate = now()->endOfMonth()->toDateString();
     }
@@ -64,8 +66,20 @@ class ReservationReports extends Page
         ];
     }
 
+    private function safeCsvCell(mixed $value): string
+    {
+        $str = (string) ($value ?? '');
+        if ($str !== '' && preg_match('/^[=+\-@\t\r]/', $str)) {
+            return "'" . $str;
+        }
+
+        return $str;
+    }
+
     public function exportCsv(): StreamedResponse
     {
+        abort_unless(auth()->user()?->isAdmin() ?? false, 403);
+
         $records = $this->getReportQuery()->get();
         $filename = 'rekap_reservasi_umco_' . $this->startDate . '_sampai_' . $this->endDate . '.csv';
 
@@ -91,18 +105,18 @@ class ReservationReports extends Page
 
             foreach ($records as $r) {
                 fputcsv($handle, [
-                    $r->code,
-                    $r->name,
-                    $r->phone_wa,
+                    $this->safeCsvCell($r->code),
+                    $this->safeCsvCell($r->name),
+                    $this->safeCsvCell($r->phone_wa),
                     $r->date->format('Y-m-d'),
                     $r->time . ' WIB',
                     $r->party_size,
                     $r->mode === 'table_menu' ? 'Meja + Menu' : 'Meja Saja',
-                    $r->status_label,
-                    $r->payment_status_label,
+                    $this->safeCsvCell($r->status_label),
+                    $this->safeCsvCell($r->payment_status_label),
                     $r->subtotal,
                     $r->dp_amount,
-                    $r->note ?? '',
+                    $this->safeCsvCell($r->note ?? ''),
                 ]);
             }
 

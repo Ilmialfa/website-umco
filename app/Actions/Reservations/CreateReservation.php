@@ -211,6 +211,14 @@ class CreateReservation
                     'payment_proof' => 'Ukuran file bukti maksimal 5 MB.',
                 ]);
             }
+            if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp'], true)) {
+                $realPath = method_exists($proofFile, 'getRealPath') ? $proofFile->getRealPath() : null;
+                if (! $realPath || ! is_array(@getimagesize($realPath))) {
+                    throw ValidationException::withMessages([
+                        'payment_proof' => 'File bukti transfer tidak dikenali sebagai gambar yang sah.',
+                    ]);
+                }
+            }
 
             $filename = Str::uuid()->toString() . '.' . $ext;
             $proofPath = $proofFile->storeAs('payment_proofs', $filename, 'public');

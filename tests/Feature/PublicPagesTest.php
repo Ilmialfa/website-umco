@@ -16,6 +16,9 @@ it('renders home page without legacy copy, emojis, or external fonts', function 
     $response->assertDontSee('huruf H');
     $response->assertDontSee('fonts.googleapis.com');
     $response->assertDontSee('fonts.bunny.net');
+    $response->assertDontSee('font-led');
+    $response->assertDontSee('Section 01');
+    $response->assertDontSee('#biji');
     expect($response->getContent())->not->toMatch('/[\x{1F300}-\x{1FAFF}]/u');
 });
 
@@ -54,6 +57,8 @@ it('renders cerita page and permanently redirects /about to /cerita', function (
     $response->assertSee('Tiga hal yang kami pegang');
     $response->assertDontSee('Wing Barat');
     $response->assertDontSee('Arsitektur');
+    $response->assertDontSee('id="biji"', false);
+    $response->assertDontSee('mdpl');
     expect($response->getContent())->not->toMatch('/[\x{1F300}-\x{1FAFF}]/u');
 });
 
@@ -84,4 +89,10 @@ it('downloads ics calendar event for a valid reservation', function () {
     $response->assertSee('BEGIN:VCALENDAR');
     $response->assertSee("UID:{$reservation->code}@umco.house");
     $response->assertSee('UMCO House');
+    $response->assertSee('Tamu UMCO');
+    $response->assertDontSee('Fulan Test');
+
+    $verifiedResponse = $this->withSession(["umco_status_verified_{$reservation->code}" => true])
+        ->get("/reservasi/calendar/{$reservation->code}");
+    $verifiedResponse->assertStatus(200)->assertSee('Fulan Test');
 });

@@ -77,13 +77,13 @@
             return url;
         }
     }"
-    class="umco-section bg-[var(--kertas)] text-[var(--tinta)] edge-perforated-top"
+    class="umco-section bg-[var(--batu)] text-[var(--tinta)]"
 >
     <div class="umco-container">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-            {{-- Karcis preview (atas di tablet, kanan di desktop, versi mini di bawah pilihan pada HP) --}}
+            {{-- Karcis preview --}}
             <div class="order-2 lg:order-2 lg:col-span-5">
-                <div class="sm:max-w-sm lg:ml-auto rotate-1">
+                <div class="sm:max-w-sm lg:ml-auto">
                     <x-umco.karcis code="No. 0127" title="Karcis meja">
                         <x-umco.karcis-line label="Hari" bind="selectedDayText()" />
                         <x-umco.karcis-line label="Orang" bind="partySize + ' orang'" />
@@ -99,7 +99,7 @@
             {{-- Pilihan cepat --}}
             <div class="order-1 lg:order-1 lg:col-span-7 space-y-7">
                 <div class="space-y-3 max-w-xl">
-                    <h2 data-reveal="rise" class="type-h2 font-display font-bold">
+                    <h2 data-reveal="rise" class="type-h2 font-display font-semibold">
                         {{ $section?->heading ?: 'Pesan meja. Karcisnya terisi sendiri.' }}
                     </h2>
                     <p class="type-body text-[var(--tinta-70)]">
@@ -138,7 +138,7 @@
                             >
                                 -
                             </button>
-                            <span class="font-display font-extrabold text-3xl w-10 text-center tabular-nums" x-text="partySize"></span>
+                            <span class="font-display font-semibold text-2xl sm:text-3xl w-10 text-center tabular-nums" x-text="partySize"></span>
                             <button
                                 type="button"
                                 @click="partySize = Math.min(12, partySize + 1)"

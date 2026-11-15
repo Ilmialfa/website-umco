@@ -133,18 +133,21 @@ class ReservationForm
                                             'verified' => 'Terverifikasi (DP Sah)',
                                             'rejected' => 'Bukti Ditolak',
                                         ])
+                                        ->disabled(fn (): bool => ! (auth()->user()?->isOwner() ?? false))
                                         ->required(),
 
                                     TextInput::make('subtotal')
                                         ->label('Estimasi Total Pesanan')
                                         ->prefix('Rp')
                                         ->numeric()
+                                        ->disabled(fn (): bool => ! (auth()->user()?->isOwner() ?? false))
                                         ->default(0),
 
                                     TextInput::make('dp_amount')
                                         ->label('Nominal DP Diterima')
                                         ->prefix('Rp')
                                         ->numeric()
+                                        ->disabled(fn (): bool => ! (auth()->user()?->isOwner() ?? false))
                                         ->default(0),
 
                                     FileUpload::make('payment_proof_path')

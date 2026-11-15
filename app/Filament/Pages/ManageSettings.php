@@ -277,6 +277,8 @@ class ManageSettings extends Page implements HasForms
 
     public function save(): void
     {
+        abort_unless(auth()->user()?->isOwner() ?? false, 403);
+
         $state = $this->form->getState();
 
         $dpPct = max(50, (int) ($state['dp_percentage'] ?? 50));

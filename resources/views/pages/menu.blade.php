@@ -136,10 +136,10 @@
         <section data-nav-theme="light" class="bg-[var(--kertas)] text-[var(--tinta)] pt-24 sm:pt-28 pb-6 sm:pb-8">
             <div class="umco-container">
                 <div class="flex flex-wrap items-baseline gap-4">
-                    <h1 data-reveal="chars-wdth" class="type-display font-display font-extrabold">
+                    <h1 class="type-display font-display font-semibold">
                         {{ $hero?->heading ?: 'Menu' }}
                     </h1>
-                    <span class="font-led text-base sm:text-xl text-[var(--cabai)]">{{ $itemsCount }} item</span>
+                    <span class="font-sans font-semibold text-sm sm:text-base text-[var(--mentega-tua)] tabular-nums">{{ $itemsCount }} item</span>
                 </div>
                 <p data-reveal="fade" class="type-body text-[var(--tinta-70)] mt-3 max-w-xl">
                     {{ $hero?->subheading ?: 'Harga sudah termasuk senyum kasir.' }}
@@ -224,9 +224,9 @@
             <div class="umco-container space-y-14">
                 <template x-for="group in groupedCategories()" :key="group.slug">
                     <div :id="'kat-' + group.slug" class="space-y-6">
-                        <div class="flex items-baseline justify-between border-b border-[var(--tinta)]/25 pb-3">
-                            <h2 class="type-h2 font-display font-bold" x-text="group.name"></h2>
-                            <span class="font-led text-xs text-[var(--tinta-70)]" x-text="group.items.length + ' pilihan'"></span>
+                        <div class="flex items-baseline justify-between border-b border-[var(--tinta)]/20 pb-3">
+                            <h2 class="type-h2 font-display font-semibold" x-text="group.name"></h2>
+                            <span class="font-sans text-xs font-medium text-[var(--tinta-70)] tabular-nums" x-text="group.items.length + ' pilihan'"></span>
                         </div>
 
                         {{-- Tampilan Daftar (nota) --}}
@@ -243,8 +243,8 @@
                                             :class="!item.is_available ? 'line-through decoration-[var(--cabai)] decoration-2 text-[var(--tinta-70)]' : ''"
                                             x-text="item.name"
                                         ></span>
-                                        <span x-show="item.is_new" class="px-2 py-0.5 text-[11px] font-semibold bg-[var(--mentega)] text-[var(--tinta)]">Baru</span>
-                                        <span x-show="!item.is_available" class="px-2 py-0.5 text-[11px] font-semibold bg-[var(--blush)] text-[var(--cabai)]">Habis</span>
+                                        <span x-show="item.is_new" class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[var(--aksen-soft)] text-[var(--tinta)]">Baru</span>
+                                        <span x-show="!item.is_available" class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[var(--batu)] text-[var(--tinta-70)]">Habis</span>
                                         <span class="hidden sm:block flex-1 border-b border-dotted border-[var(--tinta)]/30"></span>
                                         <span class="font-sans font-semibold text-base sm:text-lg tabular-nums ml-auto shrink-0" x-text="item.price_ribu"></span>
                                     </div>
@@ -291,7 +291,7 @@
                                             </template>
 
                                             <span x-show="item.is_new" class="absolute top-2.5 left-2.5 px-2.5 py-1 text-[11px] font-semibold bg-[var(--mentega)] text-[var(--tinta)]">Baru</span>
-                                            <span x-show="!item.is_available" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-[11px] font-semibold bg-[var(--blush)] text-[var(--cabai)]">Habis</span>
+                                            <span x-show="!item.is_available" class="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[var(--batu)] text-[var(--tinta-70)]">Habis</span>
                                         </div>
 
                                         <div class="pt-3 space-y-1">

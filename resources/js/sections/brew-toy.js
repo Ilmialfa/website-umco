@@ -9,6 +9,7 @@ export function init(el) {
     const verdictEl = el.querySelector('[data-brew-verdict]');
     const ratioEl = el.querySelector('[data-brew-ratio]');
     const liquidRect = el.querySelector('[data-brew-liquid]');
+    const toneEl = el.querySelector('[data-brew-tone]');
 
     const verdicts = (() => {
         try {
@@ -55,6 +56,10 @@ export function init(el) {
         }
 
         if (verdictEl) verdictEl.textContent = statusText;
+        if (toneEl) {
+            toneEl.style.backgroundColor = fillColor;
+            toneEl.style.opacity = String(fillOpacity);
+        }
         if (liquidRect) {
             liquidRect.setAttribute('fill', fillColor);
             liquidRect.setAttribute('fill-opacity', String(fillOpacity));

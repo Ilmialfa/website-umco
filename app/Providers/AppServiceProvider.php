@@ -2,14 +2,17 @@
 
 namespace App\Providers;
 
+use App\Models\ActivityLog;
 use App\Models\Banner;
 use App\Models\BeanOrigin;
+use App\Models\ClosedDate;
 use App\Models\CrowdPattern;
 use App\Models\Facility;
 use App\Models\GalleryItem;
 use App\Models\MenuCategory;
 use App\Models\MenuItem;
 use App\Models\PageSection;
+use App\Models\Reservation;
 use App\Models\Rule;
 use App\Models\SeatingOption;
 use App\Models\Setting;
@@ -17,11 +20,21 @@ use App\Models\SpendTier;
 use App\Models\StoryBlock;
 use App\Models\StreetStall;
 use App\Models\Testimonial;
+use App\Models\User;
 use App\Observers\PublicContentObserver;
+use App\Policies\ActivityLogPolicy;
+use App\Policies\ClosedDatePolicy;
+use App\Policies\MenuCategoryPolicy;
+use App\Policies\MenuItemPolicy;
+use App\Policies\OwnerOnlyPolicy;
+use App\Policies\ReservationPolicy;
+use App\Policies\UserPolicy;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -42,10 +55,42 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->configureDefaults();
         $this->registerObservers();
+        $this->registerPolicies();
     }
 
     /**
-     * Register model observers for auto-purging public cache.
+     * Register model policies for server-side authorization.
+     */
+    protected function registerPolicies(): void
+    {
+        Gate::policy(Reservation::class, ReservationPolicy::class);
+        Gate::policy(MenuItem::class, MenuItemPolicy::class);
+        Gate::policy(MenuCategory::class, MenuCategoryPolicy::class);
+        Gate::policy(ClosedDate::class, ClosedDatePolicy::class);
+        Gate::policy(User::class, UserPolicy::class);
+        Gate::policy(ActivityLog::class, ActivityLogPolicy::class);
+
+        foreach ([
+            Banner::class,
+            BeanOrigin::class,
+            CrowdPattern::class,
+            Facility::class,
+            GalleryItem::class,
+            PageSection::class,
+            Rule::class,
+            SeatingOption::class,
+            Setting::class,
+            SpendTier::class,
+            StoryBlock::class,
+            StreetStall::class,
+            Testimonial::class,
+        ] as $ownerOnlyModel) {
+            Gate::policy($ownerOnlyModel, OwnerOnlyPolicy::class);
+        }
+    }
+
+    /**
+     * Register model observers for auto-purging public & admin caches.
      */
     protected function registerObservers(): void
     {
@@ -64,6 +109,16 @@ class AppServiceProvider extends ServiceProvider
         SeatingOption::observe(PublicContentObserver::class);
         CrowdPattern::observe(PublicContentObserver::class);
         BeanOrigin::observe(PublicContentObserver::class);
+
+        $flushAdminStats = static function (): void {
+            Cache::forget('filament.reservations.pending_count');
+            Cache::forget('filament.dashboard.stats');
+        };
+
+        Reservation::saved($flushAdminStats);
+        Reservation::deleted($flushAdminStats);
+        MenuItem::saved($flushAdminStats);
+        MenuItem::deleted($flushAdminStats);
     }
 
     /**

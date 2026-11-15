@@ -4,47 +4,50 @@
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
 @theme {
-    --font-display: 'Anybody', 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
-    --font-sans: 'Familjen Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-display: 'Plus Jakarta Sans', 'Instrument Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-sans: 'Instrument Sans', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     --font-hand: 'Reenie Beanie', 'Segoe Print', cursive;
-    --font-led: 'Doto', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --font-led: 'Plus Jakarta Sans', 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
 
-    /* UMCO 2026: Kertas, Tinta & Karcis */
-    --color-kertas: #F5F2EA;
-    --color-kertas-terang: #FCFBF7;
-    --color-tinta: #22263A;
-    --color-tinta-70: #4E5266;
-    --color-tinta-40: #9396A3;
-    --color-garis: #DCD7CB;
-    --color-mentega: #EFC94C;
-    --color-mentega-tua: #D9AF2B;
-    --color-matcha: #C8D5AE;
-    --color-susu-stroberi: #F0D2C9;
-    --color-stempel: #A3301A;
+    /* UMCO 3-Color Architectural Palette: Primer (Warm Alabaster), Sekunder (Espresso Obsidian), Aksen (Roasted Amber Gold) */
+    --color-kertas: #F7F5F0;
+    --color-kertas-terang: #FFFFFF;
+    --color-batu: #EFECE5;
+    --color-tinta: #161615;
+    --color-tinta-70: #52514D;
+    --color-tinta-40: #8A8882;
+    --color-garis: rgba(22, 22, 21, 0.09);
+    --color-mentega: #C4933F;
+    --color-mentega-tua: #A87A2C;
+    --color-matcha: #EFECE5;
+    --color-susu-stroberi: #FFFFFF;
+    --color-stempel: #9A6B26;
 }
 
 :root {
-    --kertas: #F5F2EA;
-    --kertas-terang: #FCFBF7;
-    --tinta: #22263A;
-    --tinta-70: #4E5266;
-    --tinta-muted: #4E5266;
-    --tinta-40: #9396A3;
-    --garis: #DCD7CB;
-    --garis-kuwat: #9396A3;
-    --mentega: #EFC94C;
-    --mentega-tua: #D9AF2B;
-    --matcha: #C8D5AE;
-    --zaitun: #C8D5AE;
-    --susu-stroberi: #F0D2C9;
-    --blush: #F0D2C9;
-    --stempel: #A3301A;
-    --cabai: #A3301A;
+    --kertas: #F7F5F0;
+    --kertas-terang: #FFFFFF;
+    --batu: #EFECE5;
+    --tinta: #161615;
+    --tinta-70: #52514D;
+    --tinta-muted: #52514D;
+    --tinta-40: #8A8882;
+    --garis: rgba(22, 22, 21, 0.09);
+    --garis-kuwat: rgba(22, 22, 21, 0.22);
+    --mentega: #C4933F;
+    --mentega-tua: #A87A2C;
+    --aksen-soft: #F3EDE0;
+    --matcha: #EFECE5;
+    --zaitun: #EFECE5;
+    --susu-stroberi: #FFFFFF;
+    --blush: #FFFFFF;
+    --stempel: #9A6B26;
+    --cabai: #9A6B26;
 
-    --font-display: 'Anybody', 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
-    --font-sans: 'Familjen Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-display: 'Plus Jakarta Sans', 'Instrument Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-sans: 'Instrument Sans', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     --font-hand: 'Reenie Beanie', 'Segoe Print', cursive;
-    --font-led: 'Doto', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --font-led: 'Plus Jakarta Sans', 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
 
     --ease-out: cubic-bezier(.22, 1, .36, 1);
     --ease-in-out: cubic-bezier(.65, 0, .35, 1);
@@ -72,11 +75,11 @@
 
     ::selection {
         background-color: var(--mentega);
-        color: var(--tinta);
+        color: #161615;
     }
 
     :focus-visible {
-        outline: 2px solid var(--tinta);
+        outline: 2px solid var(--mentega);
         outline-offset: 3px;
     }
 }
@@ -91,98 +94,99 @@
     visibility: hidden !important;
 }
 
-/* Skala Tipografi (Bagian 3.3) */
+/* Skala Tipografi Halus & Proporsional (Non-Chunky) */
 .type-display-xl {
     font-family: var(--font-display);
-    font-variation-settings: 'wdth' 75, 'wght' 800;
-    font-size: 3.5rem; /* 56px HP */
-    line-height: 0.92;
-    letter-spacing: -0.01em;
+    font-weight: 600;
+    font-size: 3rem;
+    line-height: 0.98;
+    letter-spacing: -0.03em;
 }
 .type-display-l {
     font-family: var(--font-display);
-    font-variation-settings: 'wdth' 75, 'wght' 800;
-    font-size: 2.5rem; /* 40px HP */
-    line-height: 0.94;
-    letter-spacing: -0.01em;
+    font-weight: 600;
+    font-size: 2.25rem;
+    line-height: 1.02;
+    letter-spacing: -0.025em;
 }
 .type-display-m {
     font-family: var(--font-display);
-    font-variation-settings: 'wdth' 75, 'wght' 700;
-    font-size: 1.75rem; /* 28px HP */
-    line-height: 0.96;
-    letter-spacing: -0.01em;
+    font-weight: 600;
+    font-size: 1.625rem;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
 }
 .type-title,
 .type-h3 {
     font-family: var(--font-display);
-    font-variation-settings: 'wdth' 85, 'wght' 700;
-    font-size: 1.25rem; /* 20px HP */
-    line-height: 1.15;
+    font-weight: 600;
+    font-size: 1.2rem;
+    line-height: 1.22;
+    letter-spacing: -0.015em;
 }
 .type-display {
     font-family: var(--font-display);
-    font-variation-settings: 'wdth' 75, 'wght' 800;
-    font-size: 2.5rem; /* 40px HP */
-    line-height: 0.94;
-    letter-spacing: -0.02em;
+    font-weight: 600;
+    font-size: 2.25rem;
+    line-height: 1.04;
+    letter-spacing: -0.025em;
 }
 .type-h1 {
     font-family: var(--font-display);
-    font-variation-settings: 'wdth' 78, 'wght' 800;
-    font-size: 2rem; /* 32px HP */
-    line-height: 1.02;
-    letter-spacing: -0.015em;
+    font-weight: 600;
+    font-size: 1.875rem;
+    line-height: 1.08;
+    letter-spacing: -0.025em;
 }
 .type-h2 {
     font-family: var(--font-display);
-    font-variation-settings: 'wdth' 80, 'wght' 700;
-    font-size: 1.625rem; /* 26px HP */
-    line-height: 1.05;
-    letter-spacing: -0.01em;
+    font-weight: 600;
+    font-size: 1.5rem;
+    line-height: 1.12;
+    letter-spacing: -0.02em;
 }
 .type-body-l {
-    font-size: 1.0625rem; /* 17px HP */
-    line-height: 1.5;
+    font-size: 1.0625rem;
+    line-height: 1.55;
 }
 .type-body {
-    font-size: 0.9375rem; /* 15px HP */
-    line-height: 1.5;
+    font-size: 0.9375rem;
+    line-height: 1.55;
 }
 .type-small {
-    font-size: 0.8125rem; /* 13px HP */
+    font-size: 0.8125rem;
     line-height: 1.45;
 }
 
 @media (min-width: 640px) {
-    .type-display-xl { font-size: 6rem; } /* 96px */
-    .type-display-l, .type-display { font-size: 4rem; } /* 64px */
-    .type-display-m { font-size: 2.25rem; } /* 36px */
-    .type-h1 { font-size: 2.625rem; } /* 42px */
-    .type-h2 { font-size: 2rem; } /* 32px */
-    .type-title, .type-h3 { font-size: 1.375rem; } /* 22px */
-    .type-body-l { font-size: 1.125rem; } /* 18px */
-    .type-body { font-size: 1rem; } /* 16px */
-    .type-small { font-size: 0.8125rem; } /* 13px */
+    .type-display-xl { font-size: 4.5rem; }
+    .type-display-l, .type-display { font-size: 3.25rem; }
+    .type-display-m { font-size: 2.125rem; }
+    .type-h1 { font-size: 2.5rem; }
+    .type-h2 { font-size: 2rem; }
+    .type-title, .type-h3 { font-size: 1.35rem; }
+    .type-body-l { font-size: 1.125rem; }
+    .type-body { font-size: 1rem; }
+    .type-small { font-size: 0.8125rem; }
 }
 
 @media (min-width: 1024px) {
-    .type-display-xl { font-size: clamp(7.5rem, 13vw, 13.75rem); } /* 120-220px */
-    .type-display-l { font-size: clamp(4.5rem, 7vw, 7.5rem); } /* 72-120px */
-    .type-display { font-size: clamp(3.75rem, 6vw, 5.75rem); } /* 60-92px */
-    .type-display-m { font-size: 3rem; } /* 48px */
-    .type-h1 { font-size: clamp(2.75rem, 3.6vw, 3.5rem); } /* 44-56px */
-    .type-h2 { font-size: clamp(2rem, 2.8vw, 2.75rem); } /* 32-44px */
-    .type-title, .type-h3 { font-size: 1.5rem; } /* 24px */
-    .type-body-l { font-size: 1.25rem; } /* 20px */
-    .type-body { font-size: 1.0625rem; } /* 17px */
-    .type-small { font-size: 0.875rem; } /* 14px */
+    .type-display-xl { font-size: clamp(5rem, 8.5vw, 8.5rem); }
+    .type-display-l { font-size: clamp(3.5rem, 5.2vw, 5.25rem); }
+    .type-display { font-size: clamp(3rem, 4.4vw, 4.35rem); }
+    .type-display-m { font-size: 2.5rem; }
+    .type-h1 { font-size: clamp(2.5rem, 3.3vw, 3.25rem); }
+    .type-h2 { font-size: clamp(1.875rem, 2.5vw, 2.5rem); }
+    .type-title, .type-h3 { font-size: 1.45rem; }
+    .type-body-l { font-size: 1.1875rem; }
+    .type-body { font-size: 1.0625rem; }
+    .type-small { font-size: 0.875rem; }
 }
 
-/* Ruang & Grid UMCO (Bagian 3.4) */
+/* Ruang & Grid UMCO */
 .umco-container {
     width: 100%;
-    max-width: 1440px;
+    max-width: 1380px;
     margin-inline: auto;
     padding-inline: 20px;
 }
@@ -190,59 +194,28 @@
     .umco-container { padding-inline: 32px; }
 }
 @media (min-width: 1024px) {
-    .umco-container { padding-inline: clamp(24px, 5vw, 80px); }
+    .umco-container { padding-inline: clamp(32px, 5vw, 72px); }
 }
 
 .umco-section {
     position: relative;
-    padding-block: 72px;
+    padding-block: 64px;
 }
 @media (min-width: 640px) {
-    .umco-section { padding-block: 104px; }
+    .umco-section { padding-block: 88px; }
 }
 @media (min-width: 1024px) {
-    .umco-section { padding-block: clamp(128px, 12vw, 200px); }
+    .umco-section { padding-block: clamp(96px, 9vw, 148px); }
 }
 
-/* Pembatas Antar Section (Bagian 3.5) */
-.edge-perforated-top::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: -10px;
-    height: 10px;
-    pointer-events: none;
-    background: radial-gradient(circle at 10px 10px, var(--edge-bg, var(--kertas)) 9px, transparent 9.6px) 0 0 / 20px 10px repeat-x;
-}
-
-.edge-torn-top::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: -15px;
-    height: 16px;
-    pointer-events: none;
-    background-color: var(--edge-bg, var(--kertas));
-    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 16' preserveAspectRatio='none'%3E%3Cpath d='M0 16 L0 9 L6 12 L14 5 L22 11 L30 3 L38 10 L46 6 L54 12 L63 4 L72 11 L81 5 L90 12 L98 4 L106 10 L114 6 L120 9 L120 16 Z' fill='%23000'/%3E%3C/svg%3E") 0 0 / 120px 16px repeat-x;
-            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 16' preserveAspectRatio='none'%3E%3Cpath d='M0 16 L0 9 L6 12 L14 5 L22 11 L30 3 L38 10 L46 6 L54 12 L63 4 L72 11 L81 5 L90 12 L98 4 L106 10 L114 6 L120 9 L120 16 Z' fill='%23000'/%3E%3C/svg%3E") 0 0 / 120px 16px repeat-x;
-}
-
+/* Transisi lembut antar section (tanpa tepian bergerigi brutalism) */
+.edge-perforated-top::before,
+.edge-torn-top::before,
 .edge-arc-top::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: -31px;
-    height: 32px;
-    pointer-events: none;
-    background-color: var(--edge-bg, var(--kertas));
-    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 32' preserveAspectRatio='none'%3E%3Cpath d='M0 32 Q720 0 1440 32 Z' fill='%23000'/%3E%3C/svg%3E") 0 0 / 100% 32px no-repeat;
-            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 32' preserveAspectRatio='none'%3E%3Cpath d='M0 32 Q720 0 1440 32 Z' fill='%23000'/%3E%3C/svg%3E") 0 0 / 100% 32px no-repeat;
+    content: none;
 }
 
-/* Tombol UMCO (Bagian 6.2 & 5.4: teks naik-turun 180ms tanpa scale) */
+/* Tombol UMCO */
 .btn-umco {
     position: relative;
     display: inline-flex;
@@ -269,7 +242,7 @@
 .btn-umco-primary {
     background-color: var(--mentega);
     color: var(--tinta);
-    border: 1.5px solid var(--mentega);
+    border: 1px solid var(--mentega);
 }
 .btn-umco-primary:hover:not(:disabled) {
     background-color: var(--mentega-tua);
@@ -278,11 +251,12 @@
 .btn-umco-secondary {
     background-color: transparent;
     color: var(--tinta);
-    border: 1.5px solid var(--tinta);
+    border: 1px solid var(--garis-kuwat);
 }
 .btn-umco-secondary:hover:not(:disabled) {
     background-color: var(--tinta);
     color: var(--kertas);
+    border-color: var(--tinta);
 }
 .btn-umco:disabled,
 .btn-umco[aria-disabled="true"] {
@@ -312,7 +286,7 @@
     transform: translateY(-100%);
 }
 
-/* Navbar 3-behavior floating state */
+/* Navbar 3-state (flat architectural surface) */
 #umco-navbar {
     transition: transform var(--dur-2) var(--ease-out);
 }
@@ -323,19 +297,19 @@
     transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
 }
 #umco-navbar[data-theme="dark"] .nav-pill {
-    background-color: transparent;
+    background-color: rgba(22, 22, 21, 0.72);
     color: var(--kertas);
-    border: 1px solid transparent;
+    border: 1px solid rgba(247, 245, 240, 0.14);
 }
 #umco-navbar[data-theme="light"] .nav-pill {
-    background-color: transparent;
+    background-color: rgba(247, 245, 240, 0.92);
     color: var(--tinta);
-    border: 1px solid transparent;
+    border: 1px solid var(--garis);
 }
 #umco-navbar[data-theme="solid"] .nav-pill {
     background-color: var(--kertas-terang);
     color: var(--tinta);
-    border: 1px solid rgba(34, 38, 58, 0.12);
+    border: 1px solid var(--garis);
 }
 
 /* Link navbar underline tumbuh dari kiri */
@@ -351,7 +325,7 @@
     bottom: 0;
     width: 100%;
     height: 1.5px;
-    background-color: currentColor;
+    background-color: var(--mentega);
     transform: scaleX(0);
     transform-origin: left;
     transition: transform var(--dur-1) var(--ease-out);
@@ -361,39 +335,37 @@
     transform: scaleX(1);
 }
 
-/* Signature interaksi UMCO: nama menu melebar saat hover desktop */
+/* Nama menu responsif halus saat hover desktop */
 .menu-row-name {
     font-family: var(--font-display);
-    font-variation-settings: 'wdth' 75, 'wght' 700;
-    transition: font-variation-settings var(--dur-2) var(--ease-out);
+    font-weight: 500;
+    transition: color var(--dur-1) var(--ease-out), letter-spacing var(--dur-2) var(--ease-out);
 }
 @media (hover: hover) and (pointer: fine) {
     .menu-row-trigger:hover .menu-row-name,
     .menu-row-trigger:focus-visible .menu-row-name {
-        font-variation-settings: 'wdth' 110, 'wght' 800;
+        color: var(--mentega-tua);
+        letter-spacing: 0.015em;
     }
 }
 
-/* Karcis bergerigi & tumpukan solid tanpa blur (Bagian 6.3) */
+/* Karcis editorial bersih tanpa gerigi brutalism & tanpa shadow */
 .karcis-serrated {
-    -webkit-mask:
-        radial-gradient(6px at 50% 0, transparent 96%, #000) 0 0 / 18px 100% repeat-x,
-        radial-gradient(6px at 50% 100%, transparent 96%, #000) 0 0 / 18px 100% repeat-x;
-    -webkit-mask-composite: source-in;
-            mask:
-        radial-gradient(6px at 50% 0, transparent 96%, #000) 0 0 / 18px 100% repeat-x,
-        radial-gradient(6px at 50% 100%, transparent 96%, #000) 0 0 / 18px 100% repeat-x;
-            mask-composite: intersect;
+    border-top: 3px solid var(--mentega);
+    border-left: 1px solid var(--garis);
+    border-right: 1px solid var(--garis);
+    border-bottom: 1px solid var(--garis);
+    border-radius: 16px;
 }
 
-/* Skeleton Loader: shimmer opacity (bukan gradien bergerak, Bagian 6.6) */
+/* Skeleton Loader: shimmer opacity halus */
 @keyframes skeleton-opacity {
     0%, 100% { opacity: 0.45; }
     50% { opacity: 0.85; }
 }
 .skeleton-block {
-    background-color: color-mix(in srgb, var(--garis) 55%, transparent);
-    border-radius: 6px;
+    background-color: var(--batu);
+    border-radius: 8px;
     animation: skeleton-opacity 1.3s var(--ease-in-out) infinite;
 }
 
@@ -405,14 +377,13 @@
 .umco-marquee-track {
     display: flex;
     width: max-content;
-    animation: umco-marquee 34s linear infinite;
+    animation: umco-marquee 38s linear infinite;
 }
 .umco-marquee-track:hover,
 .umco-marquee-track:active {
     animation-play-state: paused;
 }
 
-/* Reveal helper initial state */
 [data-reveal] {
     will-change: opacity, transform;
 }
@@ -430,8 +401,8 @@
         to bottom,
         transparent 0,
         transparent 31px,
-        rgba(34, 38, 58, 0.14) 31px,
-        rgba(34, 38, 58, 0.14) 32px
+        rgba(22, 22, 21, 0.08) 31px,
+        rgba(22, 22, 21, 0.08) 32px
     );
 }
 
@@ -439,19 +410,19 @@
     -webkit-appearance: none;
     appearance: none;
     width: 100%;
-    height: 4px;
-    background-color: rgba(34, 38, 58, 0.25);
+    height: 3px;
+    background-color: rgba(22, 22, 21, 0.16);
     border-radius: 9999px;
     outline: none;
 }
 .umco-range::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 28px;
-    height: 28px;
+    width: 22px;
+    height: 22px;
     border-radius: 9999px;
     background-color: var(--tinta);
-    border: 3px solid var(--kertas-terang);
+    border: 3px solid var(--mentega);
     cursor: pointer;
     transition: transform var(--dur-1) var(--ease-out);
 }
@@ -459,11 +430,11 @@
     transform: scale(1.1);
 }
 .umco-range::-moz-range-thumb {
-    width: 28px;
-    height: 28px;
+    width: 22px;
+    height: 22px;
     border-radius: 9999px;
     background-color: var(--tinta);
-    border: 3px solid var(--kertas-terang);
+    border: 3px solid var(--mentega);
     cursor: pointer;
 }
 
@@ -471,7 +442,7 @@
     transition: transform var(--dur-2) var(--ease-out);
 }
 .karcis-stub.is-torn {
-    transform: translateY(12px) rotate(3deg);
+    transform: translateY(10px) rotate(1.5deg);
 }
 
 @media (prefers-reduced-motion: reduce) {

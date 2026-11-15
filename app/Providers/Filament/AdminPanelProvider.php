@@ -32,7 +32,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandName('UMCO')
             ->favicon('/favicon.svg')
             ->databaseNotifications()
-            ->databaseNotificationsPolling('30s')
+            ->databaseNotificationsPolling('60s')
             ->renderHook(
                 PanelsRenderHook::HEAD_END,
                 fn (): HtmlString => new HtmlString('<link rel="stylesheet" href="/css/filament-theme.css">')
@@ -41,11 +41,14 @@ class AdminPanelProvider extends PanelProvider
                 PanelsRenderHook::BODY_END,
                 function (): HtmlString {
                     $soundEnabled = Settings::get('reservation.sound_on_notification', false) ? '1' : '0';
+                    if ($soundEnabled !== '1') {
+                        return new HtmlString('');
+                    }
                     return new HtmlString("<script>
 (function(){
-    if ('{$soundEnabled}' !== '1') return;
     let lastCount = null;
     const checkBell = () => {
+        if (document.visibilityState !== 'visible') return;
         const badge = document.querySelector('[aria-label*=\"Notifikasi\"], .fi-topbar-database-notifications-btn .fi-badge');
         const txt = badge ? badge.textContent.trim() : '';
         const count = txt ? parseInt(txt, 10) || 0 : 0;
@@ -64,26 +67,26 @@ class AdminPanelProvider extends PanelProvider
         }
         lastCount = count;
     };
-    setInterval(checkBell, 5000);
+    setInterval(checkBell, 30000);
 })();
 </script>");
                 }
             )
             ->colors([
                 'primary' => [
-                    50 => '#fdfaf0',
-                    100 => '#fbf2d4',
-                    200 => '#f7e4a8',
-                    300 => '#f3d476',
-                    400 => '#EFC94C',
-                    500 => '#D9AF2B',
-                    600 => '#b58d1c',
-                    700 => '#8f6c17',
-                    800 => '#6e5214',
-                    900 => '#523d11',
-                    950 => '#22263A',
+                    50 => '#faf6ee',
+                    100 => '#f3ead5',
+                    200 => '#e6d3aa',
+                    300 => '#d6b676',
+                    400 => '#d1a556',
+                    500 => '#c4933f',
+                    600 => '#a87a2c',
+                    700 => '#876022',
+                    800 => '#6d4d1d',
+                    900 => '#583f1a',
+                    950 => '#161615',
                 ],
-                'gray' => Color::Zinc,
+                'gray' => Color::Stone,
             ])
             ->navigationGroups([
                 'Operasional Reservasi',

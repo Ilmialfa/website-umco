@@ -165,7 +165,7 @@
                     @endif
 
                     @if ($reuploadSuccess)
-                        <div class="p-4 bg-[var(--matcha)]/40 border border-[var(--tinta)]/25 text-sm">
+                        <div class="p-4 rounded-xl bg-[var(--batu)] text-sm text-[var(--tinta)]">
                             Bukti bayar baru sudah kami terima. Kasir sedang mengecek ulang.
                         </div>
                     @endif

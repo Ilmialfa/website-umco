@@ -10,6 +10,7 @@ use App\Notifications\NewReservationNotification;
 use App\Support\PhoneNumber;
 use App\Support\Settings;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
@@ -51,6 +52,13 @@ class ReservationStatusPage extends Component
     public function verifyDigits(): void
     {
         $this->resetErrorBag();
+        $throttleKey = 'umco:status-verify:' . $this->code . ':' . request()->ip();
+        if (RateLimiter::tooManyAttempts($throttleKey, 6)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+            $this->addError('digitsInput', "Terlalu banyak percobaan. Tunggu {$seconds} detik ya.");
+            return;
+        }
+
         $input = preg_replace('/\D+/', '', $this->digitsInput);
         if (strlen($input) !== 4) {
             $this->addError('digitsInput', 'Masukkan tepat 4 digit terakhir nomor WhatsApp kamu.');
@@ -61,10 +69,12 @@ class ReservationStatusPage extends Component
         $last4 = substr((string) $reservation->phone_wa, -4);
 
         if ($input !== $last4) {
+            RateLimiter::hit($throttleKey, 60);
             $this->addError('digitsInput', '4 digit terakhir belum cocok dengan nomor saat reservasi.');
             return;
         }
 
+        RateLimiter::clear($throttleKey);
         session()->put("umco_status_verified_{$this->code}", true);
         $this->verified = true;
     }
@@ -81,6 +91,13 @@ class ReservationStatusPage extends Component
             abort(403);
         }
 
+        $throttleKey = 'umco:proof-reupload:' . $this->code . ':' . request()->ip();
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+            $this->addError('newProof', "Terlalu sering mengunggah. Tunggu {$seconds} detik ya.");
+            return;
+        }
+
         $reservation = $this->reservation;
         if ($reservation->payment_status !== 'rejected') {
             return;
@@ -95,6 +112,14 @@ class ReservationStatusPage extends Component
         ]);
 
         $ext = strtolower($this->newProof->getClientOriginalExtension() ?: $this->newProof->extension() ?: 'jpg');
+        if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp'], true)) {
+            $realPath = method_exists($this->newProof, 'getRealPath') ? $this->newProof->getRealPath() : null;
+            if (! $realPath || ! is_array(@getimagesize($realPath))) {
+                $this->addError('newProof', 'File tidak terbaca sebagai gambar yang sah.');
+                return;
+            }
+        }
+        RateLimiter::hit($throttleKey, 60);
         $path = $this->newProof->storeAs('payment_proofs', Str::uuid()->toString() . '.' . $ext, 'public');
 
         $reservation->update([

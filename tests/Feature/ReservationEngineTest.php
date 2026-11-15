@@ -273,3 +273,41 @@ test('ReservationStatusPage gates ticket behind last 4 digits of WA and supports
 
     expect($reservation->fresh()->payment_status)->toBe('proof_uploaded');
 });
+
+test('ReservationStatusPage throttles repeated wrong WA verification attempts', function () {
+    $reservation = Reservation::create([
+        'name' => 'Rate Limit Test',
+        'phone_input' => '082248009999',
+        'date' => now('Asia/Jakarta')->addDay()->format('Y-m-d'),
+        'time' => '17:00',
+        'party_size' => 2,
+    ]);
+
+    $component = Livewire::test(ReservationStatusPage::class, ['code' => $reservation->code]);
+
+    for ($i = 0; $i < 6; $i++) {
+        $component->set('digitsInput', '0000')->call('verifyDigits');
+    }
+
+    $component->set('digitsInput', '9999')
+        ->call('verifyDigits')
+        ->assertSet('verified', false)
+        ->assertHasErrors(['digitsInput']);
+});
+
+test('CreateReservation rejects non-image payload disguised with jpg extension', function () {
+    [$coffee] = createSampleMenus();
+    $tomorrow = now('Asia/Jakarta')->addDay()->format('Y-m-d');
+    $fakeTxtAsJpg = UploadedFile::fake()->createWithContent('evil.jpg', '<?php echo 1;');
+
+    expect(fn () => CreateReservation::execute([
+        'source' => 'web',
+        'date' => $tomorrow,
+        'time' => '14:00',
+        'party_size' => 2,
+        'name' => 'Budi Test',
+        'phone_input' => '081234567890',
+        'payment_type' => 'dp',
+        'items' => [['menu_item_id' => $coffee->id, 'qty' => 2]],
+    ], $fakeTxtAsJpg))->toThrow(ValidationException::class);
+});

@@ -198,7 +198,7 @@
                         <a
                             href="{{ url('/reservasi') }}"
                             wire:navigate
-                            class="btn-umco btn-umco-primary min-h-0 h-9 lg:h-10 px-5 text-[13px] lg:text-[14px] whitespace-nowrap"
+                            class="nav-reservasi-pill btn-umco min-h-0 h-9 lg:h-10 px-5 text-[13px] lg:text-[14px] whitespace-nowrap"
                         >
                             <span class="btn-roll">
                                 <span>Reservasi</span>
@@ -234,7 +234,7 @@
                     <a
                         href="{{ url('/reservasi') }}"
                         wire:navigate
-                        class="inline-flex items-center justify-center h-8 px-3.5 rounded-full bg-[var(--mentega)] text-white text-xs font-semibold tracking-wide"
+                        class="nav-reservasi-pill inline-flex items-center justify-center h-8 px-4 rounded-full text-xs font-semibold tracking-wide"
                     >
                         Reservasi
                     </a>
@@ -245,7 +245,7 @@
                 x-show="openNav"
                 x-transition
                 @click.outside="openNav = false"
-                class="bg-[var(--kertas-terang)] text-[var(--tinta)] border-t border-[var(--garis)] px-4 py-4 space-y-2"
+                class="bg-[var(--kertas-terang)] text-[var(--tinta)] px-4 py-4 space-y-2"
                 style="display: none;"
             >
                 @foreach ($navItems as $item)
@@ -253,7 +253,7 @@
                         href="{{ $item['href'] }}"
                         @click="openNav = false"
                         @if (! str_contains($item['href'], '#')) wire:navigate @endif
-                        class="flex items-center justify-between py-2.5 text-sm font-medium border-b border-[var(--garis)]"
+                        class="flex items-center justify-between py-2.5 text-sm font-medium"
                     >
                         <span>{{ $item['label'] }}</span>
                         <span class="text-xs text-[var(--tinta-70)]">&rarr;</span>
@@ -287,7 +287,7 @@
 
     <footer id="public-footer" class="relative umco-footer-gradient text-[var(--kertas)] pt-14 sm:pt-20 pb-0 overflow-hidden">
         <div class="umco-container">
-            <div class="grid grid-cols-1 sm:grid-cols-12 gap-8 sm:gap-10 pb-10 sm:pb-12 border-b border-white/20">
+            <div class="grid grid-cols-1 sm:grid-cols-12 gap-8 sm:gap-10 pb-10 sm:pb-12">
                 <div class="sm:col-span-5 space-y-3">
                     <p class="font-display font-bold text-2xl tracking-[0.06em] text-white">UM.CO</p>
                     <p class="text-sm sm:text-[15px] text-white/85 leading-relaxed max-w-sm">
@@ -333,24 +333,24 @@
             <div class="relative pt-10 sm:pt-14 pb-4 sm:pb-6 flex flex-col items-center justify-end overflow-hidden select-none">
                 <div
                     data-footer-wordmark
-                    class="w-full font-display font-bold text-[25vw] sm:text-[23vw] lg:text-[21vw] leading-[0.82] tracking-[-0.02em] text-white/95 text-center whitespace-nowrap will-change-transform"
+                    class="w-full font-display font-bold text-[30vw] sm:text-[27vw] lg:text-[25vw] leading-[0.78] tracking-[-0.02em] bg-gradient-to-b from-white via-[#EAF5EE] to-white/30 bg-clip-text text-transparent text-center whitespace-nowrap will-change-transform"
                 >
                     {{ $footerWordmark }}
                 </div>
 
                 {{-- Uap dingin lembut berlapis kode di bawah gelas & tatakan batu --}}
-                <div class="relative z-10 -mt-[17vw] sm:-mt-[16.5vw] lg:-mt-[15vw] flex flex-col items-center pointer-events-none">
+                <div class="relative z-10 -mt-[20vw] sm:-mt-[19vw] lg:-mt-[17.5vw] flex flex-col items-center pointer-events-none">
                     <div class="umco-vapor-wisp absolute -bottom-2 left-1/2 -translate-x-1/2 w-56 sm:w-80 lg:w-96 h-24 sm:h-32 rounded-full"></div>
                     <div class="umco-vapor-wisp absolute bottom-2 left-1/2 -translate-x-1/2 w-40 sm:w-64 lg:w-72 h-16 sm:h-24 rounded-full" style="animation-delay: -2.4s;"></div>
                     <img
                         data-footer-cutout
                         src="{{ asset($footerCutout) }}"
                         alt="Segelas kopi susu dingin UMCO di atas tatakan batu"
-                        width="556"
+                        width="589"
                         height="840"
                         loading="lazy"
                         decoding="async"
-                        class="relative z-10 w-36 sm:w-56 lg:w-68 h-auto pointer-events-none [mask-image:linear-gradient(to_bottom,black_88%,transparent_100%)]"
+                        class="relative z-10 w-36 sm:w-56 lg:w-68 h-auto pointer-events-none [mask-image:linear-gradient(to_bottom,black_92%,transparent_100%)]"
                     >
                 </div>
             </div>

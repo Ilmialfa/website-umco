@@ -99,3 +99,56 @@ it('downloads ics calendar event for a valid reservation', function () {
         ->get("/reservasi/calendar/{$reservation->code}");
     $verifiedResponse->assertStatus(200)->assertSee('Fulan Test');
 });
+
+it('renders menu detail page with description, pricing, and reservation CTA', function () {
+    $category = MenuCategory::create([
+        'name' => 'Kopi Susu Detail',
+        'slug' => 'kopi-susu-detail',
+        'sort' => 1,
+        'is_active' => true,
+    ]);
+
+    MenuItem::create([
+        'category_id' => $category->id,
+        'name' => 'Aren Coffee',
+        'slug' => 'aren-coffee',
+        'price' => 24000,
+        'description' => 'Perpaduan gula aren pilihan dengan susu segar dan double espresso.',
+        'ingredients' => 'Espresso, gula aren, susu segar',
+        'has_temperature' => true,
+        'is_active' => true,
+        'is_available' => true,
+    ]);
+
+    $response = $this->get('/menu/aren-coffee');
+    $response->assertStatus(200);
+    $response->assertSee('Aren Coffee');
+    $response->assertSee('Perpaduan gula aren pilihan');
+    $response->assertSee('Lanjut Reservasi');
+    $response->assertDontSee('Wing Barat');
+});
+
+it('imports nota items on ReservationPage without Livewire lifecycle hook collision', function () {
+    $category = MenuCategory::create([
+        'name' => 'Kopi Hitam Nota',
+        'slug' => 'kopi-hitam-nota',
+        'sort' => 1,
+        'is_active' => true,
+    ]);
+
+    $item = MenuItem::create([
+        'category_id' => $category->id,
+        'name' => 'Americano Test',
+        'slug' => 'americano-test',
+        'price' => 24000,
+        'is_active' => true,
+        'is_available' => true,
+    ]);
+
+    $component = \Livewire\Livewire::test(\App\Livewire\ReservationPage::class)
+        ->call('importNotaItems', [
+            ['slug' => 'americano-test', 'qty' => 2, 'variant_label' => null, 'temperature' => 'Es'],
+        ]);
+
+    expect($component->instance()->selectedItems[$item->id . '||Es']['qty'])->toBe(2);
+});

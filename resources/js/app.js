@@ -38,10 +38,10 @@ function initFooter() {
     }
 
     if (wordmark) {
-        gsap.set(wordmark, { scaleX: 0.70, letterSpacing: '-0.025em', y: 40, opacity: 0.25, transformOrigin: '50% 80%' });
+        gsap.set(wordmark, { scaleX: 0.68, letterSpacing: '-0.03em', y: 40, opacity: 0.25, transformOrigin: '50% 80%' });
         gsap.to(wordmark, {
-            scaleX: 1.12,
-            letterSpacing: '0.06em',
+            scaleX: 1.16,
+            letterSpacing: '0.07em',
             y: 0,
             opacity: 1,
             ease: 'power2.out',
@@ -49,7 +49,7 @@ function initFooter() {
                 trigger: footer,
                 start: 'top 95%',
                 end: 'bottom bottom',
-                scrub: 1.4,
+                scrub: 1.6,
             },
         });
     }

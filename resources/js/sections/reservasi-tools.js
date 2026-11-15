@@ -173,7 +173,7 @@ export function init(el) {
             const wireEl = el.closest('[wire\\:id]');
             const comp = wireEl ? window.Livewire.find(wireEl.getAttribute('wire:id')) : null;
             if (comp) {
-                comp.call('hydrateNotaItems', nota);
+                comp.call('importNotaItems', nota);
             }
         }
     }

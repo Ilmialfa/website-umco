@@ -77,7 +77,7 @@
             @if ($step < 6)
                 <div class="flex items-center gap-3 text-xs sm:text-sm text-[var(--tinta-70)]">
                     <span>Minimal belanja {{ $partySize }} orang:</span>
-                    <span class="font-display font-bold text-[var(--tinta)] px-2.5 py-1 bg-[var(--kertas-terang)] border border-[var(--garis)]">
+                    <span class="font-display font-bold text-[var(--tinta)] rounded-full px-3 py-1 bg-[var(--kertas-terang)]">
                         {{ \App\Support\IndonesianFormat::rupiah($quoteData['min_spend']) }}
                     </span>
                 </div>
@@ -86,7 +86,7 @@
 
         @if ($step < 6)
             {{-- Bar langkah horizontal (1 Kapan · 2 Tempat · 3 Menu · 4 Data · 5 Bayar) --}}
-            <nav aria-label="Langkah reservasi" class="py-4 border-b border-[var(--garis)] overflow-x-auto no-scrollbar">
+            <nav aria-label="Langkah reservasi" class="py-4 overflow-x-auto no-scrollbar">
                 <ol class="flex items-center gap-2 sm:gap-4 min-w-max">
                     @foreach ($stepTitles as $num => $label)
                         @php
@@ -98,11 +98,11 @@
                                 type="button"
                                 wire:click="goToStep({{ $num }})"
                                 @disabled(! $canJump && ! $isCurrent)
-                                class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm transition-colors duration-[180ms] {{ $isCurrent
-                                    ? 'bg-[var(--tinta)] text-[var(--kertas-terang)] font-semibold'
+                                class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-sm transition-colors duration-[180ms] {{ $isCurrent
+                                    ? 'bg-[var(--mentega)] text-white font-semibold'
                                     : ($canJump
-                                        ? 'bg-[var(--kertas-terang)] text-[var(--tinta)] border border-[var(--garis)] hover:border-[var(--tinta)] cursor-pointer'
-                                        : 'text-[var(--tinta-40)] border border-transparent cursor-default') }}"
+                                        ? 'bg-[var(--kertas-terang)] text-[var(--tinta)] hover:bg-[var(--batu)] cursor-pointer'
+                                        : 'text-[var(--tinta-40)] cursor-default') }}"
                             >
                                 <span class="font-display font-bold text-xs">{{ $num }}</span>
                                 <span>{{ $label }}</span>
@@ -116,7 +116,7 @@
             </nav>
 
             {{-- TABLET (640px-1023px): Kartu ringkas karcis menempel & bisa dilipat --}}
-            <div class="hidden sm:block lg:hidden sticky top-16 z-30 mt-4 rounded-2xl bg-[var(--kertas-terang)] text-[var(--tinta)] border-t-[3px] border-t-[var(--mentega)] border border-[var(--garis)] px-5 py-3.5">
+            <div class="hidden sm:block lg:hidden sticky top-16 z-30 mt-4 rounded-2xl bg-[var(--kertas-terang)] text-[var(--tinta)] border-t-[3px] border-t-[var(--mentega)] px-5 py-3.5">
                 <div class="flex items-center justify-between gap-4">
                     <div class="min-w-0">
                         <p class="font-display font-semibold text-sm truncate">
@@ -129,7 +129,7 @@
                     <button
                         type="button"
                         @click="tabletExpanded = !tabletExpanded"
-                        class="shrink-0 px-3 py-1.5 rounded-full border border-[var(--tinta)] text-xs font-semibold hover:bg-[var(--tinta)] hover:text-[var(--kertas-terang)] transition-colors"
+                        class="shrink-0 px-3.5 py-1.5 rounded-full bg-[var(--batu)] text-xs font-semibold hover:bg-[var(--tinta)] hover:text-[var(--kertas-terang)] transition-colors"
                     >
                         <span x-text="tabletExpanded ? 'Tutup karcis' : 'Lihat karcis'">Lihat karcis</span>
                     </button>

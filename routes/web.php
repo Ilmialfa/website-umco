@@ -10,7 +10,8 @@ use App\Livewire\ReservationStatusPage;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
-Route::get('/menu', MenuController::class)->name('menu');
+Route::get('/menu', [MenuController::class, 'index'])->name('menu');
+Route::get('/menu/{menuItem:slug}', [MenuController::class, 'show'])->name('menu.show');
 Route::get('/cerita', AboutController::class)->name('cerita');
 Route::redirect('/about', '/cerita', 301);
 

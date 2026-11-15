@@ -15,13 +15,13 @@
     id="hero"
     data-nav-theme="dark"
     data-module="hero"
-    class="relative umco-hero-gradient text-white overflow-hidden pt-20 sm:pt-28 lg:pt-24"
+    class="relative umco-hero-gradient text-white overflow-hidden pt-24 sm:pt-28 lg:pt-28 pb-10 sm:pb-16 lg:pb-20"
 >
     <div class="umco-container">
-        <div class="grid grid-cols-1 sm:grid-cols-12 items-end gap-8 lg:gap-10 min-h-[78svh] sm:min-h-[68svh] lg:min-h-[84svh]">
-            {{-- Kiri: Eyebrow, Judul Condensed Tinggi, Deskripsi, & Dual CTA --}}
-            <div class="sm:col-span-6 lg:col-span-6 pb-4 sm:pb-14 lg:pb-20 pt-6 sm:pt-8 space-y-5 sm:space-y-6">
-                <div class="inline-flex items-center gap-2 text-xs sm:text-sm font-medium text-white/85">
+        <div class="grid grid-cols-1 sm:grid-cols-12 items-center sm:items-end gap-8 lg:gap-10 min-h-[76svh] sm:min-h-[68svh] lg:min-h-[82svh]">
+            {{-- Kiri: Eyebrow, Judul Condensed Tinggi, Deskripsi, Catatan Tangan, & Dual CTA --}}
+            <div class="sm:col-span-6 lg:col-span-6 pb-2 sm:pb-16 lg:pb-24 pt-4 sm:pt-6 space-y-5 sm:space-y-6">
+                <div data-reveal="rise" class="inline-flex items-center gap-2 text-xs sm:text-sm font-medium text-white/90">
                     <span class="w-2 h-2 rounded-full bg-[var(--aksen-soft)]"></span>
                     <span>{{ $eyebrow }}</span>
                 </div>
@@ -30,15 +30,19 @@
                     {{ $heading }}
                 </h1>
 
-                <p data-reveal="fade" class="type-body sm:type-body-l text-white/85 max-w-md leading-relaxed">
+                <p data-reveal="fade" class="type-body sm:type-body-l text-white/90 max-w-md leading-relaxed">
                     {{ $subheading }}
                 </p>
 
-                <div class="flex flex-wrap items-center gap-3 pt-1">
+                <p data-reveal="fade" class="font-hand text-2xl sm:text-[28px] leading-none text-[#E2F1E7]">
+                    ~ seduhan hangat & dingin, tinggal pilih meja dulu
+                </p>
+
+                <div data-reveal="rise" class="flex flex-wrap items-center gap-3 pt-1">
                     <a
                         href="{{ url($ctaUrl) }}"
                         wire:navigate
-                        class="btn-umco bg-[#F6F4ED] text-[#141916] border border-[#F6F4ED] hover:bg-white"
+                        class="btn-umco bg-[#F6F4ED] text-[#141916] hover:bg-white"
                     >
                         <span class="btn-roll">
                             <span>{{ $ctaLabel }}</span>
@@ -48,7 +52,7 @@
                     <a
                         href="{{ url('/menu') }}"
                         wire:navigate
-                        class="btn-umco border border-white/40 text-white hover:bg-white hover:text-[#141916]"
+                        class="btn-umco bg-white/15 text-white hover:bg-white hover:text-[#141916]"
                     >
                         Lihat menu
                     </a>
@@ -56,7 +60,7 @@
             </div>
 
             {{-- Kanan: Gambar Cutout Tanpa Latar yang bisa diunggah admin dari Filament --}}
-            <div class="sm:col-span-6 lg:col-span-6 flex justify-center sm:justify-end items-end self-end">
+            <div data-reveal="mask" class="sm:col-span-6 lg:col-span-6 flex justify-center sm:justify-end items-end self-end">
                 <img
                     data-hero-cutout
                     src="{{ asset($cutoutSrc) }}"

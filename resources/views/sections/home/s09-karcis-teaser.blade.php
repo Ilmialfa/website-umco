@@ -81,20 +81,20 @@
 >
     <div class="umco-container space-y-10 sm:space-y-12">
         <div class="max-w-2xl mx-auto text-center space-y-3">
-            <p class="text-xs font-semibold tracking-[0.08em] text-[var(--mentega)]">
+            <p data-reveal="fade" class="font-hand text-2xl sm:text-[28px] leading-none text-[var(--mentega)]">
                 {{ $section?->data['eyebrow'] ?? 'Reservasi Meja' }}
             </p>
             <h2 data-reveal="rise" class="type-display-l font-display font-bold">
                 {{ $section?->heading ?: 'Pesan meja, karcis terisi sendiri' }}
             </h2>
-            <p class="type-body text-[var(--tinta-70)] max-w-lg mx-auto">
+            <p data-reveal="fade" class="type-body text-[var(--tinta-70)] max-w-lg mx-auto">
                 {{ $section?->subheading ?: 'Pilih hari dan jumlah orang dulu di sini, lalu lanjut atur jam, tempat duduk, dan pembayaran.' }}
             </p>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
             {{-- Karcis preview --}}
-            <div class="order-2 lg:order-2 lg:col-span-5">
+            <div data-reveal-media class="order-2 lg:order-2 lg:col-span-5">
                 <div class="sm:max-w-sm lg:ml-auto">
                     <x-umco.karcis code="No. 0127" title="Karcis meja">
                         <x-umco.karcis-line label="Hari" bind="selectedDayText()" />
@@ -109,7 +109,7 @@
             </div>
 
             {{-- Pilihan cepat + Ringkasan Ketentuan --}}
-            <div class="order-1 lg:order-1 lg:col-span-7 space-y-7">
+            <div data-reveal="rise" class="order-1 lg:order-1 lg:col-span-7 space-y-7">
 
                 <div class="space-y-3">
                     <p class="text-sm font-semibold">Mau datang hari apa?</p>
@@ -119,8 +119,8 @@
                                 type="button"
                                 :disabled="Boolean(d.closedReason)"
                                 @click="selectedDate = d.date"
-                                class="px-4 py-2 rounded-full border text-left transition-colors cursor-pointer disabled:opacity-45 disabled:cursor-not-allowed"
-                                :class="selectedDate === d.date ? 'bg-[var(--mentega)] text-white border-[var(--mentega)]' : 'bg-[var(--kertas-terang)] text-[var(--tinta)] border-[var(--garis)] hover:border-[var(--mentega)]'"
+                                class="px-4 py-2.5 rounded-full text-left transition-colors cursor-pointer disabled:opacity-45 disabled:cursor-not-allowed"
+                                :class="selectedDate === d.date ? 'bg-[var(--mentega)] text-white' : 'bg-[var(--kertas)] text-[var(--tinta)] hover:bg-[var(--batu)]'"
                             >
                                 <span class="block text-sm font-semibold" :class="d.closedReason ? 'line-through' : ''" x-text="d.label"></span>
                                 <span class="block text-[11px] opacity-75" x-text="d.closedReason ? d.closedReason : d.sub"></span>
@@ -137,7 +137,7 @@
                                 type="button"
                                 @click="partySize = Math.max(2, partySize - 1)"
                                 :disabled="partySize <= 2"
-                                class="w-11 h-11 rounded-full border border-[var(--tinta)] font-bold text-lg hover:bg-[var(--tinta)] hover:text-[var(--kertas)] disabled:opacity-35 cursor-pointer"
+                                class="w-11 h-11 rounded-full bg-[var(--batu)] text-[var(--tinta)] font-bold text-lg hover:bg-[var(--tinta)] hover:text-[var(--kertas)] disabled:opacity-35 cursor-pointer transition-colors"
                                 aria-label="Kurangi jumlah orang"
                             >
                                 -
@@ -147,7 +147,7 @@
                                 type="button"
                                 @click="partySize = Math.min(12, partySize + 1)"
                                 :disabled="partySize >= 12"
-                                class="w-11 h-11 rounded-full border border-[var(--tinta)] font-bold text-lg hover:bg-[var(--tinta)] hover:text-[var(--kertas)] disabled:opacity-35 cursor-pointer"
+                                class="w-11 h-11 rounded-full bg-[var(--batu)] text-[var(--tinta)] font-bold text-lg hover:bg-[var(--tinta)] hover:text-[var(--kertas)] disabled:opacity-35 cursor-pointer transition-colors"
                                 aria-label="Tambah jumlah orang"
                             >
                                 +

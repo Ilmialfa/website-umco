@@ -1,14 +1,39 @@
 @php
-    $banners = ($activeBanners ?? collect())->values();
-    $fallbackBanner = (object) [
-        'title' => $section?->heading ?: 'Meja lapang buat diskusi dan tugas sore',
-        'description' => $section?->subheading ?: 'Ruang nyaman di kawasan kampus buat nugas sendirian, kerja kelompok, atau diskusi komunitas.',
-        'image_path' => $section?->media['banner'] ?? '/images/bistro-patio-table.jpg',
-        'cta_label' => $section?->cta_label ?: 'Lihat selengkapnya',
-        'cta_url' => $section?->cta_url ?: '/cerita',
-    ];
+    $banners = ($activeBanners ?? collect())->toBase()->values();
+    $defaults = collect([
+        (object) [
+            'title' => $section?->heading ?: 'Meja lapang buat diskusi dan tugas sore',
+            'description' => $section?->subheading ?: 'Meja panjang bercatu daya, seduhan segar dari pagi, dan menu hangat yang bisa dipesan sekaligus saat reservasi meja.',
+            'image_path' => $section?->media['banner'] ?? '/images/bistro-patio-table.jpg',
+            'cta_label' => $section?->cta_label ?: 'Lihat selengkapnya',
+            'cta_url' => $section?->cta_url ?: '/cerita',
+        ],
+        (object) [
+            'title' => 'Pesan meja sekalian menu tanpa antre',
+            'description' => 'Pilih jadwal kedatangan minimal 2 orang, tentukan permintaan tempat duduk, lalu kunci karcis meja lewat QRIS.',
+            'image_path' => '/images/hero-banner-full.jpg',
+            'cta_label' => 'Lihat selengkapnya',
+            'cta_url' => '/reservasi',
+        ],
+        (object) [
+            'title' => 'Racikan kopi susu & penyegar non-kopi',
+            'description' => 'Dari Aren Coffee klasik, Matcha dingin, hingga sajian camilan hangat untuk teman kelompok.',
+            'image_path' => '/images/drinks-trio-banner.jpg',
+            'cta_label' => 'Lihat selengkapnya',
+            'cta_url' => '/menu',
+        ],
+    ]);
+
     if ($banners->isEmpty()) {
-        $banners = collect([$fallbackBanner]);
+        $banners = $defaults;
+    } elseif ($banners->count() < 3) {
+        $existingTitles = $banners->pluck('title')->all();
+        foreach ($defaults as $def) {
+            if (! in_array($def->title, $existingTitles, true)) {
+                $banners->push($def);
+            }
+            if ($banners->count() >= 3) break;
+        }
     }
 
     $bannerSlides = $banners->map(function ($b) {
@@ -24,7 +49,7 @@
             'cta_url' => $b->cta_url ? url($b->cta_url) : url('/cerita'),
             'external' => $b->cta_url && str_starts_with($b->cta_url, 'http'),
         ];
-    })->all();
+    })->values()->all();
 
     $ribbonItems = [
         'Wi-Fi kencang di seluruh meja',
@@ -37,76 +62,148 @@
 
 <section
     id="banner-utama"
-    data-nav-theme="dark"
-    x-data="{ active: 0, slides: @js($bannerSlides) }"
-    class="relative bg-[var(--umco-hutan)] text-white overflow-hidden"
+    data-nav-theme="light"
+    x-data="{
+        active: 0,
+        slides: @js($bannerSlides),
+        prevIdx() { return (this.active - 1 + this.slides.length) % this.slides.length; },
+        nextIdx() { return (this.active + 1) % this.slides.length; },
+        prev() { this.active = this.prevIdx(); },
+        next() { this.active = this.nextIdx(); }
+    }"
+    class="bg-[var(--kertas)] text-[var(--tinta)] overflow-hidden"
 >
-    <div class="relative min-h-[460px] sm:min-h-[540px] lg:min-h-[620px] flex items-center">
-        <template x-for="(slide, idx) in slides" :key="idx">
-            <div x-show="active === idx" class="absolute inset-0">
-                <img
-                    :src="slide.image"
-                    :alt="slide.title"
-                    loading="lazy"
-                    decoding="async"
-                    class="w-full h-full object-cover object-center"
-                >
-                <div class="absolute inset-0 bg-gradient-to-r from-[#0E2B1E]/90 via-[#0E2B1E]/55 to-[#0E2B1E]/15"></div>
+    {{-- Showcase Banner 3-Kartu Lanskap: Teks Judul, Deskripsi & Tautan di Bawah Setiap Foto --}}
+    <div class="umco-section pt-8 sm:pt-12 pb-12 sm:pb-16">
+        <div class="umco-container space-y-8 sm:space-y-10">
+            <div class="max-w-2xl mx-auto text-center space-y-2">
+                <p data-reveal="fade" class="font-hand text-2xl sm:text-[28px] leading-none text-[var(--mentega)]">
+                    Sorotan UMCO
+                </p>
+                <h2 data-reveal="rise" class="type-display-l font-display font-bold text-[var(--tinta)]">
+                    Ruang, promo, dan kabar terbaru
+                </h2>
             </div>
-        </template>
 
-        <div class="relative z-10 umco-container py-16 sm:py-20">
-            <div class="max-w-xl space-y-5">
-                <div class="flex items-center gap-3 text-xs font-semibold tracking-[0.08em] text-[var(--aksen-soft)]">
-                    <span>Sorotan UMCO</span>
-                    <template x-if="slides.length > 1">
-                        <div class="inline-flex items-center gap-1.5 ml-2">
-                            <template x-for="(_, i) in slides" :key="'dot-' + i">
-                                <button
-                                    type="button"
-                                    @click="active = i"
-                                    :aria-label="'Tampilkan banner ' + (i + 1)"
-                                    class="h-2 rounded-full transition-all cursor-pointer"
-                                    :class="active === i ? 'w-6 bg-white' : 'w-2 bg-white/40 hover:bg-white/70'"
-                                ></button>
-                            </template>
+            <div data-reveal-media class="relative">
+                {{-- Desktop & Tablet: Panggung 3 Banner (Tengah fokus penuh, sisi kanan-kiri mendampingi) --}}
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-5 lg:gap-6 items-start">
+                    {{-- Slot Kiri --}}
+                    <article
+                        @click="prev()"
+                        class="hidden md:block md:col-span-3 space-y-3.5 opacity-60 hover:opacity-90 transition-all duration-300 cursor-pointer"
+                    >
+                        <div class="rounded-2xl overflow-hidden bg-[var(--batu)] aspect-[16/10]">
+                            <img :src="slides[prevIdx()].image" :alt="slides[prevIdx()].title" loading="lazy" decoding="async" class="w-full h-full object-cover">
                         </div>
-                    </template>
+                        <div class="space-y-1.5 px-1">
+                            <h3 class="font-display font-bold text-xl leading-tight line-clamp-1" x-text="slides[prevIdx()].title"></h3>
+                            <p class="text-xs text-[var(--tinta-70)] line-clamp-2 leading-relaxed" x-text="slides[prevIdx()].description"></p>
+                            <a
+                                :href="slides[prevIdx()].cta_url"
+                                @click.stop
+                                :target="slides[prevIdx()].external ? '_blank' : null"
+                                :rel="slides[prevIdx()].external ? 'noopener noreferrer' : null"
+                                class="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--mentega)] pt-0.5"
+                            >
+                                <span x-text="slides[prevIdx()].cta_label"></span>
+                                <svg class="w-3.5 h-3.5"><use href="#icon-arrow-right"/></svg>
+                            </a>
+                        </div>
+                    </article>
+
+                    {{-- Slot Tengah (Sorotan Utama) --}}
+                    <article class="col-span-1 md:col-span-6 space-y-4">
+                        <div class="rounded-2xl overflow-hidden bg-[var(--batu)] aspect-[16/10]">
+                            <img
+                                :src="slides[active].image"
+                                :alt="slides[active].title"
+                                class="w-full h-full object-cover transition-transform duration-500"
+                            >
+                        </div>
+                        <div class="space-y-2 text-center md:text-left px-1">
+                            <h3 class="font-display font-bold text-2xl sm:text-[1.95rem] leading-tight text-[var(--tinta)]" x-text="slides[active].title">
+                                {{ $bannerSlides[0]['title'] }}
+                            </h3>
+                            <p class="text-sm sm:text-[15px] text-[var(--tinta-70)] leading-relaxed max-w-xl mx-auto md:mx-0" x-text="slides[active].description">
+                                {{ $bannerSlides[0]['description'] }}
+                            </p>
+                            <div class="pt-1">
+                                <a
+                                    :href="slides[active].cta_url"
+                                    :target="slides[active].external ? '_blank' : null"
+                                    :rel="slides[active].external ? 'noopener noreferrer' : null"
+                                    class="inline-flex items-center gap-2 rounded-full bg-[var(--batu)] text-[var(--tinta)] hover:bg-[var(--tinta)] hover:text-[var(--kertas)] px-5 h-10 text-sm font-semibold transition-colors"
+                                >
+                                    <span x-text="slides[active].cta_label">{{ $bannerSlides[0]['cta_label'] }}</span>
+                                    <svg class="w-4 h-4 shrink-0"><use href="#icon-arrow-right"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+
+                    {{-- Slot Kanan --}}
+                    <article
+                        @click="next()"
+                        class="hidden md:block md:col-span-3 space-y-3.5 opacity-60 hover:opacity-90 transition-all duration-300 cursor-pointer"
+                    >
+                        <div class="rounded-2xl overflow-hidden bg-[var(--batu)] aspect-[16/10]">
+                            <img :src="slides[nextIdx()].image" :alt="slides[nextIdx()].title" loading="lazy" decoding="async" class="w-full h-full object-cover">
+                        </div>
+                        <div class="space-y-1.5 px-1">
+                            <h3 class="font-display font-bold text-xl leading-tight line-clamp-1" x-text="slides[nextIdx()].title"></h3>
+                            <p class="text-xs text-[var(--tinta-70)] line-clamp-2 leading-relaxed" x-text="slides[nextIdx()].description"></p>
+                            <a
+                                :href="slides[nextIdx()].cta_url"
+                                @click.stop
+                                :target="slides[nextIdx()].external ? '_blank' : null"
+                                :rel="slides[nextIdx()].external ? 'noopener noreferrer' : null"
+                                class="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--mentega)] pt-0.5"
+                            >
+                                <span x-text="slides[nextIdx()].cta_label"></span>
+                                <svg class="w-3.5 h-3.5"><use href="#icon-arrow-right"/></svg>
+                            </a>
+                        </div>
+                    </article>
                 </div>
 
-                <h2
-                    data-reveal="rise"
-                    class="type-display font-display font-bold text-white"
-                    x-text="slides[active].title"
-                >
-                    {{ $bannerSlides[0]['title'] }}
-                </h2>
-
-                <p
-                    class="type-body sm:type-body-l text-white/90 max-w-md leading-relaxed"
-                    x-text="slides[active].description"
-                >
-                    {{ $bannerSlides[0]['description'] }}
-                </p>
-
-                <div class="pt-1">
-                    <a
-                        :href="slides[active].cta_url"
-                        :target="slides[active].external ? '_blank' : null"
-                        :rel="slides[active].external ? 'noopener noreferrer' : null"
-                        class="btn-umco bg-[#F6F4ED] text-[#141916] border border-[#F6F4ED] hover:bg-white"
+                {{-- Indikator & Tombol Navigasi (di bawah panggung agar tidak menutupi teks kartu) --}}
+                <div class="mt-7 flex items-center justify-center gap-4">
+                    <button
+                        type="button"
+                        @click="prev()"
+                        aria-label="Banner sebelumnya"
+                        class="w-10 h-10 rounded-full bg-[var(--batu)] text-[var(--tinta)] hover:bg-[var(--tinta)] hover:text-[var(--kertas)] inline-flex items-center justify-center transition-colors cursor-pointer"
                     >
-                        <span x-text="slides[active].cta_label">{{ $bannerSlides[0]['cta_label'] }}</span>
-                        <svg class="w-4 h-4 shrink-0"><use href="#icon-arrow-right"/></svg>
-                    </a>
+                        <svg class="w-4 h-4"><use href="#icon-arrow-left"/></svg>
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <template x-for="(_, i) in slides" :key="'b-dot-' + i">
+                            <button
+                                type="button"
+                                @click="active = i"
+                                :aria-label="'Pilih banner ' + (i + 1)"
+                                class="h-2 rounded-full transition-all cursor-pointer"
+                                :class="active === i ? 'w-7 bg-[var(--tinta)]' : 'w-2 bg-[var(--tinta)]/25 hover:bg-[var(--tinta)]/50'"
+                            ></button>
+                        </template>
+                    </div>
+                    <button
+                        type="button"
+                        @click="next()"
+                        aria-label="Banner berikutnya"
+                        class="w-10 h-10 rounded-full bg-[var(--batu)] text-[var(--tinta)] hover:bg-[var(--tinta)] hover:text-[var(--kertas)] inline-flex items-center justify-center transition-colors cursor-pointer"
+                    >
+                        <svg class="w-4 h-4"><use href="#icon-arrow-right"/></svg>
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    {{-- Strip fitur bawah menyatu elegan dengan tepi banner --}}
-    <div class="relative z-10 bg-[#13422E] border-t border-white/15 py-3 overflow-hidden select-none">
-        <div class="umco-marquee-track text-xs sm:text-sm font-medium text-white/90">
+    {{-- Strip fitur dekoratif murni (Point 6: dipertahankan sebagai pita dekoratif beridentitas) --}}
+    <div class="bg-[#13422E] py-3.5 overflow-hidden select-none">
+        <div class="umco-marquee-track text-xs sm:text-sm font-medium text-white/95">
             @for ($c = 0; $c < 2; $c++)
                 <div class="flex items-center gap-8 pr-8" @if ($c === 1) aria-hidden="true" @endif>
                     @foreach ($ribbonItems as $ri)

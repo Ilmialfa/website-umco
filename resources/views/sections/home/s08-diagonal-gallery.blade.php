@@ -38,20 +38,20 @@
 >
     <div class="umco-container space-y-10 sm:space-y-12">
         <div class="max-w-2xl mx-auto text-center space-y-3">
-            <p class="text-xs font-semibold tracking-[0.08em] text-[var(--mentega)]">
+            <p data-reveal="fade" class="font-hand text-2xl sm:text-[1.75rem] leading-none text-[var(--mentega)]">
                 {{ $eyebrow }}
             </p>
             <h2 data-reveal="rise" class="type-display-l font-display font-bold">
                 {{ $heading }}
             </h2>
-            <p class="type-body text-[var(--tinta-70)] max-w-lg mx-auto">
+            <p data-reveal="fade" class="type-body text-[var(--tinta-70)] max-w-lg mx-auto">
                 {{ $subheading }}
             </p>
         </div>
     </div>
 
     {{-- Alur Diagonal Bebas Semua Rasio Foto (portrait, kotak, maupun landscape tampil penuh apa adanya) --}}
-    <div class="mt-10 sm:mt-14 -mx-6 sm:-mx-12 py-4 -rotate-[3deg] origin-center space-y-4 sm:space-y-6 select-none">
+    <div data-reveal-media class="mt-10 sm:mt-14 -mx-6 sm:-mx-12 py-4 -rotate-[3deg] origin-center space-y-4 sm:space-y-6 select-none">
         @foreach ([$rowOne, $rowTwo] as $rIdx => $lane)
             <div
                 data-diag-row

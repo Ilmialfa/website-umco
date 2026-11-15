@@ -24,7 +24,7 @@
 >
     <div class="umco-container">
         <div class="max-w-2xl mx-auto text-center space-y-5">
-            <p class="text-xs font-semibold tracking-[0.08em] text-[var(--mentega-tua)]">
+            <p data-reveal="fade" class="font-hand text-2xl sm:text-[1.75rem] leading-none text-[var(--mentega-tua)]">
                 {{ $eyebrow }}
             </p>
 
@@ -36,11 +36,11 @@
                 {{ $subheading }}
             </p>
 
-            <div class="pt-3 flex flex-wrap items-center justify-center gap-3">
+            <div data-reveal-stagger class="pt-3 flex flex-wrap items-center justify-center gap-3">
                 <a
                     href="{{ url($primaryUrl) }}"
                     wire:navigate
-                    class="btn-umco bg-[#134731] text-white border border-[#134731] hover:bg-[#0E3524]"
+                    class="btn-umco bg-[#134731] text-white hover:bg-[#0E3524]"
                 >
                     <span class="btn-roll">
                         <span>{{ $primaryLabel }}</span>
@@ -52,7 +52,7 @@
                     href="{{ $waLink }}"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="btn-umco bg-white/85 text-[#141916] border border-[#141916]/25 hover:bg-white"
+                    class="btn-umco bg-white text-[#141916] hover:bg-[#EDE9E0]"
                 >
                     <span>{{ $secondaryLabel }}</span>
                 </a>

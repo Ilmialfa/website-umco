@@ -32,7 +32,7 @@
     <div class="umco-section pb-12 sm:pb-16">
         <div class="umco-container space-y-10 sm:space-y-14">
             <div class="max-w-2xl mx-auto text-center space-y-3">
-                <p class="text-xs font-semibold tracking-[0.08em] text-[var(--mentega)]">
+                <p data-reveal="fade" class="font-hand text-2xl sm:text-[28px] leading-none text-[var(--mentega)]">
                     {{ $eyebrow }}
                 </p>
                 <h2 data-reveal="rise" class="type-display-l font-display font-bold text-[var(--tinta)]">
@@ -45,15 +45,15 @@
 
             {{-- Kolase 5 Foto Parallax (rapi di HP, Tablet, & Desktop tanpa tumpuk) --}}
             <div class="grid grid-cols-2 sm:grid-cols-12 gap-3 sm:gap-4 lg:gap-5 items-center">
-                <div data-collage-card class="col-span-1 sm:col-span-3 rounded-2xl overflow-hidden bg-[var(--batu)] aspect-[3/4] sm:mt-8">
+                <div data-collage-card data-reveal-media class="col-span-1 sm:col-span-3 rounded-2xl overflow-hidden bg-[var(--batu)] aspect-[3/4] sm:mt-8">
                     <img src="{{ asset($collagePhotos[0]['src']) }}" alt="{{ $collagePhotos[0]['alt'] }}" loading="lazy" decoding="async" class="w-full h-full object-cover">
                 </div>
 
-                <div data-collage-card class="col-span-1 sm:col-span-4 rounded-2xl overflow-hidden bg-[var(--batu)] aspect-[4/3] sm:aspect-[5/4] sm:-mt-4">
+                <div data-collage-card data-reveal-media class="col-span-1 sm:col-span-4 rounded-2xl overflow-hidden bg-[var(--batu)] aspect-[4/3] sm:aspect-[5/4] sm:-mt-4">
                     <img src="{{ asset($collagePhotos[1]['src']) }}" alt="{{ $collagePhotos[1]['alt'] }}" loading="lazy" decoding="async" class="w-full h-full object-cover">
                 </div>
 
-                <div data-collage-card class="col-span-2 sm:col-span-2 sm:flex sm:flex-col gap-3 sm:gap-4 hidden">
+                <div data-collage-card data-reveal-media class="col-span-2 sm:col-span-2 sm:flex sm:flex-col gap-3 sm:gap-4 hidden">
                     <div class="rounded-2xl overflow-hidden bg-[var(--batu)] aspect-square">
                         <img src="{{ asset($collagePhotos[3]['src']) }}" alt="{{ $collagePhotos[3]['alt'] }}" loading="lazy" decoding="async" class="w-full h-full object-cover">
                     </div>
@@ -62,7 +62,7 @@
                     </div>
                 </div>
 
-                <div data-collage-card class="col-span-2 sm:col-span-3 rounded-2xl overflow-hidden bg-[var(--batu)] aspect-[16/9] sm:aspect-[3/4] sm:mt-6">
+                <div data-collage-card data-reveal-media class="col-span-2 sm:col-span-3 rounded-2xl overflow-hidden bg-[var(--batu)] aspect-[16/9] sm:aspect-[3/4] sm:mt-6">
                     <img src="{{ asset($collagePhotos[2]['src']) }}" alt="{{ $collagePhotos[2]['alt'] }}" loading="lazy" decoding="async" class="w-full h-full object-cover">
                 </div>
             </div>
@@ -70,7 +70,7 @@
     </div>
 
     {{-- Strip Marquee Paralaks (Bisa Diubah Owner lewat CMS PageSection marquee) --}}
-    <div class="border-y border-[var(--garis)] bg-[var(--umco-hutan)] text-white py-4 sm:py-5 overflow-hidden select-none">
+    <div class="bg-[var(--umco-hutan)] text-white py-4 sm:py-5 overflow-hidden select-none">
         <div data-marquee-parallax>
             <div class="umco-marquee-track font-display font-semibold text-[1.4rem] sm:text-[1.9rem] lg:text-[2.2rem] leading-none tracking-[0.01em]">
                 @for ($copy = 0; $copy < 2; $copy++)

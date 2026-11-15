@@ -135,8 +135,13 @@ class ReservationPage extends Component
                 } else {
                     foreach (explode(',', $rawItemsQuery) as $pair) {
                         if (str_contains($pair, ':')) {
-                            [$id, $qty] = explode(':', $pair, 2);
-                            $parsed[] = ['id' => (int) $id, 'qty' => (int) $qty];
+                            [$keyOrId, $qty] = explode(':', $pair, 2);
+                            $keyOrId = trim($keyOrId);
+                            if (ctype_digit($keyOrId)) {
+                                $parsed[] = ['id' => (int) $keyOrId, 'qty' => (int) $qty];
+                            } elseif ($keyOrId !== '') {
+                                $parsed[] = ['slug' => $keyOrId, 'qty' => (int) $qty];
+                            }
                         }
                     }
                 }
@@ -145,13 +150,13 @@ class ReservationPage extends Component
             }
 
             if ($parsed !== []) {
-                $this->hydrateNotaItems($parsed);
+                $this->importNotaItems($parsed);
                 $this->hasQueryItems = true;
             }
         }
     }
 
-    public function hydrateNotaItems(array $notaItems): void
+    public function importNotaItems(array $notaItems): void
     {
         if ($this->selectedItems !== [] || $this->createdCode !== null) {
             return;
@@ -163,26 +168,48 @@ class ReservationPage extends Component
             ->unique()
             ->values();
 
-        if ($ids->isEmpty()) {
+        $slugs = collect($notaItems)
+            ->map(fn ($row) => trim((string) ($row['slug'] ?? '')))
+            ->filter(fn ($slug) => $slug !== '')
+            ->unique()
+            ->values();
+
+        if ($ids->isEmpty() && $slugs->isEmpty()) {
             return;
         }
 
-        $menus = MenuItem::query()
-            ->whereIn('id', $ids)
+        $menuRows = MenuItem::query()
             ->where('is_active', true)
             ->where('is_available', true)
-            ->get()
-            ->keyBy('id');
+            ->where(function ($q) use ($ids, $slugs) {
+                if ($ids->isNotEmpty()) {
+                    $q->whereIn('id', $ids);
+                }
+                if ($slugs->isNotEmpty()) {
+                    $q->orWhereIn('slug', $slugs);
+                }
+            })
+            ->get();
+
+        $menusById = $menuRows->keyBy('id');
+        $menusBySlug = $menuRows->keyBy('slug');
 
         foreach ($notaItems as $row) {
             $menuId = (int) ($row['menu_item_id'] ?? $row['id'] ?? 0);
+            $slug = trim((string) ($row['slug'] ?? ''));
             $qty = max(0, (int) ($row['qty'] ?? 1));
-            if ($menuId <= 0 || $qty <= 0 || ! $menus->has($menuId)) {
+            if ($qty <= 0) {
                 continue;
             }
 
-            /** @var MenuItem $menu */
-            $menu = $menus->get($menuId);
+            /** @var MenuItem|null $menu */
+            $menu = $menuId > 0
+                ? $menusById->get($menuId)
+                : ($slug !== '' ? $menusBySlug->get($slug) : null);
+
+            if (! $menu) {
+                continue;
+            }
             $variant = isset($row['variant_label']) ? trim((string) $row['variant_label']) : (isset($row['variant']) ? trim((string) $row['variant']) : null);
             $variant = $variant !== '' ? $variant : null;
             $temp = isset($row['temperature']) ? trim((string) $row['temperature']) : (isset($row['temp']) ? trim((string) $row['temp']) : null);

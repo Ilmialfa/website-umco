@@ -243,22 +243,20 @@
 .btn-umco-primary {
     background-color: var(--mentega);
     color: #FFFFFF;
-    border: 1px solid var(--mentega);
+    border: none;
 }
 .btn-umco-primary:hover:not(:disabled) {
     background-color: var(--mentega-tua);
-    border-color: var(--mentega-tua);
     color: #FFFFFF;
 }
 .btn-umco-secondary {
-    background-color: transparent;
+    background-color: var(--batu);
     color: var(--tinta);
-    border: 1px solid var(--garis-kuwat);
+    border: none;
 }
 .btn-umco-secondary:hover:not(:disabled) {
     background-color: var(--tinta);
     color: var(--kertas);
-    border-color: var(--tinta);
 }
 .btn-umco:disabled,
 .btn-umco[aria-disabled="true"] {
@@ -288,30 +286,44 @@
     transform: translateY(-100%);
 }
 
-/* Navbar 3-state (arsitektural full-width bersih tanpa pill melayang) */
+/* Navbar lengket penuh atas tanpa garis tepi & tanpa bayangan */
 #umco-navbar {
     transition: transform var(--dur-2) var(--ease-out);
 }
-#umco-navbar[data-hidden="1"] {
-    transform: translateY(-110%);
-}
 #umco-navbar .nav-bar {
-    transition: background-color 240ms var(--ease-out), color 240ms var(--ease-out), border-color 240ms var(--ease-out);
+    transition: background-color 280ms var(--ease-out), color 280ms var(--ease-out);
+    border-bottom: none;
+    box-shadow: none;
 }
 #umco-navbar[data-theme="dark"] .nav-bar {
-    background: linear-gradient(to bottom, rgba(23, 28, 25, 0.72), rgba(23, 28, 25, 0));
+    background: linear-gradient(to bottom, rgba(13, 53, 38, 0.85), rgba(13, 53, 38, 0));
     color: #FFFFFF;
-    border-bottom: 1px solid transparent;
 }
-#umco-navbar[data-theme="light"] .nav-bar {
-    background-color: rgba(246, 245, 240, 0.96);
-    color: var(--tinta);
-    border-bottom: 1px solid var(--garis);
-}
+#umco-navbar[data-theme="light"] .nav-bar,
 #umco-navbar[data-theme="solid"] .nav-bar {
-    background-color: rgba(255, 255, 255, 0.97);
+    background-color: var(--kertas);
     color: var(--tinta);
-    border-bottom: 1px solid var(--garis);
+}
+section[id] {
+    scroll-margin-top: 72px;
+}
+#umco-navbar[data-theme="dark"] .nav-reservasi-pill {
+    background-color: rgba(255, 255, 255, 0.16);
+    color: #FFFFFF;
+}
+#umco-navbar[data-theme="dark"] .nav-reservasi-pill:hover {
+    background-color: #FFFFFF;
+    color: var(--tinta);
+}
+#umco-navbar[data-theme="light"] .nav-reservasi-pill,
+#umco-navbar[data-theme="solid"] .nav-reservasi-pill {
+    background-color: var(--batu);
+    color: var(--tinta);
+}
+#umco-navbar[data-theme="light"] .nav-reservasi-pill:hover,
+#umco-navbar[data-theme="solid"] .nav-reservasi-pill:hover {
+    background-color: var(--tinta);
+    color: var(--kertas);
 }
 
 /* Link navbar underline tumbuh dari kiri */
@@ -351,13 +363,34 @@
     }
 }
 
-/* Karcis editorial bersih tanpa gerigi brutalism & tanpa shadow */
+/* Karcis sobekan bergerigi otentik UMCO (tanpa border luar & tanpa shadow) */
 .karcis-serrated {
-    border-top: 3px solid var(--mentega);
-    border-left: 1px solid var(--garis);
-    border-right: 1px solid var(--garis);
-    border-bottom: 1px solid var(--garis);
-    border-radius: 16px;
+    position: relative;
+    background-color: #EFE9DF;
+    border: none;
+    border-radius: 0;
+    padding-top: 28px;
+    padding-bottom: 28px;
+    -webkit-mask-image:
+        linear-gradient(#000, #000),
+        repeating-linear-gradient(-45deg, #000 0, #000 7px, transparent 7px, transparent 14px),
+        repeating-linear-gradient(45deg, #000 0, #000 7px, transparent 7px, transparent 14px);
+    -webkit-mask-position: center, top left, bottom left;
+    -webkit-mask-size: 100% calc(100% - 14px), 100% 7px, 100% 7px;
+    -webkit-mask-repeat: no-repeat, repeat-x, repeat-x;
+    mask-image:
+        conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg),
+        linear-gradient(#000 0 0),
+        conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg);
+    mask-position: 50% 0, 50% 50%, 50% 100%;
+    mask-size: 16px 8px, 100% calc(100% - 16px), 16px 8px;
+    mask-repeat: repeat-x, no-repeat, repeat-x;
+    transition: transform var(--dur-2) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+    .karcis-serrated:hover {
+        transform: rotate(0deg) translateY(-3px);
+    }
 }
 
 /* Skeleton Loader: shimmer opacity halus */
@@ -448,11 +481,11 @@
     transform: translateY(10px) rotate(1.5deg);
 }
 
-/* Gradasi UMCO (Hero, CTA -> Footer transisi mulus tanpa hijau gelap/hitam) */
+/* Gradasi UMCO (Hero top-green -> bottom Oat Ivory agar mulus menyatu dengan seksi berikutnya) */
 .umco-hero-gradient {
     background:
-        radial-gradient(62% 70% at 72% 48%, rgba(169, 214, 187, 0.24) 0%, rgba(169, 214, 187, 0) 70%),
-        linear-gradient(150deg, #0D3526 0%, #17533B 46%, #2C7254 100%);
+        radial-gradient(58% 60% at 72% 38%, rgba(169, 214, 187, 0.20) 0%, rgba(169, 214, 187, 0) 70%),
+        linear-gradient(180deg, #0D3526 0%, #154B36 44%, #2B6E51 70%, #9BC4AD 86%, #F6F4ED 100%);
 }
 .umco-cta-gradient {
     background: linear-gradient(180deg, #F6F4ED 0%, #DFEDE4 44%, #95C5AB 78%, #226649 100%);

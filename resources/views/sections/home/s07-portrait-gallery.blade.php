@@ -31,21 +31,21 @@
 >
     <div class="umco-container space-y-8 sm:space-y-10">
         <div class="max-w-2xl mx-auto text-center space-y-3">
-            <p class="text-xs font-semibold tracking-[0.08em] text-[var(--mentega)]">
+            <p data-reveal="fade" class="font-hand text-2xl sm:text-[1.75rem] leading-none text-[var(--mentega)]">
                 {{ $eyebrow }}
             </p>
             <h2 data-reveal="rise" class="type-display-l font-display font-bold">
                 {{ $heading }}
             </h2>
-            <p class="type-body text-[var(--tinta-70)] max-w-lg mx-auto">
+            <p data-reveal="fade" class="type-body text-[var(--tinta-70)] max-w-lg mx-auto">
                 {{ $subheading }}
             </p>
-            <div class="pt-1 flex items-center justify-center gap-3">
+            <div data-reveal="fade" class="pt-1 flex items-center justify-center gap-3">
                 <button
                     type="button"
                     data-infinite-prev
                     aria-label="Geser galeri ke kiri"
-                    class="w-10 h-10 rounded-full border border-[var(--garis-kuwat)] inline-flex items-center justify-center hover:bg-[var(--mentega)] hover:text-white hover:border-[var(--mentega)] transition-colors cursor-pointer"
+                    class="w-10 h-10 rounded-full bg-[var(--batu)] text-[var(--tinta)] inline-flex items-center justify-center hover:bg-[var(--mentega)] hover:text-white transition-colors cursor-pointer"
                 >
                     <svg class="w-4 h-4"><use href="#icon-arrow-left"/></svg>
                 </button>
@@ -53,7 +53,7 @@
                     type="button"
                     data-infinite-next
                     aria-label="Geser galeri ke kanan"
-                    class="w-10 h-10 rounded-full border border-[var(--garis-kuwat)] inline-flex items-center justify-center hover:bg-[var(--mentega)] hover:text-white hover:border-[var(--mentega)] transition-colors cursor-pointer"
+                    class="w-10 h-10 rounded-full bg-[var(--batu)] text-[var(--tinta)] inline-flex items-center justify-center hover:bg-[var(--mentega)] hover:text-white transition-colors cursor-pointer"
                 >
                     <svg class="w-4 h-4"><use href="#icon-arrow-right"/></svg>
                 </button>
@@ -62,7 +62,7 @@
     </div>
 
     {{-- Strip Portrait Horizontal Tak Terbatas (Duplikat mulus 2x, bisa diseret & klik lightbox) --}}
-    <div data-infinite-viewport class="mt-8 sm:mt-10 overflow-hidden cursor-grab active:cursor-grabbing select-none">
+    <div data-reveal-media data-infinite-viewport class="mt-8 sm:mt-10 overflow-hidden cursor-grab active:cursor-grabbing select-none">
         <div data-infinite-strip class="flex w-max will-change-transform">
             @for ($dup = 0; $dup < 2; $dup++)
                 <div class="flex gap-4 sm:gap-5 pr-4 sm:pr-5" @if ($dup === 1) aria-hidden="true" @endif>

@@ -2,39 +2,21 @@ export function initNav() {
     const header = document.getElementById('umco-navbar');
     if (!header) return () => {};
 
-    const isReservationPage = header.dataset.page === 'reservation';
-    let lastY = window.scrollY;
     let ticking = false;
-    let currentTheme = header.dataset.initialTheme || 'dark';
+    const initialTheme = header.dataset.initialTheme || 'dark';
 
     const applyState = () => {
         const y = window.scrollY;
-        const scrolled = y > 80;
+        const scrolled = y > 48;
         header.dataset.scrolled = scrolled ? '1' : '0';
+        header.dataset.hidden = '0';
 
-        // Sembunyi halus hanya saat scroll cepat ke bawah melewati hero, langsung tampil saat scroll naik
-        if (!isReservationPage && y > 360 && y > lastY + 8) {
-            header.dataset.hidden = '1';
-        } else if (y < lastY - 4 || y <= 360) {
-            header.dataset.hidden = '0';
-        }
-
-        // Deteksi tema section di bawah navbar jika belum scrolled
         if (!scrolled) {
-            const sections = document.querySelectorAll('[data-nav-theme]');
-            for (const sec of sections) {
-                const rect = sec.getBoundingClientRect();
-                if (rect.top <= 48 && rect.bottom >= 48) {
-                    currentTheme = sec.dataset.navTheme;
-                    break;
-                }
-            }
-            header.dataset.theme = currentTheme;
+            header.dataset.theme = initialTheme;
         } else {
             header.dataset.theme = 'solid';
         }
 
-        lastY = y;
         ticking = false;
     };
 

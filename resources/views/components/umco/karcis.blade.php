@@ -7,20 +7,20 @@
     'torn' => false,
 ])
 
-<div {{ $attributes->class(['karcis-serrated bg-[var(--kertas-terang)] text-[var(--tinta)] relative select-none', $compact ? 'p-5' : 'p-6 sm:p-7']) }}>
+<div {{ $attributes->class(['karcis-serrated text-[var(--tinta)] relative select-none -rotate-1', $compact ? 'px-5 sm:px-6' : 'px-6 sm:px-7']) }}>
     <div class="flex items-center justify-between gap-3">
-        <span class="font-display font-semibold tracking-[0.08em] text-sm">UMCO</span>
-        <span class="font-hand text-xl text-[var(--mentega-tua)] tabular-nums">{{ $code }}</span>
+        <span class="font-display font-bold tracking-[0.08em] text-sm">UMCO</span>
+        <span class="font-hand text-2xl text-[var(--cabai)] tabular-nums">{{ $code }}</span>
     </div>
 
     <div class="mt-2 flex items-baseline justify-between gap-3">
-        <p class="font-display font-semibold tracking-tight {{ $compact ? 'text-2xl' : 'text-3xl sm:text-[2rem]' }} leading-none">
+        <p class="font-display font-bold tracking-tight {{ $compact ? 'text-2xl' : 'text-3xl sm:text-[2.1rem]' }} leading-none">
             {{ $title }}
         </p>
         @if ($stamp)
             <span
                 data-reveal="stamp"
-                class="inline-block px-2.5 py-1 rounded-md border font-display font-semibold text-[11px] tracking-wider -rotate-3 {{ $stampColor }}"
+                class="inline-block px-2.5 py-1 rounded-full bg-white/60 font-display font-semibold text-[11px] tracking-wider -rotate-3 {{ $stampColor }}"
             >
                 {{ $stamp }}
             </span>

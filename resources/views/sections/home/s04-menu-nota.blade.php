@@ -73,16 +73,16 @@
 >
     <div class="umco-container space-y-10">
         <div class="max-w-2xl mx-auto text-center space-y-3">
-            <p class="text-xs font-semibold tracking-[0.08em] text-[var(--mentega)]">
+            <p data-reveal="fade" class="font-hand text-2xl sm:text-[1.75rem] leading-none text-[var(--mentega)]">
                 {{ $section?->data['eyebrow'] ?? 'Nota Pilihan' }}
             </p>
             <h2 data-reveal="rise" class="type-display-l font-display font-bold">
                 {{ $section?->heading ?: 'Pilih duluan sebelum datang' }}
             </h2>
-            <p class="type-body text-[var(--tinta-70)] max-w-lg mx-auto">
+            <p data-reveal="fade" class="type-body text-[var(--tinta-70)] max-w-lg mx-auto">
                 {{ $section?->subheading ?: 'Ketuk nama menu, isiannya turun langsung ke nota.' }}
             </p>
-            <div class="pt-1">
+            <div data-reveal="fade" class="pt-1">
                 <a href="{{ url('/menu') }}" wire:navigate class="inline-flex items-center gap-2 text-sm font-semibold text-[var(--tinta)] underline underline-offset-4 hover:text-[var(--mentega)]">
                     <span>{{ $section?->cta_label ?: 'Lihat semua menu' }}</span>
                     <svg class="w-4 h-4"><use href="#icon-arrow-right"/></svg>
@@ -91,13 +91,13 @@
         </div>
 
         {{-- Tab kategori aktif di semua layar agar daftar ringkas & cepat --}}
-        <div class="flex gap-2 overflow-x-auto sm:justify-center pb-1 scrollbar-none">
+        <div data-reveal="fade" class="flex gap-2 overflow-x-auto sm:justify-center pb-1 scrollbar-none">
             <template x-for="cat in categories" :key="cat.slug">
                 <button
                     type="button"
                     @click="activeTab = cat.slug"
                     class="px-4 sm:px-5 h-10 rounded-full text-sm font-semibold whitespace-nowrap transition-colors cursor-pointer"
-                    :class="activeTab === cat.slug ? 'bg-[var(--mentega)] text-white' : 'bg-[var(--kertas-terang)] text-[var(--tinta)] border border-[var(--garis)] hover:border-[var(--mentega)]'"
+                    :class="activeTab === cat.slug ? 'bg-[var(--mentega)] text-white' : 'bg-[var(--kertas-terang)] text-[var(--tinta)] hover:bg-[var(--kertas)]'"
                     x-text="cat.name"
                 ></button>
             </template>
@@ -105,10 +105,10 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
             {{-- Kiri: Daftar menu bergaya nota sesuai tab aktif --}}
-            <div class="lg:col-span-7 space-y-6">
+            <div data-reveal="fade" class="lg:col-span-7 space-y-6">
                 <template x-for="cat in categories" :key="cat.slug">
                     <div x-show="activeTab === cat.slug" class="space-y-3">
-                        <p class="text-sm font-semibold text-[var(--mentega-tua)] border-b border-[var(--garis-kuwat)] pb-2" x-text="cat.name"></p>
+                        <p class="font-hand text-2xl text-[var(--mentega-tua)] pb-1" x-text="cat.name"></p>
 
                         <div class="divide-y divide-[var(--garis)]">
                             <template x-for="item in cat.items" :key="item.id">
@@ -136,8 +136,15 @@
                                             type="button"
                                             @click="toggleIng(item.id)"
                                             class="underline underline-offset-4 hover:text-[var(--tinta)] cursor-pointer"
-                                            x-text="openIng[item.id] ? 'Tutup detail' : 'Lihat komposisi'"
+                                            x-text="openIng[item.id] ? 'Tutup komposisi' : 'Lihat komposisi'"
                                         ></button>
+                                        <a
+                                            :href="'{{ url('/menu') }}/' + item.slug"
+                                            wire:navigate
+                                            class="underline underline-offset-4 hover:text-[var(--mentega)]"
+                                        >
+                                            Detail menu &rarr;
+                                        </a>
                                         <span x-show="!item.available" class="text-[var(--tinta-70)] font-semibold">Sedang habis</span>
                                     </div>
 
@@ -154,9 +161,9 @@
                 </template>
             </div>
 
-            {{-- Kanan Desktop: Nota lembut bergaris halus --}}
-            <div class="hidden lg:block lg:col-span-5 lg:sticky lg:top-24 space-y-4">
-                <div class="rounded-2xl bg-[var(--kertas-terang)] text-[var(--tinta)] border border-[var(--garis)] p-6 sm:p-7 space-y-4">
+            {{-- Kanan Desktop: Nota lembut tanpa border luar --}}
+            <div data-reveal-media class="hidden lg:block lg:col-span-5 lg:sticky lg:top-24 space-y-4">
+                <div class="rounded-2xl bg-[var(--kertas-terang)] text-[var(--tinta)] p-6 sm:p-7 space-y-4">
                     <div class="flex items-baseline justify-between">
                         <span class="font-display font-semibold text-lg tracking-wide">NOTA PILIHAN</span>
                         <span class="font-sans font-semibold text-xs text-[var(--mentega-tua)] tabular-nums">No. 000127</span>

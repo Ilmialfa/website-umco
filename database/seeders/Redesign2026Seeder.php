@@ -960,6 +960,30 @@ class Redesign2026Seeder extends Seeder
             ]
         );
 
+        Banner::updateOrCreate(
+            ['title' => 'Racikan kopi susu & penyegar non-kopi'],
+            [
+                'description' => 'Dari Aren Coffee sampai Matcha Oat dan mocktail dingin tanpa kopi, diracik segar per pesanan di bar.',
+                'image_path' => '/images/drinks-trio-banner.jpg',
+                'cta_label' => 'Lihat selengkapnya',
+                'cta_url' => '/menu',
+                'is_active' => true,
+                'sort' => 3,
+            ]
+        );
+
+        Banner::updateOrCreate(
+            ['title' => 'Menu hangat & kudapan dari pagi'],
+            [
+                'description' => 'Temani sesi kerja kelompok atau ngobrol sore dengan camilan gurih dan sajian manis yang siap disiapkan meja.',
+                'image_path' => '/images/hero-iced-coffee-splash.jpg',
+                'cta_label' => 'Lihat selengkapnya',
+                'cta_url' => '/menu',
+                'is_active' => true,
+                'sort' => 4,
+            ]
+        );
+
         $testimonials = [
             [
                 'name' => 'Rani',

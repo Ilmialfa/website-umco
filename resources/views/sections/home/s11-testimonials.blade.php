@@ -34,23 +34,23 @@
 >
     <div class="umco-container space-y-10 sm:space-y-12">
         <div class="max-w-2xl mx-auto text-center space-y-3">
-            <p class="text-xs font-semibold tracking-[0.08em] text-[var(--mentega)]">
+            <p data-reveal="fade" class="font-hand text-2xl sm:text-[1.75rem] leading-none text-[var(--mentega)]">
                 {{ $eyebrow }}
             </p>
             <h2 data-reveal="rise" class="type-display-l font-display font-bold">
                 {{ $heading }}
             </h2>
-            <p class="type-body text-[var(--tinta-70)] max-w-lg mx-auto">
+            <p data-reveal="fade" class="type-body text-[var(--tinta-70)] max-w-lg mx-auto">
                 {{ $subheading }}
             </p>
-            <div class="pt-1 inline-flex items-center gap-2 rounded-full bg-[var(--kertas-terang)] border border-[var(--garis)] px-4 py-1.5 text-xs sm:text-sm">
+            <div data-reveal="fade" class="pt-1 inline-flex items-center gap-2 rounded-full bg-[var(--kertas-terang)] px-4 py-1.5 text-xs sm:text-sm">
                 <span class="font-display font-bold text-base text-[var(--mentega)] tabular-nums">{{ $googleRating }}</span>
                 <span class="text-[var(--tinta-70)]">dari {{ $reviewsCount }} ulasan di Google Maps</span>
             </div>
         </div>
 
         {{-- Tablet & Desktop (>=640px): 3 Kolom Paralaks Infinite (Kiri Atas, Tengah Bawah, Kanan Atas) --}}
-        <div class="relative hidden sm:grid grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6 h-[470px] lg:h-[520px] overflow-hidden">
+        <div data-reveal-media class="relative hidden sm:grid grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6 h-[470px] lg:h-[520px] overflow-hidden">
             {{-- Mask gradasi atas/bawah agar kartu keluar-masuk halus --}}
             <div class="pointer-events-none absolute inset-x-0 top-0 h-16 z-10 bg-gradient-to-b from-[var(--kertas)] to-transparent"></div>
             <div class="pointer-events-none absolute inset-x-0 bottom-0 h-16 z-10 bg-gradient-to-t from-[var(--kertas)] to-transparent"></div>
@@ -65,7 +65,7 @@
                         @for ($dup = 0; $dup < 2; $dup++)
                             <div class="space-y-5 pb-5" @if ($dup === 1) aria-hidden="true" @endif>
                                 @foreach ($colItems as $t)
-                                    <article class="rounded-2xl bg-[var(--kertas-terang)] border border-[var(--garis)] p-6 space-y-4">
+                                    <article class="rounded-2xl bg-[var(--kertas-terang)] p-6 space-y-4">
                                         <div class="flex items-center gap-1 text-[var(--mentega)]" aria-label="{{ $t->rating ?? 5 }} bintang">
                                             @for ($s = 0; $s < (int) ($t->rating ?? 5); $s++)
                                                 <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.2 1 5.9L10 15l-5.2 2.8 1-5.9-4.3-4.2 5.9-.9L10 1.5z"/></svg>
@@ -74,7 +74,7 @@
                                         <p class="text-sm sm:text-[15px] leading-relaxed text-[var(--tinta)]">
                                             “{{ $t->body }}”
                                         </p>
-                                        <footer class="pt-2 border-t border-[var(--garis)] flex items-center justify-between gap-2 text-xs text-[var(--tinta-70)]">
+                                        <footer class="pt-2 flex items-center justify-between gap-2 text-xs text-[var(--tinta-70)]">
                                             <span class="font-semibold text-[var(--tinta)]">{{ $t->name }}</span>
                                             @if ($t->role)
                                                 <span class="truncate">{{ $t->role }}</span>
@@ -90,12 +90,12 @@
         </div>
 
         {{-- HP (<640px): Marquee Kartu Horizontal Ringkas agar tidak memakan tinggi layar --}}
-        <div class="sm:hidden overflow-hidden -mx-5 px-5">
+        <div data-reveal-media class="sm:hidden overflow-hidden -mx-5 px-5">
             <div class="umco-marquee-track gap-4" style="animation-duration: 34s;">
                 @for ($dup = 0; $dup < 2; $dup++)
                     <div class="flex gap-4 pr-4" @if ($dup === 1) aria-hidden="true" @endif>
                         @foreach ($list->take(6) as $t)
-                            <article class="w-[78vw] max-w-[300px] shrink-0 rounded-2xl bg-[var(--kertas-terang)] border border-[var(--garis)] p-5 space-y-3">
+                            <article class="w-[78vw] max-w-[300px] shrink-0 rounded-2xl bg-[var(--kertas-terang)] p-5 space-y-3">
                                 <div class="flex items-center gap-1 text-[var(--mentega)]">
                                     @for ($s = 0; $s < (int) ($t->rating ?? 5); $s++)
                                         <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.2 1 5.9L10 15l-5.2 2.8 1-5.9-4.3-4.2 5.9-.9L10 1.5z"/></svg>
@@ -104,7 +104,7 @@
                                 <p class="text-sm leading-relaxed text-[var(--tinta)]">
                                     “{{ $t->body }}”
                                 </p>
-                                <p class="pt-2 border-t border-[var(--garis)] text-xs">
+                                <p class="pt-1 text-xs">
                                     <span class="font-semibold text-[var(--tinta)]">{{ $t->name }}</span>
                                     @if ($t->role)
                                         <span class="text-[var(--tinta-70)]"> · {{ $t->role }}</span>

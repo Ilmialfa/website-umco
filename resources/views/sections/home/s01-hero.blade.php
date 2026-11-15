@@ -5,7 +5,7 @@
         $cutoutSrc = '/storage/' . ltrim($cutoutSrc, '/');
     }
     $eyebrow = $section?->body ?: 'Kampus 2 UMRI · Pekanbaru';
-    $heading = $section?->heading ?: \App\Support\Settings::get('brand.hero_headline', 'Kopi hangat, meja lapang di tepi kampus.');
+    $heading = $section?->heading ?: \App\Support\Settings::get('brand.hero_headline', 'Kopi hangat, meja lapang.');
     $subheading = $section?->subheading ?: \App\Support\Settings::get('brand.hero_description', 'Buka tiap hari 08.00 - 22.00 WIB di Kampus 2 UMRI Pekanbaru. Pesan meja dan menu langsung sebelum datang.');
     $ctaLabel = $section?->cta_label ?: 'Pesan meja';
     $ctaUrl = $section?->cta_url ?: '/reservasi';
@@ -20,13 +20,13 @@
     <div class="umco-container">
         <div class="grid grid-cols-1 sm:grid-cols-12 items-center sm:items-end gap-8 lg:gap-10 min-h-[76svh] sm:min-h-[68svh] lg:min-h-[82svh]">
             {{-- Kiri: Eyebrow, Judul Condensed Tinggi, Deskripsi, Catatan Tangan, & Dual CTA --}}
-            <div class="sm:col-span-6 lg:col-span-6 pb-2 sm:pb-16 lg:pb-24 pt-4 sm:pt-6 space-y-5 sm:space-y-6">
+            <div class="sm:col-span-6 lg:col-span-6 pb-2 sm:pb-16 lg:pb-24 pt-4 sm:pt-6 space-y-5 sm:space-y-6 relative z-10">
                 <div data-reveal="rise" class="inline-flex items-center gap-2 text-xs sm:text-sm font-medium text-white/90">
                     <span class="w-2 h-2 rounded-full bg-[var(--aksen-soft)]"></span>
                     <span>{{ $eyebrow }}</span>
                 </div>
 
-                <h1 data-reveal="lines" class="type-display font-display font-bold text-white max-w-xl">
+                <h1 data-reveal="lines" class="type-display font-display font-bold text-white max-w-2xl">
                     {{ $heading }}
                 </h1>
 
@@ -59,8 +59,8 @@
                 </div>
             </div>
 
-            {{-- Kanan: Gambar Cutout Tanpa Latar yang bisa diunggah admin dari Filament --}}
-            <div data-reveal="mask" class="sm:col-span-6 lg:col-span-6 flex justify-center sm:justify-end items-end self-end">
+            {{-- Kanan: Gambar Cutout Tanpa Latar + Kabut/Awan Lembut Penutup Potongan Bawah --}}
+            <div data-reveal="mask" class="relative sm:col-span-6 lg:col-span-6 flex justify-center sm:justify-end items-end self-end">
                 <img
                     data-hero-cutout
                     src="{{ asset($cutoutSrc) }}"
@@ -69,9 +69,19 @@
                     height="920"
                     fetchpriority="high"
                     decoding="async"
-                    class="w-[74vw] max-w-[300px] sm:w-full sm:max-w-[360px] lg:max-w-[490px] xl:max-w-[530px] h-auto object-contain object-bottom block select-none pointer-events-none"
+                    class="relative z-10 w-[74vw] max-w-[300px] sm:w-full sm:max-w-[360px] lg:max-w-[490px] xl:max-w-[530px] h-auto object-contain object-bottom block select-none pointer-events-none [mask-image:linear-gradient(to_bottom,black_82%,transparent_100%)]"
                 >
+
+                {{-- Awan / kabut halus melapisi bagian bawah foto agar perpotongan menyatu --}}
+                <div aria-hidden="true" class="pointer-events-none select-none absolute -bottom-12 inset-x-[-18%] z-20 h-28 sm:h-36 lg:h-44">
+                    <div class="umco-hero-cloud-puff absolute left-[4%] bottom-4 w-[58%] h-24 sm:h-32 rounded-full"></div>
+                    <div class="umco-hero-cloud-puff absolute right-[-4%] bottom-2 w-[62%] h-28 sm:h-36 rounded-full opacity-95"></div>
+                    <div class="umco-hero-cloud-puff absolute left-[24%] -bottom-2 w-[56%] h-24 sm:h-32 rounded-full opacity-90"></div>
+                </div>
             </div>
         </div>
     </div>
+
+    {{-- Kabut transisi bawah full-width menyambung ke warna kertas section berikutnya --}}
+    <div aria-hidden="true" class="umco-hero-cloud-band pointer-events-none select-none absolute bottom-0 inset-x-0 z-20 h-24 sm:h-28 lg:h-36"></div>
 </section>

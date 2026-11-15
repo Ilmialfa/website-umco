@@ -1,6 +1,6 @@
 @php
     $eyebrow = $section?->data['eyebrow'] ?? 'Suasana Kedai';
-    $heading = $section?->heading ?: 'Semua yang kamu butuh buat duduk tenang';
+    $heading = $section?->heading ?: 'Semua buat duduk tenang';
     $subheading = $section?->subheading ?: 'Dari kopi pagi sebelum kelas sampai meja panjang untuk diskusi malam di Kampus 2 UMRI.';
     $phrases = $section?->data['phrases'] ?? [
         'Buka tiap hari 08.00 - 22.00 WIB',
@@ -28,17 +28,33 @@
     data-module="marquee-collage"
     class="bg-[var(--kertas)] text-[var(--tinta)] overflow-hidden"
 >
-    {{-- Kolase Editorial dengan Judul Tengah Tegas ala Referensi --}}
-    <div class="umco-section pb-12 sm:pb-16">
+    {{-- Strip Marquee Paralaks Utama tepat di bawah Banner (Bisa Diubah Owner lewat CMS PageSection marquee) --}}
+    <div class="bg-[var(--umco-hutan)] text-white py-4 sm:py-5 overflow-hidden select-none">
+        <div data-marquee-parallax>
+            <div class="umco-marquee-track font-display font-semibold text-[1.4rem] sm:text-[1.9rem] lg:text-[2.2rem] leading-none tracking-[0.01em]">
+                @for ($copy = 0; $copy < 2; $copy++)
+                    <div class="flex items-center gap-7 sm:gap-10 pr-7 sm:pr-10" @if ($copy === 1) aria-hidden="true" @endif>
+                        @foreach ($phrases as $idx => $phrase)
+                            <span class="{{ $idx % 2 === 1 ? 'text-[var(--aksen-soft)]' : 'text-white' }} whitespace-nowrap">{{ $phrase }}</span>
+                            <span class="w-1.5 h-1.5 rounded-full bg-[var(--aksen-soft)] shrink-0" aria-hidden="true"></span>
+                        @endforeach
+                    </div>
+                @endfor
+            </div>
+        </div>
+    </div>
+
+    {{-- Kolase Editorial dengan Judul Tengah Tegas Maksimal 1-2 Baris --}}
+    <div class="umco-section">
         <div class="umco-container space-y-10 sm:space-y-14">
-            <div class="max-w-2xl mx-auto text-center space-y-3">
+            <div class="max-w-5xl mx-auto text-center space-y-3">
                 <p data-reveal="fade" class="font-hand text-2xl sm:text-[28px] leading-none text-[var(--mentega)]">
                     {{ $eyebrow }}
                 </p>
                 <h2 data-reveal="rise" class="type-display-l font-display font-bold text-[var(--tinta)]">
                     {{ $heading }}
                 </h2>
-                <p data-reveal="fade" class="type-body text-[var(--tinta-70)] max-w-lg mx-auto">
+                <p data-reveal="fade" class="type-body text-[var(--tinta-70)] max-w-xl mx-auto">
                     {{ $subheading }}
                 </p>
             </div>
@@ -65,22 +81,6 @@
                 <div data-collage-card data-reveal-media class="col-span-2 sm:col-span-3 rounded-2xl overflow-hidden bg-[var(--batu)] aspect-[16/9] sm:aspect-[3/4] sm:mt-6">
                     <img src="{{ asset($collagePhotos[2]['src']) }}" alt="{{ $collagePhotos[2]['alt'] }}" loading="lazy" decoding="async" class="w-full h-full object-cover">
                 </div>
-            </div>
-        </div>
-    </div>
-
-    {{-- Strip Marquee Paralaks (Bisa Diubah Owner lewat CMS PageSection marquee) --}}
-    <div class="bg-[var(--umco-hutan)] text-white py-4 sm:py-5 overflow-hidden select-none">
-        <div data-marquee-parallax>
-            <div class="umco-marquee-track font-display font-semibold text-[1.4rem] sm:text-[1.9rem] lg:text-[2.2rem] leading-none tracking-[0.01em]">
-                @for ($copy = 0; $copy < 2; $copy++)
-                    <div class="flex items-center gap-7 sm:gap-10 pr-7 sm:pr-10" @if ($copy === 1) aria-hidden="true" @endif>
-                        @foreach ($phrases as $idx => $phrase)
-                            <span class="{{ $idx % 2 === 1 ? 'text-[var(--aksen-soft)]' : 'text-white' }} whitespace-nowrap">{{ $phrase }}</span>
-                            <span class="w-1.5 h-1.5 rounded-full bg-[var(--aksen-soft)] shrink-0" aria-hidden="true"></span>
-                        @endforeach
-                    </div>
-                @endfor
             </div>
         </div>
     </div>

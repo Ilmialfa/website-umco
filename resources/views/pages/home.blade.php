@@ -8,6 +8,7 @@
         'gallery_diagonal' => 'sections.home.s08-diagonal-gallery',
         'faq' => 'sections.home.s12-faq',
         'testimonials' => 'sections.home.s11-testimonials',
+        'instagram_feed' => 'sections.home.s13-instagram',
         'cta_footer' => 'sections.home.s10-cta',
     ];
 

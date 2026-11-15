@@ -80,27 +80,27 @@
     class="umco-section bg-[var(--kertas-terang)] text-[var(--tinta)]"
 >
     <div class="umco-container space-y-10 sm:space-y-12">
-        <div class="max-w-2xl mx-auto text-center space-y-3">
+        <div class="max-w-4xl mx-auto text-center space-y-3">
             <p data-reveal="fade" class="font-hand text-2xl sm:text-[28px] leading-none text-[var(--mentega)]">
                 {{ $section?->data['eyebrow'] ?? 'Reservasi Meja' }}
             </p>
             <h2 data-reveal="rise" class="type-display-l font-display font-bold">
-                {{ $section?->heading ?: 'Pesan meja, karcis terisi sendiri' }}
+                {{ $section?->heading ?: 'Pesan meja, karcis terisi' }}
             </h2>
-            <p data-reveal="fade" class="type-body text-[var(--tinta-70)] max-w-lg mx-auto">
+            <p data-reveal="fade" class="type-body text-[var(--tinta-70)] max-w-xl mx-auto">
                 {{ $section?->subheading ?: 'Pilih hari dan jumlah orang dulu di sini, lalu lanjut atur jam, tempat duduk, dan pembayaran.' }}
             </p>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
-            {{-- Karcis preview --}}
-            <div data-reveal-media class="order-2 lg:order-2 lg:col-span-5">
-                <div class="sm:max-w-sm lg:ml-auto">
-                    <x-umco.karcis code="No. 0127" title="Karcis meja">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+            {{-- Karcis preview lebih besar di kanan --}}
+            <div data-reveal-media class="order-2 lg:order-2 lg:col-span-6">
+                <div class="w-full sm:max-w-[460px] lg:ml-auto">
+                    <x-umco.karcis code="No. 0127" title="Karcis meja" size="lg">
                         <x-umco.karcis-line label="Hari" bind="selectedDayText()" />
                         <x-umco.karcis-line label="Orang" bind="partySize + ' orang'" />
                         <x-umco.karcis-line label="Min. jajan" bind="formatRupiah(minSpend())" />
-                        <div class="hidden sm:block space-y-2.5 pt-0.5">
+                        <div class="space-y-3 pt-0.5">
                             <x-umco.karcis-line label="Tempat" value="dipilih di langkah berikut" />
                             <x-umco.karcis-line label="Menu" value="wajib sesuai minimal" />
                         </div>
@@ -108,8 +108,8 @@
                 </div>
             </div>
 
-            {{-- Pilihan cepat + Ringkasan Ketentuan --}}
-            <div data-reveal="rise" class="order-1 lg:order-1 lg:col-span-7 space-y-7">
+            {{-- Pilihan cepat + Ringkasan Alur Nyaman --}}
+            <div data-reveal="rise" class="order-1 lg:order-1 lg:col-span-6 space-y-7">
 
                 <div class="space-y-3">
                     <p class="text-sm font-semibold">Mau datang hari apa?</p>
@@ -171,28 +171,20 @@
                     </a>
                 </div>
 
-                @if ($rules->isNotEmpty())
-                    <div class="border-t border-[var(--garis)] pt-6 space-y-2" x-data="{ openRule: null }">
-                        <p class="text-xs font-semibold tracking-[0.06em] text-[var(--tinta-70)] pb-1">Ketentuan Singkat Kedai</p>
-                        <div class="divide-y divide-[var(--garis)]">
-                            @foreach ($rules->take(5) as $rIdx => $rule)
-                                <div class="py-2.5">
-                                    <button
-                                        type="button"
-                                        @click="openRule = openRule === {{ $rIdx + 1 }} ? null : {{ $rIdx + 1 }}"
-                                        class="w-full flex items-center justify-between gap-3 text-left text-sm font-medium hover:text-[var(--mentega)] cursor-pointer"
-                                    >
-                                        <span>{{ $rIdx + 1 }}. {{ $rule->title }}</span>
-                                        <span class="text-xs text-[var(--tinta-70)] shrink-0" x-text="openRule === {{ $rIdx + 1 }} ? 'Tutup' : 'Baca'"></span>
-                                    </button>
-                                    <p x-show="openRule === {{ $rIdx + 1 }}" x-transition class="pt-1.5 text-xs sm:text-sm text-[var(--tinta-70)] leading-relaxed">
-                                        {{ $rule->body }}
-                                    </p>
-                                </div>
-                            @endforeach
-                        </div>
+                <div class="pt-1 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div class="rounded-2xl bg-[var(--kertas)] p-4 space-y-1">
+                        <p class="font-display font-bold text-lg text-[var(--mentega)] leading-none">08.00 - 22.00</p>
+                        <p class="text-xs text-[var(--tinta-70)] leading-snug">Buka setiap hari di Kampus 2 UMRI</p>
                     </div>
-                @endif
+                    <div class="rounded-2xl bg-[var(--kertas)] p-4 space-y-1">
+                        <p class="font-display font-bold text-lg text-[var(--mentega)] leading-none">DP 50% / Lunas</p>
+                        <p class="text-xs text-[var(--tinta-70)] leading-snug">Bayar cepat via QRIS tanpa antre</p>
+                    </div>
+                    <div class="rounded-2xl bg-[var(--kertas)] p-4 space-y-1">
+                        <p class="font-display font-bold text-lg text-[var(--mentega)] leading-none">Siap di Meja</p>
+                        <p class="text-xs text-[var(--tinta-70)] leading-snug">Minuman disiapkan sebelum kamu tiba</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

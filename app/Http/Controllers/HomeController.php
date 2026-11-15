@@ -13,6 +13,7 @@ use App\Models\PageSection;
 use App\Models\Rule;
 use App\Models\SpendTier;
 use App\Models\Testimonial;
+use App\Services\InstagramFeedService;
 
 class HomeController extends Controller
 {
@@ -88,6 +89,7 @@ class HomeController extends Controller
             'rules' => Rule::where('is_active', true)->orderBy('sort')->get(),
             'faqs' => Faq::active()->get(),
             'testimonials' => Testimonial::where('is_featured', true)->orderBy('sort')->limit(9)->get(),
+            'instagramFeed' => app(InstagramFeedService::class)->getFeed(8),
             'portraitGallery' => $portraitGallery,
             'diagonalGallery' => $diagonalGallery,
             'galleryItems' => $portraitGallery->merge($diagonalGallery)->unique('id')->values(),

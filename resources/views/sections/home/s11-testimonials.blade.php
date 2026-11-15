@@ -34,7 +34,7 @@
         ];
     })->values();
 
-    // Bagi menjadi grup tepat 3 kolom agar tampilan horizontal simetris (Pt 7)
+    // Bagi menjadi grup 3 kolom simetris untuk rolling paralel otomatis atas/bawah
     $groups = $mapped->chunk(3)->map(function ($chunk) use ($mapped) {
         $arr = $chunk->values()->all();
         $i = 0;
@@ -52,32 +52,29 @@
     x-data="{
         groups: @js($groups),
         activeGroup: 0,
-        fading: false,
+        prevGroup: null,
+        rolling: false,
         paused: false,
         timer: null,
         init() {
             if (this.groups.length > 1) {
                 this.timer = setInterval(() => {
-                    if (!this.paused) this.next();
-                }, 5200);
+                    if (!this.paused) this.rollNext();
+                }, 4400);
             }
         },
         destroy() {
             if (this.timer) clearInterval(this.timer);
         },
-        switchTo(idx) {
-            if (idx === this.activeGroup || this.fading) return;
-            this.fading = true;
+        rollNext() {
+            if (this.rolling || this.groups.length <= 1) return;
+            this.prevGroup = this.activeGroup;
+            this.activeGroup = (this.activeGroup + 1) % this.groups.length;
+            this.rolling = true;
             setTimeout(() => {
-                this.activeGroup = idx;
-                this.fading = false;
-            }, 220);
-        },
-        next() {
-            this.switchTo((this.activeGroup + 1) % this.groups.length);
-        },
-        prev() {
-            this.switchTo((this.activeGroup - 1 + this.groups.length) % this.groups.length);
+                this.rolling = false;
+                this.prevGroup = null;
+            }, 580);
         }
     }"
     @mouseenter="paused = true"
@@ -85,87 +82,91 @@
     class="umco-section bg-[var(--batu)]/55 text-[var(--tinta)] overflow-hidden"
 >
     <div class="umco-container space-y-12 sm:space-y-14">
-        {{-- Header Tengah Editorial Gaya Contoh --}}
-        <div class="max-w-2xl mx-auto text-center space-y-2.5">
+        {{-- Header Tengah Editorial Maksimal 1-2 Baris --}}
+        <div class="max-w-5xl mx-auto text-center space-y-2.5">
             <p data-reveal="fade" class="font-hand text-2xl sm:text-[1.75rem] leading-none text-[var(--mentega)]">
                 {{ $eyebrow }} · {{ $googleRating }}/5 ({{ $reviewsCount }} ulasan)
             </p>
             <h2 data-reveal="rise" class="type-display-l font-display font-bold">
                 {{ $heading }}
             </h2>
-            <p data-reveal="fade" class="type-body text-[var(--tinta-70)] max-w-lg mx-auto">
+            <p data-reveal="fade" class="type-body text-[var(--tinta-70)] max-w-xl mx-auto">
                 {{ $subheading }}
             </p>
         </div>
 
-        {{-- 3 Kolom Horizontal dengan Garis Vertikal Kiri + Bintang + Avatar + Transisi Smooth --}}
-        <div
-            data-reveal-media
-            class="transition-all duration-500 ease-out"
-            :class="fading ? 'opacity-0 translate-y-2' : 'opacity-100 translate-y-0'"
-        >
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-9 md:gap-8 lg:gap-12">
-                <template x-for="(t, idx) in groups[activeGroup]" :key="activeGroup + '-' + idx + '-' + t.name">
-                    <article class="border-l border-[var(--tinta)]/20 pl-6 sm:pl-7 flex flex-col justify-between gap-6">
+        {{-- 3 Kolom Paralel Rolling Vertikal Otomatis (Kiri Turun, Tengah Naik, Kanan Turun; tanpa tombol kanan/kiri) --}}
+        <div data-reveal-media class="grid grid-cols-1 md:grid-cols-3 gap-9 md:gap-8 lg:gap-12">
+            @for ($col = 0; $col < 3; $col++)
+                @php
+                    $isMiddle = $col === 1;
+                    $inClass = $isMiddle ? 'umco-roll-in-up' : 'umco-roll-in-down';
+                    $outClass = $isMiddle ? 'umco-roll-out-up' : 'umco-roll-out-down';
+                @endphp
+                <div class="border-l border-[var(--tinta)]/20 pl-6 sm:pl-7 overflow-hidden relative min-h-[215px] sm:min-h-[225px]">
+                    {{-- Item Lama yang Meluncur Keluar Saat Transisi --}}
+                    <template x-if="rolling && prevGroup !== null">
+                        <article
+                            class="absolute inset-0 pl-6 sm:pl-7 flex flex-col justify-between gap-6 pointer-events-none {{ $outClass }}"
+                            aria-hidden="true"
+                        >
+                            <div class="space-y-4">
+                                <div class="flex items-center gap-1 text-[#C88A1E]">
+                                    <template x-for="s in groups[prevGroup][{{ $col }}].rating" :key="'old-s-' + s">
+                                        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.2 1 5.9L10 15l-5.2 2.8 1-5.9-4.3-4.2 5.9-.9L10 1.5z"/></svg>
+                                    </template>
+                                </div>
+                                <p class="text-[15px] sm:text-base leading-relaxed text-[var(--tinta)] line-clamp-4" x-text="groups[prevGroup][{{ $col }}].body"></p>
+                            </div>
+
+                            <footer class="flex items-center gap-3.5 pt-1">
+                                <template x-if="groups[prevGroup][{{ $col }}].avatar">
+                                    <img :src="groups[prevGroup][{{ $col }}].avatar" :alt="groups[prevGroup][{{ $col }}].name" class="w-11 h-11 rounded-full object-cover bg-[var(--kertas)] shrink-0">
+                                </template>
+                                <template x-if="!groups[prevGroup][{{ $col }}].avatar">
+                                    <span class="w-11 h-11 rounded-full bg-[var(--mentega)] text-white font-display font-bold text-base inline-flex items-center justify-center shrink-0" x-text="groups[prevGroup][{{ $col }}].initials"></span>
+                                </template>
+                                <div class="min-w-0">
+                                    <p class="font-display font-bold text-base leading-tight text-[var(--tinta)] truncate" x-text="groups[prevGroup][{{ $col }}].name"></p>
+                                    <p class="text-xs text-[var(--tinta-70)] truncate" x-text="groups[prevGroup][{{ $col }}].role"></p>
+                                </div>
+                            </footer>
+                        </article>
+                    </template>
+
+                    {{-- Item Aktif yang Meluncur Masuk Secara Paralel --}}
+                    <article
+                        :key="'cur-' + activeGroup + '-c{{ $col }}'"
+                        :class="rolling ? '{{ $inClass }}' : ''"
+                        class="h-full flex flex-col justify-between gap-6"
+                    >
                         <div class="space-y-4">
-                            <div class="flex items-center gap-1 text-[#C88A1E]" :aria-label="t.rating + ' bintang'">
-                                <template x-for="s in t.rating" :key="s">
+                            <div class="flex items-center gap-1 text-[#C88A1E]" :aria-label="groups[activeGroup][{{ $col }}].rating + ' bintang'">
+                                <template x-for="s in groups[activeGroup][{{ $col }}].rating" :key="'cur-s-' + s">
                                     <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.2 1 5.9L10 15l-5.2 2.8 1-5.9-4.3-4.2 5.9-.9L10 1.5z"/></svg>
                                 </template>
                             </div>
-
-                            <p class="text-[15px] sm:text-base leading-relaxed text-[var(--tinta)]" x-text="t.body"></p>
+                            <p class="text-[15px] sm:text-base leading-relaxed text-[var(--tinta)] line-clamp-4" x-text="groups[activeGroup][{{ $col }}].body"></p>
                         </div>
 
                         <footer class="flex items-center gap-3.5 pt-1">
-                            <template x-if="t.avatar">
-                                <img :src="t.avatar" :alt="t.name" class="w-11 h-11 rounded-full object-cover bg-[var(--kertas)] shrink-0">
+                            <template x-if="groups[activeGroup][{{ $col }}].avatar">
+                                <img :src="groups[activeGroup][{{ $col }}].avatar" :alt="groups[activeGroup][{{ $col }}].name" class="w-11 h-11 rounded-full object-cover bg-[var(--kertas)] shrink-0">
                             </template>
-                            <template x-if="!t.avatar">
+                            <template x-if="!groups[activeGroup][{{ $col }}].avatar">
                                 <span
                                     class="w-11 h-11 rounded-full bg-[var(--mentega)] text-white font-display font-bold text-base inline-flex items-center justify-center shrink-0"
-                                    x-text="t.initials"
+                                    x-text="groups[activeGroup][{{ $col }}].initials"
                                 ></span>
                             </template>
                             <div class="min-w-0">
-                                <p class="font-display font-bold text-base leading-tight text-[var(--tinta)] truncate" x-text="t.name"></p>
-                                <p class="text-xs text-[var(--tinta-70)] truncate" x-text="t.role"></p>
+                                <p class="font-display font-bold text-base leading-tight text-[var(--tinta)] truncate" x-text="groups[activeGroup][{{ $col }}].name"></p>
+                                <p class="text-xs text-[var(--tinta-70)] truncate" x-text="groups[activeGroup][{{ $col }}].role"></p>
                             </div>
                         </footer>
                     </article>
-                </template>
-            </div>
-        </div>
-
-        {{-- Navigasi Titik Halus bila terdapat lebih dari 1 set (3 ulasan/set) --}}
-        <div x-show="groups.length > 1" class="flex items-center justify-center gap-3">
-            <button
-                type="button"
-                @click="prev()"
-                aria-label="Ulasan sebelumnya"
-                class="w-9 h-9 rounded-full bg-[var(--kertas-terang)] text-[var(--tinta)] hover:bg-[var(--mentega)] hover:text-white inline-flex items-center justify-center transition-colors cursor-pointer"
-            >
-                <svg class="w-3.5 h-3.5"><use href="#icon-arrow-left"/></svg>
-            </button>
-            <div class="flex items-center gap-2">
-                <template x-for="(_, gIdx) in groups" :key="'tg-' + gIdx">
-                    <button
-                        type="button"
-                        @click="switchTo(gIdx)"
-                        :aria-label="'Tampilkan kelompok ulasan ' + (gIdx + 1)"
-                        class="h-2 rounded-full transition-all cursor-pointer"
-                        :class="activeGroup === gIdx ? 'w-7 bg-[var(--tinta)]' : 'w-2 bg-[var(--tinta)]/25 hover:bg-[var(--tinta)]/50'"
-                    ></button>
-                </template>
-            </div>
-            <button
-                type="button"
-                @click="next()"
-                aria-label="Ulasan berikutnya"
-                class="w-9 h-9 rounded-full bg-[var(--kertas-terang)] text-[var(--tinta)] hover:bg-[var(--mentega)] hover:text-white inline-flex items-center justify-center transition-colors cursor-pointer"
-            >
-                <svg class="w-3.5 h-3.5"><use href="#icon-arrow-right"/></svg>
-            </button>
+                </div>
+            @endfor
         </div>
     </div>
 </section>

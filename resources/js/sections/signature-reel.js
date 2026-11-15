@@ -1,14 +1,12 @@
 import gsap from 'gsap';
 
 /**
- * Sorotan Menu andalan berpola strip portrait bergulir mulus (kiri-kanan),
- * mendukung klik ke /menu/{slug}, seret horizontal, serta tombol panah.
+ * Strip menu favorit horizontal otomatis (infinite loop) tanpa tombol panah,
+ * dikendalikan langsung oleh posisi kursor kiri/kanan, seret (drag), dan sentuhan.
  */
 export function init(el) {
     const viewport = el.querySelector('[data-infinite-viewport]');
     const strip = el.querySelector('[data-infinite-strip]');
-    const btnPrev = el.querySelector('[data-infinite-prev]');
-    const btnNext = el.querySelector('[data-infinite-next]');
     if (!viewport || !strip) return () => {};
 
     const cleanups = [];
@@ -16,11 +14,12 @@ export function init(el) {
 
     let halfWidth = strip.scrollWidth / 2;
     let offsetX = 0;
-    let paused = false;
-    let speedPxPerSec = 36;
+    const baseSpeed = -34; // px/detik ke kiri
+    let currentSpeed = baseSpeed;
+    let targetSpeed = baseSpeed;
+    let pointerDown = false;
     let dragStartX = 0;
     let dragStartOffset = 0;
-    let pointerDown = false;
     let wasDragged = false;
 
     const wrapOffset = (val) => {
@@ -32,8 +31,10 @@ export function init(el) {
 
     if (!reduced) {
         const tick = (_time, deltaMs) => {
-            if (!paused && !pointerDown && halfWidth > 0) {
-                offsetX = wrapOffset(offsetX - (speedPxPerSec * deltaMs) / 1000);
+            if (!pointerDown && halfWidth > 0) {
+                const factor = Math.min(1, (deltaMs / 1000) * 6.5);
+                currentSpeed += (targetSpeed - currentSpeed) * factor;
+                offsetX = wrapOffset(offsetX + (currentSpeed * deltaMs) / 1000);
                 strip.style.transform = `translate3d(${offsetX}px, 0, 0)`;
             }
         };
@@ -48,15 +49,49 @@ export function init(el) {
     window.addEventListener('resize', onResize, { passive: true });
     cleanups.push(() => window.removeEventListener('resize', onResize));
 
-    const onEnter = () => { paused = true; };
-    const onLeave = () => { paused = false; };
-    viewport.addEventListener('mouseenter', onEnter);
-    viewport.addEventListener('mouseleave', onLeave);
+    // Kursor kiri/kanan mengarahkan laju gulir tanpa tombol fisik
+    const onMouseMove = (e) => {
+        if (pointerDown || e.pointerType === 'touch') return;
+        const rect = viewport.getBoundingClientRect();
+        if (!rect.width) return;
+        const norm = (e.clientX - rect.left) / rect.width; // 0 (kiri) .. 1 (kanan)
+
+        if (norm < 0.30) {
+            const strength = (0.30 - norm) / 0.30; // 0..1
+            targetSpeed = 140 * strength; // gulir ke kanan (mundur ke item kiri)
+        } else if (norm > 0.70) {
+            const strength = (norm - 0.70) / 0.30; // 0..1
+            targetSpeed = -150 * strength; // percepat ke kiri (item berikutnya)
+        } else {
+            // Area tengah: melambat halus agar mudah membaca dan mengeklik menu
+            targetSpeed = 0;
+        }
+    };
+
+    const onMouseLeave = () => {
+        targetSpeed = baseSpeed;
+    };
+
+    viewport.addEventListener('mousemove', onMouseMove, { passive: true });
+    viewport.addEventListener('mouseleave', onMouseLeave, { passive: true });
     cleanups.push(() => {
-        viewport.removeEventListener('mouseenter', onEnter);
-        viewport.removeEventListener('mouseleave', onLeave);
+        viewport.removeEventListener('mousemove', onMouseMove);
+        viewport.removeEventListener('mouseleave', onMouseLeave);
     });
 
+    // Dukung wheel horizontal trackpad / mouse
+    const onWheel = (e) => {
+        const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : (e.shiftKey ? e.deltaY : 0);
+        if (Math.abs(delta) > 0) {
+            e.preventDefault();
+            offsetX = wrapOffset(offsetX - delta);
+            strip.style.transform = `translate3d(${offsetX}px, 0, 0)`;
+        }
+    };
+    viewport.addEventListener('wheel', onWheel, { passive: false });
+    cleanups.push(() => viewport.removeEventListener('wheel', onWheel));
+
+    // Seret horizontal langsung
     const onPointerDown = (e) => {
         pointerDown = true;
         wasDragged = false;
@@ -80,7 +115,6 @@ export function init(el) {
         setTimeout(() => { strip.dataset.dragging = '0'; }, 80);
     };
 
-    // Guard anchor navigation if user actually dragged
     const links = strip.querySelectorAll('a[data-menu-card-link]');
     links.forEach((a) => {
         const guard = (e) => {
@@ -103,30 +137,7 @@ export function init(el) {
         window.removeEventListener('pointercancel', onPointerUp);
     });
 
-    const stepBy = (dir) => {
-        const stepSize = Math.min(360, viewport.clientWidth * 0.72);
-        const proxy = { x: offsetX };
-        paused = true;
-        gsap.to(proxy, {
-            x: offsetX + dir * stepSize,
-            duration: 0.65,
-            ease: 'power3.out',
-            onUpdate: () => {
-                offsetX = wrapOffset(proxy.x);
-                strip.style.transform = `translate3d(${offsetX}px, 0, 0)`;
-            },
-            onComplete: () => { paused = false; },
-        });
+    return () => {
+        cleanups.forEach((fn) => fn());
     };
-
-    const onPrev = () => stepBy(1);
-    const onNext = () => stepBy(-1);
-    btnPrev?.addEventListener('click', onPrev);
-    btnNext?.addEventListener('click', onNext);
-    cleanups.push(() => {
-        btnPrev?.removeEventListener('click', onPrev);
-        btnNext?.removeEventListener('click', onNext);
-    });
-
-    return () => cleanups.forEach((fn) => fn());
 }

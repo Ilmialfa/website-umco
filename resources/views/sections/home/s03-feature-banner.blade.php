@@ -52,15 +52,7 @@
     })->values()->all();
 
     $sectionEyebrow = $section?->data['eyebrow'] ?? 'Sorotan UMCO';
-    $sectionHeading = $section?->heading ?: 'Ruang, promo, dan kabar terbaru';
-
-    $ribbonItems = [
-        'Wi-Fi kencang di seluruh meja',
-        'Colokan listrik mudah dijangkau',
-        'Pesan meja sekaligus menu online',
-        'Kopi single-origin & minuman non-kopi',
-        'Cocok buat diskusi & kerja kelompok',
-    ];
+    $sectionHeading = $section?->heading ?: 'Kabar terbaru dari UMCO';
 @endphp
 
 <section
@@ -110,9 +102,9 @@
     class="bg-[var(--kertas)] text-[var(--tinta)] overflow-hidden"
 >
     {{-- Showcase Banner 3-Kartu Lanskap dengan Animasi Geser & Dukungan Swipe --}}
-    <div class="umco-section pt-10 sm:pt-14 pb-12 sm:pb-16">
+    <div class="umco-section pt-10 sm:pt-14 pb-10 sm:pb-12">
         <div class="umco-container space-y-8 sm:space-y-10">
-            <div class="max-w-2xl mx-auto text-center space-y-2">
+            <div class="max-w-4xl mx-auto text-center space-y-2">
                 <p data-reveal="fade" class="font-hand text-2xl sm:text-[28px] leading-none text-[var(--mentega)]">
                     {{ $sectionEyebrow }}
                 </p>
@@ -239,22 +231,6 @@
                     </button>
                 </div>
             </div>
-        </div>
-    </div>
-
-    {{-- Strip fitur dekoratif murni (Point 6: dipertahankan sebagai pita dekoratif beridentitas) --}}
-    <div class="bg-[#13422E] py-3.5 overflow-hidden select-none">
-        <div class="umco-marquee-track text-xs sm:text-sm font-medium text-white/95">
-            @for ($c = 0; $c < 2; $c++)
-                <div class="flex items-center gap-8 pr-8" @if ($c === 1) aria-hidden="true" @endif>
-                    @foreach ($ribbonItems as $ri)
-                        <span class="inline-flex items-center gap-2.5 whitespace-nowrap">
-                            <span class="w-1.5 h-1.5 rounded-full bg-[var(--aksen-soft)]"></span>
-                            <span>{{ $ri }}</span>
-                        </span>
-                    @endforeach
-                </div>
-            @endfor
         </div>
     </div>
 </section>

@@ -11,7 +11,7 @@ it('renders home page without legacy copy, emojis, or external fonts', function 
     $response->assertSee('UM.CO');
     $response->assertSee('Hubungi Kami');
     $response->assertSee('Reservasi');
-    foreach (['hero', 'banner-utama', 'marquee', 'signature-reel', 'karcis-teaser', 'galeri-diagonal', 'faq', 'kata-mereka', 'cta-footer'] as $sectionId) {
+    foreach (['hero', 'banner-utama', 'marquee', 'signature-reel', 'karcis-teaser', 'galeri-diagonal', 'faq', 'kata-mereka', 'instagram-feed', 'cta-footer'] as $sectionId) {
         $response->assertSee("id=\"{$sectionId}\"", false);
     }
     $response->assertDontSee('id="menu-nota"', false);
@@ -175,4 +175,11 @@ it('renders galeri page cleanly with filters and cta', function () {
     $response->assertSee('Lihat daftar menu');
     $response->assertDontSee('Wing Barat');
     expect($response->getContent())->not->toMatch('/[\x{1F300}-\x{1FAFF}]/u');
+});
+
+it('serves instagram feed endpoint for @um.co_house', function () {
+    $response = $this->getJson('/instagram-feed');
+    $response->assertStatus(200)
+        ->assertJsonPath('username', 'um.co_house')
+        ->assertJsonStructure(['username', 'profile_url', 'source', 'posts']);
 });

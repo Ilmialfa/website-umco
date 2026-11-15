@@ -1,6 +1,6 @@
 @php
     $eyebrow = $section?->data['eyebrow'] ?? 'Tanya Jawab';
-    $heading = $section?->heading ?: 'Pertanyaan yang sering ditanyakan';
+    $heading = $section?->heading ?: 'Yang sering ditanyakan';
     $subheading = $section?->subheading ?: 'Semua yang perlu kamu tahu soal pesan meja, minimal belanja, DP QRIS, sampai acara komunitas.';
     $ctaLabel = $section?->cta_label ?: 'Tanya langsung via WhatsApp';
 

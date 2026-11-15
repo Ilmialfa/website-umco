@@ -37,7 +37,7 @@
     class="umco-section bg-[var(--batu)] text-[var(--tinta)] overflow-hidden"
 >
     <div class="umco-container space-y-10 sm:space-y-12">
-        <div class="max-w-2xl mx-auto text-center space-y-3">
+        <div class="max-w-5xl mx-auto text-center space-y-3">
             <p data-reveal="fade" class="font-hand text-2xl sm:text-[1.75rem] leading-none text-[var(--mentega)]">
                 {{ $eyebrow }}
             </p>

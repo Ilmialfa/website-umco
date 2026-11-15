@@ -18,7 +18,7 @@
     }
     $waLink = $waDigits ? 'https://wa.me/' . $waDigits : '#';
     $mapsUrl = \App\Support\Settings::get('contact.google_maps_url', 'https://maps.google.com/?q=UMRI+Pekanbaru');
-    $instagramUrl = \App\Support\Settings::get('contact.instagram_url', 'https://instagram.com/umco.house');
+    $instagramUrl = \App\Support\Settings::get('contact.instagram_url', 'https://www.instagram.com/um.co_house');
     $openTime = \App\Support\Settings::get('hours.opening_time', '08.00');
     $closeTime = \App\Support\Settings::get('hours.closing_time', '21.00');
     $address = \App\Support\Settings::get('contact.address', 'Kampus 2 UMRI, Jl. Tuanku Tambusai Ujung, Delima, Pekanbaru');
@@ -330,16 +330,16 @@
                 </div>
             </div>
 
-            <div class="relative pt-10 sm:pt-14 pb-4 sm:pb-6 flex flex-col items-center justify-end overflow-hidden select-none">
+            <div class="relative pt-8 sm:pt-12 pb-0 flex flex-col items-center justify-end overflow-hidden select-none">
                 <div
                     data-footer-wordmark
-                    class="w-full font-display font-bold text-[30vw] sm:text-[27vw] lg:text-[25vw] leading-[0.78] tracking-[-0.02em] bg-gradient-to-b from-white via-[#EAF5EE] to-white/30 bg-clip-text text-transparent text-center whitespace-nowrap will-change-transform"
+                    class="w-full font-display font-bold text-[36vw] sm:text-[34vw] lg:text-[32vw] leading-[0.90] pt-2 pb-[0.06em] tracking-[-0.02em] bg-gradient-to-b from-white via-[#EAF5EE] to-white/30 bg-clip-text text-transparent text-center whitespace-nowrap will-change-transform translate-y-3 sm:translate-y-4 lg:translate-y-5"
                 >
                     {{ $footerWordmark }}
                 </div>
 
                 {{-- Uap dingin lembut berlapis kode di bawah gelas & tatakan batu --}}
-                <div class="relative z-10 -mt-[20vw] sm:-mt-[19vw] lg:-mt-[17.5vw] flex flex-col items-center pointer-events-none">
+                <div class="relative z-10 -mt-[26vw] sm:-mt-[25vw] lg:-mt-[23.5vw] flex flex-col items-center pointer-events-none">
                     <div class="umco-vapor-wisp absolute -bottom-2 left-1/2 -translate-x-1/2 w-56 sm:w-80 lg:w-96 h-24 sm:h-32 rounded-full"></div>
                     <div class="umco-vapor-wisp absolute bottom-2 left-1/2 -translate-x-1/2 w-40 sm:w-64 lg:w-72 h-16 sm:h-24 rounded-full" style="animation-delay: -2.4s;"></div>
                     <img

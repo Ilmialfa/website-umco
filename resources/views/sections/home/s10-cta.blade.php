@@ -23,7 +23,7 @@
     class="umco-cta-gradient text-[var(--tinta)] pt-20 pb-24 sm:pt-28 sm:pb-32 overflow-hidden"
 >
     <div class="umco-container">
-        <div class="max-w-2xl mx-auto text-center space-y-5">
+        <div class="max-w-5xl mx-auto text-center space-y-5">
             <p data-reveal="fade" class="font-hand text-2xl sm:text-[1.75rem] leading-none text-[var(--mentega-tua)]">
                 {{ $eyebrow }}
             </p>

@@ -75,8 +75,9 @@ class ManageSettings extends Page implements HasForms
             'coordinates' => $all['contact.coordinates'] ?? '',
             'plus_code' => $all['contact.plus_code'] ?? '',
             'google_maps_url' => $all['contact.google_maps_url'] ?? '',
-            'instagram_url' => $all['contact.instagram_url'] ?? '',
-            'instagram_handle' => $all['contact.instagram_handle'] ?? '',
+            'instagram_url' => $all['contact.instagram_url'] ?? 'https://www.instagram.com/um.co_house',
+            'instagram_handle' => $all['contact.instagram_handle'] ?? '@um.co_house',
+            'instagram_access_token' => $all['contact.instagram_access_token'] ?? '',
             'phone_wa' => $all['contact.phone_wa'] ?? '02248001571',
             'business_wa' => $all['contact.business_wa'] ?? '622248001571',
             'collab_template' => $all['contact.collab_template'] ?? '',
@@ -171,8 +172,14 @@ class ManageSettings extends Page implements HasForms
                                 TextInput::make('business_wa')
                                     ->label('Nomor WA Penerima Notifikasi Reservasi (Otomatis 62xx)')
                                     ->required(),
-                                TextInput::make('instagram_handle')->label('Username Instagram'),
-                                TextInput::make('instagram_url')->label('URL Instagram')->url(),
+                                TextInput::make('instagram_handle')->label('Username Instagram')->placeholder('@um.co_house'),
+                                TextInput::make('instagram_url')->label('URL Instagram')->url()->placeholder('https://www.instagram.com/um.co_house'),
+                                TextInput::make('instagram_access_token')
+                                    ->label('Token Akses Instagram Graph API (Opsional, Real-Time)')
+                                    ->password()
+                                    ->revealable()
+                                    ->helperText('Jika kosong, website menyinkronkan profil publik @um.co_house otomatis. Isi Long-Lived Token untuk sync Graph API resmi.')
+                                    ->columnSpanFull(),
                                 TextInput::make('google_maps_url')->label('URL Google Maps')->url(),
                                 TextInput::make('coordinates')->label('Koordinat'),
                                 TextInput::make('plus_code')->label('Plus Code'),
@@ -322,8 +329,9 @@ class ManageSettings extends Page implements HasForms
 
             'contact.phone_wa' => $state['phone_wa'] ?? '02248001571',
             'contact.business_wa' => $businessWaNormalized,
-            'contact.instagram_handle' => $state['instagram_handle'] ?? '',
-            'contact.instagram_url' => $state['instagram_url'] ?? '',
+            'contact.instagram_handle' => $state['instagram_handle'] ?? '@um.co_house',
+            'contact.instagram_url' => $state['instagram_url'] ?? 'https://www.instagram.com/um.co_house',
+            'contact.instagram_access_token' => $state['instagram_access_token'] ?? '',
             'contact.google_maps_url' => $state['google_maps_url'] ?? '',
             'contact.coordinates' => $state['coordinates'] ?? '',
             'contact.plus_code' => $state['plus_code'] ?? '',
@@ -373,6 +381,8 @@ class ManageSettings extends Page implements HasForms
         foreach ($mapping as $key => $val) {
             Settings::set($key, $val);
         }
+
+        \App\Services\InstagramFeedService::flushCache();
 
         ActivityLog::record('setting_update', null, null, [
             'updated_by' => auth()->user()?->name ?? 'Owner',

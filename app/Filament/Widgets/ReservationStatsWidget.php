@@ -18,6 +18,7 @@ class ReservationStatsWidget extends BaseWidget
     {
         $metrics = Cache::remember('filament.dashboard.stats', 15, function (): array {
             $today = now()->toDateString();
+            $weekStart = now()->subDays(6)->toDateString();
             $monthStart = now()->startOfMonth()->toDateString();
             $monthEnd = now()->endOfMonth()->toDateString();
 
@@ -30,6 +31,19 @@ class ReservationStatsWidget extends BaseWidget
                 )
                 ->first();
 
+            $dailyCounts = Reservation::query()
+                ->selectRaw('date, COUNT(*) as total')
+                ->whereBetween('date', [$weekStart, $today])
+                ->groupBy('date')
+                ->pluck('total', 'date')
+                ->all();
+
+            $chart7Days = [];
+            for ($i = 6; $i >= 0; $i--) {
+                $d = now()->subDays($i)->toDateString();
+                $chart7Days[] = (int) ($dailyCounts[$d] ?? 0);
+            }
+
             $activeMenuCount = MenuItem::where('is_active', true)->where('is_available', true)->count();
 
             return [
@@ -37,6 +51,7 @@ class ReservationStatsWidget extends BaseWidget
                 'pending_count' => (int) ($resRow?->pending_count ?? 0),
                 'month_dp' => (int) ($resRow?->month_dp ?? 0),
                 'active_menu' => (int) $activeMenuCount,
+                'chart_7d' => $chart7Days,
             ];
         });
 
@@ -44,11 +59,13 @@ class ReservationStatsWidget extends BaseWidget
         $pendingCount = $metrics['pending_count'];
         $totalDpThisMonth = $metrics['month_dp'];
         $activeMenuCount = $metrics['active_menu'];
+        $chart7Days = $metrics['chart_7d'];
 
         return [
             Stat::make('Reservasi Hari Ini', "{$todayCount} Meja")
                 ->description(now()->translatedFormat('l, d F Y'))
                 ->descriptionIcon('heroicon-m-calendar-days')
+                ->chart($chart7Days)
                 ->color('primary'),
 
             Stat::make('Menunggu Konfirmasi', "{$pendingCount} Reservasi")

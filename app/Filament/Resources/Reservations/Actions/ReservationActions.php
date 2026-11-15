@@ -14,51 +14,61 @@ use Filament\Notifications\Notification;
 
 class ReservationActions
 {
-    public static function whatsappGroup(): ActionGroup
+    /**
+     * @return array<int, Action>
+     */
+    public static function whatsappActions(bool $prefixed = false): array
     {
-        return ActionGroup::make([
+        $prefix = $prefixed ? 'WA: ' : '';
+
+        return [
             Action::make('wa_confirmation')
-                ->label('Konfirmasi')
+                ->label($prefix . 'Konfirmasi')
                 ->icon('heroicon-o-check-badge')
                 ->color('success')
                 ->openUrlInNewTab()
                 ->url(fn (Reservation $record): string => route('admin.wa.redirect', ['reservation' => $record->id, 'template' => 'confirmation'])),
 
             Action::make('wa_reminder')
-                ->label('Ingatkan')
+                ->label($prefix . 'Ingatkan')
                 ->icon('heroicon-o-bell-alert')
                 ->color('warning')
                 ->openUrlInNewTab()
                 ->url(fn (Reservation $record): string => route('admin.wa.redirect', ['reservation' => $record->id, 'template' => 'reminder'])),
 
             Action::make('wa_follow_up_proof')
-                ->label('Follow up bukti bayar')
+                ->label($prefix . 'Follow up bukti bayar')
                 ->icon('heroicon-o-document-magnifying-glass')
                 ->color('info')
                 ->openUrlInNewTab()
                 ->url(fn (Reservation $record): string => route('admin.wa.redirect', ['reservation' => $record->id, 'template' => 'follow_up_proof'])),
 
             Action::make('wa_underpaid')
-                ->label('Kurang bayar')
+                ->label($prefix . 'Kurang bayar')
                 ->icon('heroicon-o-banknotes')
                 ->color('warning')
                 ->openUrlInNewTab()
                 ->url(fn (Reservation $record): string => route('admin.wa.redirect', ['reservation' => $record->id, 'template' => 'underpaid'])),
 
             Action::make('wa_cancellation')
-                ->label('Batal')
+                ->label($prefix . 'Batal')
                 ->icon('heroicon-o-x-circle')
                 ->color('danger')
                 ->openUrlInNewTab()
                 ->url(fn (Reservation $record): string => route('admin.wa.redirect', ['reservation' => $record->id, 'template' => 'cancellation'])),
 
             Action::make('wa_free')
-                ->label('Chat bebas')
+                ->label($prefix . 'Chat bebas')
                 ->icon('heroicon-o-chat-bubble-left-ellipsis')
                 ->color('gray')
                 ->openUrlInNewTab()
                 ->url(fn (Reservation $record): string => route('admin.wa.redirect', ['reservation' => $record->id, 'template' => 'free'])),
-        ])
+        ];
+    }
+
+    public static function whatsappGroup(): ActionGroup
+    {
+        return ActionGroup::make(self::whatsappActions())
             ->label('WhatsApp')
             ->icon('heroicon-o-chat-bubble-bottom-center-text')
             ->color('success');

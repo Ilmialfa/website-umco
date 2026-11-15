@@ -2,10 +2,10 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Resources\Reservations\ReservationResource;
 use App\Models\ActivityLog;
 use App\Models\Reservation;
 use App\Support\PhoneNumber;
-use App\Support\Settings;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
@@ -34,6 +34,13 @@ class UpcomingReservationsWidget extends BaseWidget
                     ->orderBy('time')
                     ->limit(8)
             )
+            ->headerActions([
+                Action::make('view_all')
+                    ->label('Lihat Semua')
+                    ->icon('heroicon-o-arrow-right')
+                    ->color('gray')
+                    ->url(ReservationResource::getUrl('index')),
+            ])
             ->columns([
                 TextColumn::make('code')
                     ->label('Kode')
@@ -47,7 +54,7 @@ class UpcomingReservationsWidget extends BaseWidget
                 TextColumn::make('date')
                     ->label('Jadwal')
                     ->date('d M Y')
-                    ->description(fn (Reservation $record) => "{$record->time} WIB")
+                    ->description(fn (Reservation $record) => str_replace(':', '.', substr((string) $record->time, 0, 5)) . ' WIB')
                     ->sortable(),
 
                 TextColumn::make('party_size')
@@ -95,6 +102,9 @@ class UpcomingReservationsWidget extends BaseWidget
                             ->success()
                             ->send();
                     }),
-            ]);
+            ])
+            ->emptyStateHeading('Belum ada jadwal mendatang')
+            ->emptyStateDescription('Semua reservasi yang dikonfirmasi atau menunggu verifikasi untuk hari ini dan mendatang akan muncul di sini.')
+            ->emptyStateIcon('heroicon-o-calendar-days');
     }
 }

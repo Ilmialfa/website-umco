@@ -4,7 +4,9 @@ namespace App\Filament\Resources\Reservations\Tables;
 
 use App\Filament\Resources\Reservations\Actions\ReservationActions;
 use App\Models\Reservation;
+use App\Support\IndonesianFormat;
 use App\Support\PhoneNumber;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -21,17 +23,55 @@ class ReservationsTable
             ->defaultSort('date', 'desc')
             ->columns([
                 TextColumn::make('code')
-                    ->label('Kode Booking')
+                    ->label('Kode')
+                    ->description(fn (Reservation $record): string => $record->mode === 'table_menu' ? 'Meja + Menu' : 'Hanya Meja')
                     ->searchable()
                     ->sortable()
                     ->copyable()
                     ->weight('bold'),
 
                 TextColumn::make('name')
-                    ->label('Nama Tamu')
+                    ->label('Tamu')
                     ->description(fn (Reservation $record): string => PhoneNumber::format($record->phone_wa))
                     ->searchable()
                     ->sortable(),
+
+                TextColumn::make('date')
+                    ->label('Jadwal')
+                    ->date('d M Y')
+                    ->description(fn (Reservation $record): string => str_replace(':', '.', substr((string) $record->time, 0, 5)) . ' WIB')
+                    ->sortable(),
+
+                TextColumn::make('party_size')
+                    ->label('Pax')
+                    ->formatStateUsing(fn (Reservation $record): string => $record->party_size . ' org')
+                    ->alignCenter()
+                    ->sortable(),
+
+                TextColumn::make('status')
+                    ->label('Status')
+                    ->badge()
+                    ->formatStateUsing(fn (Reservation $record) => $record->status_label)
+                    ->color(fn ($state) => match ($state) {
+                        'pending' => 'warning',
+                        'confirmed' => 'success',
+                        'completed' => 'info',
+                        'cancelled' => 'danger',
+                        default => 'gray',
+                    }),
+
+                TextColumn::make('payment_status')
+                    ->label('Pembayaran')
+                    ->badge()
+                    ->formatStateUsing(fn (Reservation $record) => $record->payment_status_label)
+                    ->description(fn (Reservation $record): string => IndonesianFormat::rupiah((int) $record->amount_due))
+                    ->color(fn ($state) => match ($state) {
+                        'waiting_proof' => 'warning',
+                        'proof_uploaded' => 'info',
+                        'verified' => 'success',
+                        'rejected' => 'danger',
+                        default => 'gray',
+                    }),
 
                 TextColumn::make('phone_wa')
                     ->label('WhatsApp')
@@ -40,23 +80,11 @@ class ReservationsTable
                     ->copyable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                TextColumn::make('date')
-                    ->label('Jadwal')
-                    ->date('d M Y')
-                    ->description(fn (Reservation $record): string => str_replace(':', '.', substr((string) $record->time, 0, 5)) . ' WIB')
-                    ->sortable(),
-
                 TextColumn::make('time')
                     ->label('Jam')
                     ->formatStateUsing(fn ($state) => str_replace(':', '.', substr((string) $state, 0, 5)) . ' WIB')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-
-                TextColumn::make('party_size')
-                    ->label('Pax')
-                    ->numeric()
-                    ->alignCenter()
-                    ->sortable(),
 
                 TextColumn::make('seatingOption.label')
                     ->label('Tempat')
@@ -75,34 +103,11 @@ class ReservationsTable
                     ->color('gray')
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                TextColumn::make('status')
-                    ->label('Status')
-                    ->badge()
-                    ->formatStateUsing(fn (Reservation $record) => $record->status_label)
-                    ->color(fn ($state) => match ($state) {
-                        'pending' => 'warning',
-                        'confirmed' => 'success',
-                        'completed' => 'info',
-                        'cancelled' => 'danger',
-                        default => 'gray',
-                    }),
-
-                TextColumn::make('payment_status')
-                    ->label('Pembayaran')
-                    ->badge()
-                    ->formatStateUsing(fn (Reservation $record) => $record->payment_status_label)
-                    ->color(fn ($state) => match ($state) {
-                        'waiting_proof' => 'warning',
-                        'proof_uploaded' => 'info',
-                        'verified' => 'success',
-                        'rejected' => 'danger',
-                        default => 'gray',
-                    }),
-
                 TextColumn::make('amount_due')
                     ->label('Tagihan')
                     ->money('IDR')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 SelectFilter::make('status')
@@ -133,15 +138,22 @@ class ReservationsTable
                     ]),
             ])
             ->recordActions([
-                ReservationActions::whatsappGroup(),
-                ...ReservationActions::statusActions(),
-                ViewAction::make(),
-                EditAction::make(),
+                ActionGroup::make([
+                    ViewAction::make(),
+                    EditAction::make(),
+                    ...ReservationActions::statusActions(),
+                    ...ReservationActions::whatsappActions(prefixed: true),
+                ])
+                    ->iconButton()
+                    ->tooltip('Tindakan'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->emptyStateHeading('Belum ada reservasi')
+            ->emptyStateDescription('Data reservasi baru dari tamu website maupun input kasir akan langsung tampil di sini.')
+            ->emptyStateIcon('heroicon-o-calendar-days');
     }
 }

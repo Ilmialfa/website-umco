@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\AdminLogin;
+use App\Http\Middleware\EnforcePasswordChange;
 use App\Http\Middleware\SecurityHeaders;
 use App\Support\Settings;
 use Filament\Http\Middleware\Authenticate;
@@ -121,6 +122,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+                EnforcePasswordChange::class,
             ]);
     }
 }

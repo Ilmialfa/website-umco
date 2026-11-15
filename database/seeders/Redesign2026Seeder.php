@@ -43,13 +43,19 @@ class Redesign2026Seeder extends Seeder
 
     private function seedUsers(): void
     {
+        if (app()->isProduction()) {
+            $this->command?->warn('Lingkungan produksi terdeteksi: akun demo staf dilewati. Jalankan: php artisan umco:create-owner');
+
+            return;
+        }
+
         User::updateOrCreate(
             ['email' => 'owner@umco.house'],
             [
                 'name' => 'Owner UMCO',
                 'password' => Hash::make('password123'),
                 'role' => 'owner',
-                'must_change_password' => true,
+                'must_change_password' => false,
                 'email_verified_at' => now(),
             ]
         );

@@ -162,13 +162,13 @@ class Redesign2026Seeder extends Seeder
             // SEO
             ['group' => 'seo', 'key' => 'meta_title', 'payload' => 'UMCO — Kedai Kopi di Kampus UMRI Pekanbaru'],
             ['group' => 'seo', 'key' => 'meta_description', 'payload' => 'Kedai kopi di Kampus 2 UMRI Pekanbaru. Kopi harian, camilan, dan pesan meja dengan pilihan menu siap saji.'],
-            ['group' => 'seo', 'key' => 'og_image', 'payload' => '/images/hero-photo.webp'],
+            ['group' => 'seo', 'key' => 'og_image', 'payload' => ''],
         ];
 
         foreach ($settingsData as $row) {
             Setting::updateOrCreate(
-                ['key' => $row['key']],
-                ['group' => $row['group'], 'payload' => $row['payload']]
+                ['group' => $row['group'], 'key' => $row['key']],
+                ['payload' => $row['payload']]
             );
         }
     }

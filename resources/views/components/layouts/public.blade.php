@@ -15,7 +15,7 @@
     $ogImageRaw = trim((string) \App\Support\Settings::get('seo.og_image', ''));
     $ogImageUrl = $ogImageRaw !== ''
         ? (str_starts_with($ogImageRaw, 'http') || str_starts_with($ogImageRaw, '/') ? asset($ogImageRaw) : asset('storage/' . ltrim($ogImageRaw, '/')))
-        : asset('/images/hero-photo.webp');
+        : asset('/images/og-cover.webp');
     $rawWa = \App\Support\Settings::get('contact.phone_wa', '02248001571');
     $waDigits = method_exists(\App\Support\PhoneNumber::class, 'normalizeBusiness')
         ? \App\Support\PhoneNumber::normalizeBusiness($rawWa)

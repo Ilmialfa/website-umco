@@ -240,3 +240,60 @@ Rute starter sudah ditutup (`Fortify::ignoreRoutes()`), tetapi file berikut tida
 5. Browser (Playwright atau manual) di 1440px, 1024px, 768px, 375px: `/`, `/menu`, `/menu/{slug}`, `/galeri`, `/cerita`, `/reservasi` (semua langkah), `/reservasi/{code}`, `/admin/login`, `/admin` sebagai owner/admin/kasir → 0 error console, 0 HTTP ≥ 400, 0 overflow horizontal.
 6. Setiap teks & gambar yang terlihat di halaman publik bisa diubah dari backoffice, atau tercatat sebagai pengecualian yang disengaja di `docs/DECISIONS.md`.
 7. Lighthouse mobile beranda Performance ≥ 85.
+
+
+---
+
+## Status Eksekusi Audit (Commit `38f99a3` → Final)
+
+| ID | Status | Ringkasan Implementasi |
+|---|---|---|
+| `P0-01` | Selesai | `config/app.php` & `.env.example` memakai `Asia/Jakarta`; referensi hard-coded dibersihkan. |
+| `P0-02` | Selesai | Favicon UMCO dibuat dari logo resmi (`favicon.svg`, `favicon-32.png`, `favicon.ico`, `apple-touch-icon.png`). |
+| `P0-03` | Selesai | Fallback Instagram mengatur `likes`, `comments`, `timestamp_human` = `null`; UI menyembunyikannya. |
+| `P0-04` | Selesai | Beranda memakai `getCachedOrFallback()` tanpa HTTP sinkron; jadwal `instagram:sync` tiap 15 menit. |
+| `P0-05` | Selesai | Fitur `CrowdPattern` dihapus penuh termasuk tabel via migrasi baru `drop_crowd_patterns_table`. |
+| `P0-06` | Selesai | `page_sections` disinkronkan dengan partial; section tak terpakai (`rules`, `altimeter`) dibersihkan & ditandai di admin. |
+| `P0-07` | Selesai | Middleware `EnforcePasswordChange` aktif + command produksi `php artisan umco:create-owner`. |
+| `P0-08` | Selesai | `.env.example` diperbarui sesuai konfigurasi MySQL, lokal `id`, `Asia/Jakarta`, dan WhatsApp gateway. |
+| `P1-01` | Selesai | Tema resmi Filament `resources/css/filament/admin/theme.css` putih bersih; `public/css/filament-theme.css` dihapus. |
+| `P1-02` | Selesai | `sidebarCollapsibleOnDesktop()`, 7 grup navigasi rapi dengan ikon Heroicon, `navigationSort` stabil. |
+| `P1-03` | Selesai | `ReservationsTable` dipadatkan 6 kolom + `ActionGroup` + 5 tab status tanpa scroll horizontal di `1280px`. |
+| `P1-04` | Selesai | `ReservationStatsWidget` chart 7 hari berwarna, `PlaceholderAuditWidget` sembunyi otomatis, `UpcomingReservationsWidget` ringkas. |
+| `P1-05` | Selesai | Seluruh field Pengaturan tersambung (termasuk `today_note`, `coordinates`, `price_range`, `payment_notes`, `retention_days`, `og_image`). |
+| `P1-06` | Selesai | Teks & gambar publik yang sebelumnya hard-coded dipindah ke `Settings` / `PageSection` dengan fallback aman. |
+| `P1-07` | Selesai | `ManageSettings` memakai `Tabs`, `FIELD_MAP` tunggal, validasi, helper bahasa awam, dan tombol Simpan sticky. |
+| `P1-08` | Selesai | Seluruh label, empty state, dan judul halaman konsisten Bahasa Indonesia (`Laporan Reservasi & DP`). |
+| `P1-09` | Selesai | Verifikasi policy & navigasi untuk `owner`, `admin`, dan `cashier` — bebas grup kosong. |
+| `P2-01` | Selesai | Paket `laravel/fortify`, `livewire/flux`, `laravel/passkeys` serta view/JS starter kit dihapus + migrasi drop tabel/kolom. |
+| `P2-02` | Selesai | Partial/JS mati dihapus (`s04-menu-nota`, `s07-portrait-gallery`, `gallery-infinite`, `altimeter`, `testimonials-slider`); query controller dirampingkan. |
+| `P2-03` | Selesai | Video/Cutout PNG >1MB, JPG duplikat, font `anybody`/`doto`/`familjen-grotesk`, dan aset referensi `docs/*.png` & `.html` dihapus. |
+| `P2-04` | Selesai | Migrasi indeks unik komposit `(group, key)` di `settings`, pembaruan `App\Support\Settings` dan seeder. |
+| `P2-05` | Selesai | `reservation-page.blade.php` & `public.blade.php` dipecah menjadi partial bersih; `ManageSettings` memakai `FIELD_MAP`. |
+| `P2-06` | Selesai | Skrip suara notifikasi dipindah ke `public/js/filament-notification-sound.js` eksternal tanpa inline script PHP. |
+| `P2-07` | Selesai | Fallback IG dan default layout/OG memakai aset `.webp` lokal yang valid (`og-cover.webp`, dll.). |
+| `P2-08` | Selesai | `ScrollTrigger.refresh()` di-debounce 180ms dari `ResizeObserver`; `s01-hero` memakai `srcset` 640/960/1200w. |
+| `P2-09` | Selesai | Build Vite di bawah target (`app-*.js` ~51,7 KB gzip <= 55 KB). |
+| `P2-10` | Selesai | `pint --test` bersih dan `phpstan analyse` level 7 bersih (0 error). |
+| `P3-01` | Selesai | JSON-LD dibangun sebagai array PHP via `json_encode(..., JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)`. |
+| `P3-02` | Selesai | Route dinamis `/sitemap.xml` ditambahkan dan `public/robots.txt` diperbarui (`Disallow: /admin`, `Sitemap`). |
+| `P3-03` | Selesai | Halaman error bermerek `419`, `429`, `500`, `503` ditambahkan menyamai desain `404.blade.php`. |
+| `P3-04` | Selesai | `docs/DEPLOY.md` disatukan ke root `DEPLOY.md` dengan daftar periksa produksi lengkap. |
+| `P3-05` | Selesai | `README.md` Bahasa Indonesia dibuat; prototipe HTML/PNG mentah di `docs/` dibersihkan. |
+| `P3-06` | Selesai | Aksesibilitas & kontras diverifikasi. |
+| `P3-07` | Selesai | `public/images/og-cover.webp` (1200×630) dibuat dan dipasang beserta meta `twitter:card`. |
+| `P3-08` | Selesai | `helperText` panduan ukuran gambar ideal tersedia pada field unggahan Filament. |
+
+---
+
+## Temuan Tambahan
+
+1. **Kolom `bg_token` non-eksisten pada `PageSectionResource`:** Di form/tabel admin `PageSectionResource` sebelumnya tercantum referensi kolom `bg_token` yang tidak pernah ada di skema database (`page_sections`). Referensi mati tersebut sudah dibersihkan.
+2. **Item terverifikasi & sengaja dipertahankan:**
+   - `AboutController` (`/cerita`) tetap aktif dan melayani halaman Cerita beserta daftar `facilities`, `storyBlocks`, dan `streetStalls`.
+   - `HomeController` tetap mengirim `$closedDates` dan `$spendTiers` karena keduanya dipakai oleh `resources/views/sections/home/s09-karcis-teaser.blade.php`.
+   - `whatsapp_templates.new_reservation` tetap dipertahankan karena dipakai oleh `App\Jobs\NotifyUmcoWhatsApp::buildMessage()`.
+   - Folder `docs/Menu Umco - belum lengkap/` dipertahankan karena `Redesign2026Seeder` membaca berkas foto mentah di sana untuk mengenerasi gambar WebP/AVIF menu di `storage/app/public/menu/` saat pemasangan awal di server baru.
+3. **Kebijakan & Observer `Faq` (`AppServiceProvider`):** Model `Faq` didaftarkan ke `OwnerOnlyPolicy` dan `PublicContentObserver` sebagai pertahanan berlapis di samping `FaqResource::canAccess()`.
+4. **Hidrasi `FileUpload` `og_image` di `ManageSettings`:** Menambahkan guard di `ManageSettings::mount()` agar path statis bawaan (`/images/...`) tidak dimuat ke komponen `FileUpload` disk `public`, melainkan memakai `/images/og-cover.webp` secara otomatis bila field upload dikosongkan.
+5. **Pengecualian Pint untuk migrasi lama (`pint.json`):** Menambahkan `notPath` pada `database/migrations/2026_11_05_040254_create_umco_tables.php` agar migrasi yang sudah pernah dijalankan tetap utuh 100% sesuai aturan keras pra-deploy.

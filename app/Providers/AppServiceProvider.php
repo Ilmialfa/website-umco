@@ -7,6 +7,7 @@ use App\Models\Banner;
 use App\Models\BeanOrigin;
 use App\Models\ClosedDate;
 use App\Models\Facility;
+use App\Models\Faq;
 use App\Models\GalleryItem;
 use App\Models\MenuCategory;
 use App\Models\MenuItem;
@@ -115,6 +116,7 @@ class AppServiceProvider extends ServiceProvider
             Banner::class,
             BeanOrigin::class,
             Facility::class,
+            Faq::class,
             GalleryItem::class,
             PageSection::class,
             Rule::class,
@@ -140,6 +142,7 @@ class AppServiceProvider extends ServiceProvider
         Setting::observe(PublicContentObserver::class);
         GalleryItem::observe(PublicContentObserver::class);
         Facility::observe(PublicContentObserver::class);
+        Faq::observe(PublicContentObserver::class);
         StreetStall::observe(PublicContentObserver::class);
         Testimonial::observe(PublicContentObserver::class);
         StoryBlock::observe(PublicContentObserver::class);

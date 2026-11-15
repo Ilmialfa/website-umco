@@ -143,6 +143,8 @@ class ManageSettings extends Page implements HasForms
                 $filled[$field] = is_string($raw) ? (json_decode($raw, true) ?: []) : (is_array($raw) ? $raw : []);
             } elseif ($field === 'dp_percentage') {
                 $filled[$field] = max(50, (int) $raw);
+            } elseif ($field === 'og_image' && is_string($raw) && str_starts_with($raw, '/images/')) {
+                $filled[$field] = null;
             } else {
                 $filled[$field] = $raw;
             }

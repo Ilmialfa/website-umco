@@ -54,16 +54,20 @@
         activeGroup: 0,
         prevGroup: null,
         rolling: false,
-        paused: false,
         timer: null,
+        initTimer: null,
         init() {
             if (this.groups.length > 1) {
-                this.timer = setInterval(() => {
-                    if (!this.paused) this.rollNext();
-                }, 4400);
+                this.initTimer = setTimeout(() => {
+                    this.rollNext();
+                    this.timer = setInterval(() => {
+                        this.rollNext();
+                    }, 2400);
+                }, 1100);
             }
         },
         destroy() {
+            if (this.initTimer) clearTimeout(this.initTimer);
             if (this.timer) clearInterval(this.timer);
         },
         rollNext() {
@@ -74,11 +78,9 @@
             setTimeout(() => {
                 this.rolling = false;
                 this.prevGroup = null;
-            }, 580);
+            }, 640);
         }
     }"
-    @mouseenter="paused = true"
-    @mouseleave="paused = false"
     class="umco-section bg-[var(--batu)]/55 text-[var(--tinta)] overflow-hidden"
 >
     <div class="umco-container space-y-12 sm:space-y-14">

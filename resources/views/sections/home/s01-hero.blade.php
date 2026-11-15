@@ -15,18 +15,18 @@
     id="hero"
     data-nav-theme="dark"
     data-module="hero"
-    class="relative umco-hero-gradient text-white overflow-hidden pt-24 sm:pt-28 lg:pt-28 pb-10 sm:pb-16 lg:pb-20"
+    class="relative umco-hero-gradient text-white overflow-hidden pt-20 sm:pt-24 lg:pt-24 pb-8 sm:pb-12 lg:pb-14"
 >
     <div class="umco-container">
-        <div class="grid grid-cols-1 sm:grid-cols-12 items-center sm:items-end gap-8 lg:gap-10 min-h-[76svh] sm:min-h-[68svh] lg:min-h-[82svh]">
+        <div class="grid grid-cols-1 sm:grid-cols-12 items-center gap-8 lg:gap-10 min-h-[70svh] sm:min-h-[64svh] lg:min-h-[76svh]">
             {{-- Kiri: Eyebrow, Judul Condensed Tinggi, Deskripsi, Catatan Tangan, & Dual CTA --}}
-            <div class="sm:col-span-6 lg:col-span-6 pb-2 sm:pb-16 lg:pb-24 pt-4 sm:pt-6 space-y-5 sm:space-y-6 relative z-10">
+            <div class="sm:col-span-6 lg:col-span-6 py-4 sm:py-6 space-y-5 sm:space-y-6 relative z-10">
                 <div data-reveal="rise" class="inline-flex items-center gap-2 text-xs sm:text-sm font-medium text-white/90">
                     <span class="w-2 h-2 rounded-full bg-[var(--aksen-soft)]"></span>
                     <span>{{ $eyebrow }}</span>
                 </div>
 
-                <h1 data-reveal="lines" class="type-display font-display font-bold text-white max-w-2xl">
+                <h1 data-reveal="lines" class="font-display font-bold [font-size:clamp(3.4rem,6.2vw,6.25rem)] leading-[0.90] tracking-[-0.025em] text-white max-w-2xl">
                     {{ $heading }}
                 </h1>
 

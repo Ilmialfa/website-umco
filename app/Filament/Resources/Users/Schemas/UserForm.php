@@ -10,6 +10,7 @@ use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 
 class UserForm
 {
@@ -43,11 +44,14 @@ class UserForm
                                     TextInput::make('password')
                                         ->label('Kata Sandi (Password)')
                                         ->password()
+                                        ->revealable()
+                                        ->minLength(8)
+                                        ->rule(Password::min(8)->letters()->numbers())
                                         ->dehydrateStateUsing(fn ($state) => filled($state) ? Hash::make($state) : null)
                                         ->dehydrated(fn ($state) => filled($state))
                                         ->required(fn (string $context): bool => $context === 'create')
                                         ->columnSpanFull()
-                                        ->helperText('Kosongkan jika tidak ingin mengubah kata sandi.'),
+                                        ->helperText('Minimal 8 karakter dengan kombinasi huruf dan angka. Kosongkan jika tidak ingin mengubah kata sandi.'),
                                 ]),
                         ])->columnSpan(['default' => 1, 'lg' => 2]),
 

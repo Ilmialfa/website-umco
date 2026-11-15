@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -67,8 +68,13 @@ class ReservationPage extends Component
     public bool $showRulesDrawer = false;
 
     // Step 6: Selesai
+    #[Locked]
     public ?string $createdCode = null;
+
+    #[Locked]
     public ?string $createdWaLink = null;
+
+    #[Locked]
     public ?int $createdReservationId = null;
 
     public bool $hasQueryItems = false;

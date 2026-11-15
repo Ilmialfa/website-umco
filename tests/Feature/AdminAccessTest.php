@@ -218,5 +218,40 @@ test('sends HTTP security headers on public responses', function () {
     $response->assertStatus(200)
         ->assertHeader('X-Frame-Options', 'SAMEORIGIN')
         ->assertHeader('X-Content-Type-Options', 'nosniff')
-        ->assertHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+        ->assertHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
+        ->assertHeader('X-Permitted-Cross-Domain-Policies', 'none')
+        ->assertHeader('Cross-Origin-Opener-Policy', 'same-origin')
+        ->assertHeader('Content-Security-Policy');
+});
+
+test('custom admin login renders split showcase with security headers and denies unauthorized roles', function () {
+    $loginResponse = $this->get('/admin/login');
+    $loginResponse->assertOk()
+        ->assertSee('MASUK BACKOFFICE')
+        ->assertSee('MEJA SIAP. RACIKAN TERJAGA.')
+        ->assertHeader('X-Frame-Options', 'SAMEORIGIN')
+        ->assertHeader('Content-Security-Policy');
+
+    $guest = User::factory()->create(['role' => 'guest']);
+    $this->actingAs($guest)->get('/admin')->assertForbidden();
+});
+
+test('enforces strict Livewire property locks, calendar CRLF sanitization, and rate-limited instagram cache refresh', function () {
+    $reservation = Reservation::create([
+        'name' => "Tamu\r\nSTATUS:CANCELLED\nTest",
+        'phone_input' => '082248001571',
+        'date' => now('Asia/Jakarta')->addDay()->format('Y-m-d'),
+        'time' => '15:00',
+        'party_size' => 2,
+        'subtotal' => 60000,
+        'dp_amount' => 30000,
+        'amount_due' => 30000,
+    ]);
+
+    $owner = User::factory()->create(['role' => 'owner']);
+    $icsResponse = $this->actingAs($owner)->get(route('reservation.calendar', ['code' => $reservation->code]));
+    $icsResponse->assertOk();
+    expect($icsResponse->getContent())->not->toContain("\r\nSTATUS:CANCELLED");
+
+    $this->get('/instagram-feed?refresh=1')->assertOk();
 });

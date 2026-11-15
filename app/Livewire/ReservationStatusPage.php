@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -24,9 +25,14 @@ class ReservationStatusPage extends Component
 {
     use WithFileUploads;
 
+    #[Locked]
     public string $code = '';
+
     public string $digitsInput = '';
+
+    #[Locked]
     public bool $verified = false;
+
     public $newProof = null;
     public bool $reuploadSuccess = false;
 

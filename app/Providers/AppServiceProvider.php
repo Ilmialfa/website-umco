@@ -30,10 +30,14 @@ use App\Policies\OwnerOnlyPolicy;
 use App\Policies\ReservationPolicy;
 use App\Policies\UserPolicy;
 use Carbon\CarbonImmutable;
+use Illuminate\Auth\Events\Failed;
+use Illuminate\Auth\Events\Lockout;
+use Illuminate\Auth\Events\Login;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
@@ -56,6 +60,38 @@ class AppServiceProvider extends ServiceProvider
         $this->configureDefaults();
         $this->registerObservers();
         $this->registerPolicies();
+        $this->registerSecurityAuditListeners();
+    }
+
+    /**
+     * Record authentication lifecycle events into ActivityLog for owner security visibility.
+     */
+    protected function registerSecurityAuditListeners(): void
+    {
+        Event::listen(Login::class, function (Login $event): void {
+            if (! $event->user instanceof User) {
+                return;
+            }
+            ActivityLog::record('auth.login', User::class, $event->user->id, [
+                'email' => $event->user->email,
+                'role' => $event->user->role,
+                'ip' => request()?->ip(),
+            ]);
+        });
+
+        Event::listen(Failed::class, function (Failed $event): void {
+            ActivityLog::record('auth.login_failed', User::class, $event->user?->getAuthIdentifier(), [
+                'email' => (string) ($event->credentials['email'] ?? '-'),
+                'ip' => request()?->ip(),
+            ]);
+        });
+
+        Event::listen(Lockout::class, function (Lockout $event): void {
+            ActivityLog::record('auth.lockout', User::class, null, [
+                'email' => (string) $event->request->input('email', '-'),
+                'ip' => $event->request->ip(),
+            ]);
+        });
     }
 
     /**

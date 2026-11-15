@@ -324,3 +324,356 @@ textarea {
     font-size: 14px;
     color: var(--umco-tinta);
 }
+
+/* Font display condensed & tulisan tangan untuk halaman login UMCO */
+@font-face {
+    font-family: 'Barlow Condensed';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url('/fonts/barlow-condensed-700.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Reenie Beanie';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/fonts/reenie-beanie-latin.woff2') format('woff2');
+}
+
+/* Halaman Login Split-Editorial UMCO (/admin/login) */
+.fi-simple-layout:has(.umco-login-shell) {
+    background: radial-gradient(circle at 12% 18%, #E6EFE9 0%, var(--umco-canvas) 48%, #ECE8DC 100%) !important;
+    min-height: 100vh;
+}
+
+.fi-simple-main-ctn:has(.umco-login-shell) {
+    padding: clamp(1rem, 3vw, 2.25rem) !important;
+    align-items: center !important;
+}
+
+.fi-simple-main:has(.umco-login-shell) {
+    max-width: 1060px !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 auto !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 24px !important;
+}
+
+.fi-simple-main:has(.umco-login-shell) .fi-simple-page,
+.fi-simple-main:has(.umco-login-shell) .fi-simple-page-content {
+    padding: 0 !important;
+    gap: 0 !important;
+}
+
+.umco-login-shell {
+    display: grid;
+    grid-template-columns: 1fr;
+    border-radius: 24px;
+    overflow: hidden;
+    background-color: var(--umco-surface);
+}
+
+@media (min-width: 960px) {
+    .umco-login-shell {
+        grid-template-columns: 1.12fr 0.88fr;
+        min-height: 620px;
+    }
+}
+
+.umco-login-visual {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.75rem;
+    padding: clamp(1.5rem, 3.2vw, 2.5rem);
+    background: linear-gradient(155deg, #0E3726 0%, #1B5E42 54%, #12422E 100%);
+    color: #FFFFFF;
+    overflow: hidden;
+}
+
+.umco-login-visual-bg {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 82% 18%, rgba(220, 235, 225, 0.16) 0%, transparent 45%),
+        radial-gradient(circle at 18% 85%, rgba(16, 59, 41, 0.55) 0%, transparent 55%);
+    pointer-events: none;
+}
+
+.umco-login-visual-top {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.umco-login-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.85rem;
+    border-radius: 9999px;
+    background-color: rgba(255, 255, 255, 0.14);
+    color: #F4F8F5;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+}
+
+.umco-login-badge-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 9999px;
+    background-color: #9EE2BA;
+}
+
+.umco-login-hours {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.82);
+}
+
+.umco-login-collage {
+    position: relative;
+    z-index: 2;
+    display: block;
+    margin: 0.25rem 0;
+}
+
+.umco-login-photo-main {
+    margin: 0;
+    border-radius: 18px;
+    overflow: hidden;
+    background-color: #134731;
+    aspect-ratio: 16 / 10;
+}
+
+.umco-login-photo-main img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.umco-login-photo-inset {
+    display: none;
+}
+
+@media (min-width: 640px) {
+    .umco-login-photo-inset {
+        display: block;
+        position: absolute;
+        right: -0.5rem;
+        bottom: -0.85rem;
+        width: 40%;
+        margin: 0;
+        border-radius: 14px;
+        overflow: hidden;
+        border: 4px solid #174F37;
+        background-color: #103B29;
+        aspect-ratio: 4 / 3;
+    }
+
+    .umco-login-photo-inset img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+}
+
+.umco-login-visual-copy {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.umco-login-hand {
+    margin: 0;
+    font-family: 'Reenie Beanie', cursive;
+    font-size: 1.55rem;
+    line-height: 1;
+    color: #DCEBE1;
+}
+
+.umco-login-headline {
+    margin: 0;
+    font-family: 'Barlow Condensed', 'Plus Jakarta Sans', sans-serif;
+    font-size: clamp(2.15rem, 3.6vw, 3rem);
+    font-weight: 700;
+    line-height: 0.96;
+    letter-spacing: -0.01em;
+    color: #FFFFFF;
+}
+
+.umco-login-subcopy {
+    margin: 0;
+    font-size: 0.88rem;
+    line-height: 1.55;
+    color: rgba(244, 248, 245, 0.84);
+    max-width: 44ch;
+}
+
+.umco-login-pillars {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.65rem;
+    margin-top: 0.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.umco-login-pillar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.umco-login-pillar-val {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #FFFFFF;
+}
+
+.umco-login-pillar-lbl {
+    font-size: 0.72rem;
+    color: rgba(244, 248, 245, 0.74);
+}
+
+.umco-login-form-pane {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(1.75rem, 4vw, 3rem);
+    background-color: #FFFFFF;
+    color: var(--umco-tinta);
+}
+
+.umco-login-form-inner {
+    width: 100%;
+    max-width: 390px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+}
+
+.umco-login-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.umco-login-mark-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.35rem;
+}
+
+.umco-login-wordmark {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.65rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--umco-aksen);
+}
+
+.umco-login-role-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.75rem;
+    border-radius: 9999px;
+    background-color: var(--umco-aksen-soft);
+    color: var(--umco-aksen-tua);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.umco-login-title {
+    margin: 0;
+    font-family: 'Barlow Condensed', 'Plus Jakarta Sans', sans-serif;
+    font-size: clamp(1.95rem, 2.8vw, 2.35rem);
+    font-weight: 700;
+    line-height: 1;
+    color: var(--umco-tinta);
+}
+
+.umco-login-subtitle {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--umco-tinta-70);
+}
+
+.umco-login-form-body .fi-btn {
+    min-height: 2.85rem;
+    font-size: 0.92rem !important;
+}
+
+.umco-login-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    padding-top: 1.15rem;
+    border-top: 1px solid #EFECE4;
+}
+
+.umco-login-security-note {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: 0.76rem;
+    line-height: 1.4;
+    color: var(--umco-tinta-70);
+}
+
+.umco-login-shield {
+    width: 16px;
+    height: 16px;
+    color: var(--umco-aksen);
+    flex-shrink: 0;
+}
+
+.umco-login-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    align-self: flex-start;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--umco-aksen);
+    text-decoration: none;
+    transition: opacity 150ms ease;
+}
+
+.umco-login-back:hover {
+    opacity: 0.78;
+}
+
+@media (max-width: 959px) {
+    .umco-login-visual {
+        padding: 1.25rem;
+        gap: 0.9rem;
+    }
+
+    .umco-login-photo-main {
+        aspect-ratio: 21 / 9;
+    }
+
+    .umco-login-subcopy,
+    .umco-login-pillars {
+        display: none;
+    }
+}

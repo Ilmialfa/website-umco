@@ -329,31 +329,27 @@
                     <p>Kampus 2 UMRI, Pekanbaru</p>
                 </div>
             </div>
+        </div>
 
-            <div class="relative pt-8 sm:pt-12 pb-0 flex flex-col items-center justify-end overflow-hidden select-none">
-                <div
-                    data-footer-wordmark
-                    class="w-full font-display font-bold text-[36vw] sm:text-[34vw] lg:text-[32vw] leading-[0.90] pt-2 pb-[0.06em] tracking-[-0.02em] bg-gradient-to-b from-white via-[#EAF5EE] to-white/30 bg-clip-text text-transparent text-center whitespace-nowrap will-change-transform translate-y-3 sm:translate-y-4 lg:translate-y-5"
-                >
-                    {{ $footerWordmark }}
-                </div>
-
-                {{-- Uap dingin lembut berlapis kode di bawah gelas & tatakan batu --}}
-                <div class="relative z-10 -mt-[26vw] sm:-mt-[25vw] lg:-mt-[23.5vw] flex flex-col items-center pointer-events-none">
-                    <div class="umco-vapor-wisp absolute -bottom-2 left-1/2 -translate-x-1/2 w-56 sm:w-80 lg:w-96 h-24 sm:h-32 rounded-full"></div>
-                    <div class="umco-vapor-wisp absolute bottom-2 left-1/2 -translate-x-1/2 w-40 sm:w-64 lg:w-72 h-16 sm:h-24 rounded-full" style="animation-delay: -2.4s;"></div>
-                    <img
-                        data-footer-cutout
-                        src="{{ asset($footerCutout) }}"
-                        alt="Segelas kopi susu dingin UMCO di atas tatakan batu"
-                        width="589"
-                        height="840"
-                        loading="lazy"
-                        decoding="async"
-                        class="relative z-10 w-36 sm:w-56 lg:w-68 h-auto pointer-events-none [mask-image:linear-gradient(to_bottom,black_92%,transparent_100%)]"
-                    >
-                </div>
+        {{-- Wordmark raksasa di belakang gelas + meja cream menyatu penuh ke ujung layar (sepenuhnya responsif) --}}
+        <div class="relative w-full overflow-hidden select-none -mt-6 sm:-mt-10 lg:-mt-16">
+            <div
+                data-footer-wordmark
+                class="absolute inset-x-0 top-[9vw] sm:top-[10vw] lg:top-[10.5vw] z-0 px-3 sm:px-6 font-display font-bold text-[34vw] sm:text-[31vw] lg:text-[28.5vw] leading-[0.88] tracking-[-0.025em] bg-gradient-to-b from-white via-[#F1F7F3] to-white/0 bg-clip-text text-transparent text-center whitespace-nowrap will-change-transform pointer-events-none"
+            >
+                {{ $footerWordmark }}
             </div>
+
+            <img
+                data-footer-cutout
+                src="{{ asset($footerCutout) }}"
+                alt="Segelas kopi susu dingin UMCO di atas tatakan batu dan meja batu"
+                width="1024"
+                height="682"
+                loading="lazy"
+                decoding="async"
+                class="relative z-10 w-full h-auto block pointer-events-none"
+            >
         </div>
     </footer>
 

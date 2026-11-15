@@ -161,7 +161,7 @@ return [
     */
 
     'features' => [
-        Features::registration(),
+        // Registrasi publik ditutup demi keamanan; akun staf dibuat khusus oleh Owner di backoffice.
         Features::resetPasswords(),
         Features::emailVerification(),
         Features::twoFactorAuthentication([

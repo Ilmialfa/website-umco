@@ -54,6 +54,16 @@ class AdminPanelProvider extends PanelProvider
             ->databaseNotifications()
             ->databaseNotificationsPolling('60s')
             ->renderHook(
+                PanelsRenderHook::HEAD_END,
+                static fn (): HtmlString => new HtmlString(
+                    '<style>'
+                    ."@font-face{font-family:'Plus Jakarta Sans';font-style:normal;font-weight:200 800;font-display:swap;src:url('/fonts/plus-jakarta-sans-latin.woff2') format('woff2');}"
+                    ."@font-face{font-family:'Barlow Condensed';font-style:normal;font-weight:700;font-display:swap;src:url('/fonts/barlow-condensed-700.woff2') format('woff2');}"
+                    ."@font-face{font-family:'Reenie Beanie';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/reenie-beanie-latin.woff2') format('woff2');}"
+                    .'</style>'
+                )
+            )
+            ->renderHook(
                 PanelsRenderHook::BODY_END,
                 function (): HtmlString {
                     $soundEnabled = Settings::get('reservation.sound_on_notification', false) ? '1' : '0';

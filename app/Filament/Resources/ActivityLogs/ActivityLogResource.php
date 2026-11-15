@@ -17,13 +17,13 @@ class ActivityLogResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentList;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Pengaturan & Audit';
+    protected static string|UnitEnum|null $navigationGroup = 'Pengaturan & Keamanan';
 
     protected static ?string $modelLabel = 'Catatan Aktivitas';
 
     protected static ?string $pluralModelLabel = 'Audit Log & Aktivitas';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 3;
 
     public static function canAccess(): bool
     {

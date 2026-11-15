@@ -24,13 +24,13 @@ class BeanOriginResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedGlobeAsiaAustralia;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Konten Website';
+    protected static string|UnitEnum|null $navigationGroup = 'Konten Editorial';
 
     protected static ?string $modelLabel = 'Asal Biji Kopi';
 
     protected static ?string $pluralModelLabel = 'Asal Biji Kopi (Altimeter)';
 
-    protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 6;
 
     public static function canAccess(): bool
     {

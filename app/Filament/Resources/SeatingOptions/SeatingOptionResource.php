@@ -23,13 +23,13 @@ class SeatingOptionResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMapPin;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Pengaturan & Audit';
+    protected static string|UnitEnum|null $navigationGroup = 'Aturan & Kapasitas';
 
     protected static ?string $modelLabel = 'Pilihan Tempat';
 
     protected static ?string $pluralModelLabel = 'Pilihan Area Duduk';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 1;
 
     public static function canAccess(): bool
     {

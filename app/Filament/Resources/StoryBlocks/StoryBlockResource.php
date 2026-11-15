@@ -21,13 +21,13 @@ class StoryBlockResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookOpen;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Konten Website';
+    protected static string|UnitEnum|null $navigationGroup = 'Konten Editorial';
 
     protected static ?string $modelLabel = 'Cerita & Filosofi';
 
     protected static ?string $pluralModelLabel = 'Narasi Editorial';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 3;
 
     protected static ?string $recordTitleAttribute = 'title';
 

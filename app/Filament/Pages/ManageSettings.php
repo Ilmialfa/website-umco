@@ -28,7 +28,7 @@ class ManageSettings extends Page implements HasForms
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Pengaturan & Audit';
+    protected static string|UnitEnum|null $navigationGroup = 'Pengaturan & Keamanan';
 
     protected static ?string $navigationLabel = 'Pengaturan Website & CMS';
 

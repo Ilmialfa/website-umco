@@ -21,13 +21,13 @@ class TestimonialResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedStar;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Konten Website';
+    protected static string|UnitEnum|null $navigationGroup = 'Galeri, Testimoni & FAQ';
 
     protected static ?string $modelLabel = 'Ulasan';
 
     protected static ?string $pluralModelLabel = 'Ulasan Pelanggan';
 
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $recordTitleAttribute = 'name';
 

@@ -22,13 +22,13 @@ class RuleResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedScale;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Konten Website';
+    protected static string|UnitEnum|null $navigationGroup = 'Aturan & Kapasitas';
 
     protected static ?string $modelLabel = 'Aturan Kedai';
 
     protected static ?string $pluralModelLabel = 'Aturan Main Kedai';
 
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 3;
 
     public static function canAccess(): bool
     {

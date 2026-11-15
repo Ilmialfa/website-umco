@@ -26,13 +26,13 @@ class FaqResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedQuestionMarkCircle;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Konten Website';
+    protected static string|UnitEnum|null $navigationGroup = 'Galeri, Testimoni & FAQ';
 
     protected static ?string $modelLabel = 'FAQ';
 
     protected static ?string $pluralModelLabel = 'Pertanyaan Umum (FAQ)';
 
-    protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 3;
 
     public static function canAccess(): bool
     {

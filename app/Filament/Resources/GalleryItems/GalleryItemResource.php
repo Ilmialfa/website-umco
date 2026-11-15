@@ -21,13 +21,13 @@ class GalleryItemResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhoto;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Konten Website';
+    protected static string|UnitEnum|null $navigationGroup = 'Galeri, Testimoni & FAQ';
 
     protected static ?string $modelLabel = 'Galeri Foto & Video';
 
     protected static ?string $pluralModelLabel = 'Galeri Suasana';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 1;
 
     public static function canAccess(): bool
     {

@@ -14,13 +14,13 @@ class ReservationReports extends Page
 {
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentChartBar;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Operasional Reservasi';
+    protected static string|UnitEnum|null $navigationGroup = 'Laporan & Keuangan';
 
     protected static ?string $navigationLabel = 'Laporan & Rekap DP';
 
-    protected static ?string $title = 'Laporan Reservasi & Down Payment (DP)';
+    protected static ?string $title = 'Laporan Reservasi & DP';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 1;
 
     public static function canAccess(): bool
     {

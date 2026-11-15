@@ -21,7 +21,7 @@ class StreetStallResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingStorefront;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Konten Website';
+    protected static string|UnitEnum|null $navigationGroup = 'Konten Editorial';
 
     protected static ?string $modelLabel = 'Stan Kuliner';
 

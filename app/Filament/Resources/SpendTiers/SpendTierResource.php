@@ -21,13 +21,13 @@ class SpendTierResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCurrencyDollar;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Pengaturan & Audit';
+    protected static string|UnitEnum|null $navigationGroup = 'Aturan & Kapasitas';
 
     protected static ?string $modelLabel = 'Minimal Belanja';
 
     protected static ?string $pluralModelLabel = 'Tabel Minimal Belanja';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 2;
 
     public static function canAccess(): bool
     {

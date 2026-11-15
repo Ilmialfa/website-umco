@@ -14,6 +14,7 @@
 <section
     id="hero"
     data-nav-theme="dark"
+    data-nav-transparent="hero"
     data-nav-stops="0:#0D3526,0.44:#154B36,0.70:#2B6E51,0.86:#9BC4AD,1:#F6F4ED"
     data-module="hero"
     class="relative umco-hero-gradient text-white overflow-hidden pt-20 sm:pt-24 lg:pt-24 pb-8 sm:pb-12 lg:pb-14"
@@ -70,14 +71,14 @@
                     height="800"
                     fetchpriority="high"
                     decoding="async"
-                    class="relative z-10 w-full max-w-[440px] sm:max-w-none lg:w-[106%] xl:w-[112%] lg:-mr-6 h-auto object-contain object-bottom block select-none pointer-events-none [mask-image:linear-gradient(to_bottom,black_80%,transparent_100%)]"
+                    class="relative z-10 w-full max-w-[460px] sm:max-w-full h-auto object-contain object-bottom block select-none pointer-events-none [mask-image:linear-gradient(to_bottom,black_84%,transparent_100%)]"
                 >
 
                 {{-- Awan / kabut halus melapisi bagian bawah foto agar perpotongan menyatu --}}
-                <div aria-hidden="true" class="pointer-events-none select-none absolute -bottom-12 inset-x-[-14%] z-20 h-28 sm:h-36 lg:h-44">
-                    <div class="umco-hero-cloud-puff absolute left-[4%] bottom-4 w-[58%] h-24 sm:h-32 rounded-full"></div>
-                    <div class="umco-hero-cloud-puff absolute right-[-4%] bottom-2 w-[62%] h-28 sm:h-36 rounded-full opacity-95"></div>
-                    <div class="umco-hero-cloud-puff absolute left-[24%] -bottom-2 w-[56%] h-24 sm:h-32 rounded-full opacity-90"></div>
+                <div aria-hidden="true" class="pointer-events-none select-none absolute -bottom-10 inset-x-[-6%] z-20 h-24 sm:h-32 lg:h-40">
+                    <div class="umco-hero-cloud-puff absolute left-[4%] bottom-3 w-[56%] h-20 sm:h-28 rounded-full"></div>
+                    <div class="umco-hero-cloud-puff absolute right-[-2%] bottom-2 w-[58%] h-24 sm:h-32 rounded-full opacity-95"></div>
+                    <div class="umco-hero-cloud-puff absolute left-[24%] -bottom-2 w-[54%] h-20 sm:h-28 rounded-full opacity-90"></div>
                 </div>
             </div>
         </div>

@@ -119,6 +119,23 @@ export function initNav() {
             return;
         }
 
+        const mode = activeZone.dataset.navTransparent;
+        if (mode === 'footer') {
+            header.style.setProperty('--nav-bg', 'transparent');
+            header.dataset.theme = activeZone.dataset.navTheme || 'dark';
+            return;
+        }
+
+        if (mode === 'hero') {
+            const heroRect = activeZone.getBoundingClientRect();
+            const progress = heroRect.height > 0 ? (sampleY - heroRect.top) / heroRect.height : 0;
+            if (progress < 0.70) {
+                header.style.setProperty('--nav-bg', 'transparent');
+                header.dataset.theme = 'dark';
+                return;
+            }
+        }
+
         const rgb = resolveSectionColor(activeZone, sampleY);
         const lum = (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255;
         const nextTheme = lum < 0.58 ? 'dark' : 'light';

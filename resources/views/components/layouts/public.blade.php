@@ -311,7 +311,7 @@
         0 cm
     </div>
 
-    <footer id="public-footer" data-nav-bg="#19523A" class="relative umco-footer-gradient text-[var(--kertas)] pt-14 sm:pt-20 pb-0 overflow-hidden">
+    <footer id="public-footer" data-nav-theme="dark" data-nav-transparent="footer" class="relative umco-footer-gradient text-[var(--kertas)] pt-14 sm:pt-20 pb-0 overflow-hidden">
         <div class="umco-container">
             <div class="grid grid-cols-1 sm:grid-cols-12 gap-8 sm:gap-10 pb-10 sm:pb-12">
                 <div class="sm:col-span-5 space-y-3">

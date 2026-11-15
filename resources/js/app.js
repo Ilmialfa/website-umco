@@ -13,7 +13,6 @@ const modules = {
     'hero': () => import('./sections/hero.js'),
     'marquee-collage': () => import('./sections/marquee-collage.js'),
     'signature-reel': () => import('./sections/signature-reel.js'),
-    'gallery-infinite': () => import('./sections/gallery-infinite.js'),
     'gallery-diagonal': () => import('./sections/gallery-diagonal.js'),
     'testimonials-parallax': () => import('./sections/testimonials-parallax.js'),
     'gallery-mosaic': () => import('./sections/gallery-mosaic.js'),

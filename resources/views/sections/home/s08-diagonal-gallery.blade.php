@@ -6,13 +6,13 @@
     $items = ($diagonalGallery ?? collect())->toBase()->values();
     if ($items->count() < 6) {
         $fallback = collect([
-            (object) ['image_path' => '/images/bistro-patio-table.jpg', 'caption' => 'Meja sore paling sering dipilih'],
+            (object) ['image_path' => '/images/bistro-patio-table.webp', 'caption' => 'Meja sore paling sering dipilih'],
             (object) ['image_path' => '/storage/menu/americano-800.webp', 'caption' => 'Americano dingin sebelum kelas'],
-            (object) ['image_path' => '/images/drinks-trio-banner.jpg', 'caption' => 'Tiga gelas meja diskusi'],
+            (object) ['image_path' => '/images/drinks-trio-banner.webp', 'caption' => 'Tiga gelas meja diskusi'],
             (object) ['image_path' => '/storage/menu/mix-platter-800.webp', 'caption' => 'Mix platter teman nugas'],
-            (object) ['image_path' => '/images/hero-banner-full.jpg', 'caption' => 'Halaman teduh depan kedai'],
+            (object) ['image_path' => '/images/hero-banner-full.webp', 'caption' => 'Halaman teduh depan kedai'],
             (object) ['image_path' => '/storage/menu/caramel-latte-800.webp', 'caption' => 'Caramel Latte di jam istirahat'],
-            (object) ['image_path' => '/images/hero-iced-coffee-splash.jpg', 'caption' => 'Susu segar bertemu espresso'],
+            (object) ['image_path' => '/images/hero-iced-coffee-splash.webp', 'caption' => 'Susu segar bertemu espresso'],
             (object) ['image_path' => '/storage/menu/japanese-800.webp', 'caption' => 'Japanese iced filter brew'],
         ]);
         $items = $items->merge($fallback)->unique('image_path')->values();
@@ -24,7 +24,7 @@
     if ($rowTwo->count() < 4) $rowTwo = $rowTwo->merge($rowTwo)->values();
 
     $resolveImg = function (?string $p): string {
-        if (! $p) return asset('/images/bistro-patio-table.jpg');
+        if (! $p) return asset('/images/bistro-patio-table.webp');
         if (str_starts_with($p, 'http') || str_starts_with($p, '/')) return asset($p);
         return asset('storage/' . ltrim($p, '/'));
     };

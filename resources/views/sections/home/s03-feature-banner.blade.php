@@ -4,21 +4,21 @@
         (object) [
             'title' => $section?->heading ?: 'Meja lapang buat diskusi dan tugas sore',
             'description' => $section?->subheading ?: 'Meja panjang bercatu daya, seduhan segar dari pagi, dan menu hangat yang bisa dipesan sekaligus saat reservasi meja.',
-            'image_path' => $section?->media['banner'] ?? '/images/bistro-patio-table.jpg',
+            'image_path' => $section?->media['banner'] ?? '/images/bistro-patio-table.webp',
             'cta_label' => $section?->cta_label ?: 'Lihat selengkapnya',
             'cta_url' => $section?->cta_url ?: '/cerita',
         ],
         (object) [
             'title' => 'Pesan meja sekalian menu tanpa antre',
             'description' => 'Pilih jadwal kedatangan minimal 2 orang, tentukan permintaan tempat duduk, lalu kunci karcis meja lewat QRIS.',
-            'image_path' => '/images/hero-banner-full.jpg',
+            'image_path' => '/images/hero-banner-full.webp',
             'cta_label' => 'Lihat selengkapnya',
             'cta_url' => '/reservasi',
         ],
         (object) [
             'title' => 'Racikan kopi susu & penyegar non-kopi',
             'description' => 'Dari Aren Coffee klasik, Matcha dingin, hingga sajian camilan hangat untuk teman kelompok.',
-            'image_path' => '/images/drinks-trio-banner.jpg',
+            'image_path' => '/images/drinks-trio-banner.webp',
             'cta_label' => 'Lihat selengkapnya',
             'cta_url' => '/menu',
         ],
@@ -37,7 +37,7 @@
     }
 
     $bannerSlides = $banners->map(function ($b) {
-        $img = $b->image_path ?: '/images/bistro-patio-table.jpg';
+        $img = $b->image_path ?: '/images/bistro-patio-table.webp';
         if (! str_starts_with($img, 'http') && ! str_starts_with($img, '/')) {
             $img = '/storage/' . ltrim($img, '/');
         }

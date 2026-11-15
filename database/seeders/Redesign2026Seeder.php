@@ -162,7 +162,7 @@ class Redesign2026Seeder extends Seeder
             // SEO
             ['group' => 'seo', 'key' => 'meta_title', 'payload' => 'UMCO — Kedai Kopi di Kampus UMRI Pekanbaru'],
             ['group' => 'seo', 'key' => 'meta_description', 'payload' => 'Kedai kopi di Kampus 2 UMRI Pekanbaru. Kopi harian, camilan, dan pesan meja dengan pilihan menu siap saji.'],
-            ['group' => 'seo', 'key' => 'og_image', 'payload' => '/images/hero-photo.jpg'],
+            ['group' => 'seo', 'key' => 'og_image', 'payload' => '/images/hero-photo.webp'],
         ];
 
         foreach ($settingsData as $row) {
@@ -705,7 +705,7 @@ class Redesign2026Seeder extends Seeder
                 'subheading' => 'Sorotan agenda kampus, ruang tenang untuk diskusi, dan penawaran hangat terbaru dari bar.',
                 'cta_label' => 'Lihat selengkapnya',
                 'cta_url' => '/cerita',
-                'media' => ['banner' => '/images/bistro-patio-table.jpg'],
+                'media' => ['banner' => '/images/bistro-patio-table.webp'],
                 'data' => ['eyebrow' => 'Sorotan UMCO'],
             ],
             [
@@ -815,7 +815,7 @@ class Redesign2026Seeder extends Seeder
                 'heading' => 'Dari kampus, buat yang lagi butuh tempat.',
                 'subheading' => 'Kampus 2 UMRI, Jalan Tuanku Tambusai Ujung.',
                 'body' => 'Kami membangun UMCO agar mahasiswa, dosen, pekerja lepas, dan tamu punya ruang yang tenang sekaligus hangat untuk duduk lama maupun singgah sebentar.',
-                'media' => ['desktop' => '/images/bistro-patio-table.jpg'],
+                'media' => ['desktop' => '/images/bistro-patio-table.webp'],
             ],
             [
                 'page' => 'cerita',
@@ -824,7 +824,7 @@ class Redesign2026Seeder extends Seeder
                 'heading' => 'Berawal dari meja kecil yang selalu penuh oleh obrolan kuliah',
                 'subheading' => 'Sejarah Singkat UMCO',
                 'body' => 'UMCO lahir dari kebutuhan sederhana di sekitar Kampus 2 UMRI: mencari kedai kopi dengan harga masuk akal di kantong mahasiswa, seduhan yang konsisten setiap cangkir, dan colokan serta Wi-Fi yang tidak pernah rewel saat mengerjakan skripsi atau diskusi kelompok.',
-                'media' => ['desktop' => '/images/hero-banner-full.jpg'],
+                'media' => ['desktop' => '/images/hero-banner-full.webp'],
                 'data' => [
                     'milestones' => [
                         '2024' => 'Gagasan kedai kampus untuk ruang nugas dan diskusi mahasiswa UMRI mulai dirumuskan.',
@@ -840,7 +840,7 @@ class Redesign2026Seeder extends Seeder
                 'heading' => 'Dibangun bersama orang-orang yang juga melewati bangku kuliah',
                 'subheading' => 'Di Balik UMCO',
                 'body' => 'Kami ingin siapa pun yang masuk lewat pintu UMCO merasa tidak buru-buru disuruh pulang. Entah kamu datang sendiri membawa laptop selama empat jam atau rapat himpunan dengan lima teman, mejamu punya tempat yang jelas.',
-                'media' => ['desktop' => '/images/hero-iced-coffee-splash.jpg'],
+                'media' => ['desktop' => '/images/hero-iced-coffee-splash.webp'],
                 'data' => [
                     'owner_name' => 'Tim Pendiri UMCO House',
                     'owner_role' => 'Founder & Pengelola Harian',
@@ -853,7 +853,7 @@ class Redesign2026Seeder extends Seeder
                 'sort' => 4,
                 'heading' => 'Tiga hal yang kami pegang',
                 'subheading' => 'Nilai Kerja Harian',
-                'media' => ['desktop' => '/images/drinks-trio-banner.jpg'],
+                'media' => ['desktop' => '/images/drinks-trio-banner.webp'],
             ],
             [
                 'page' => 'cerita',
@@ -889,7 +889,7 @@ class Redesign2026Seeder extends Seeder
                 'body' => 'Diskusi organisasi mahasiswa, komunitas kreatif, buka puasa bareng jurusan, sampai mini workshop sering mampir ke UMCO. Kabari kami beberapa hari sebelumnya untuk atur tata meja dan paket minuman.',
                 'cta_label' => 'Hubungi tim kolaborasi',
                 'cta_url' => '/reservasi',
-                'media' => ['desktop' => '/images/bistro-patio-table.jpg'],
+                'media' => ['desktop' => '/images/bistro-patio-table.webp'],
                 'data' => [
                     'secondary_label' => 'Pesan meja grup',
                 ],
@@ -1001,7 +1001,7 @@ class Redesign2026Seeder extends Seeder
             ['title' => 'Meja lapang buat diskusi dan tugas sore'],
             [
                 'description' => 'Meja panjang bercatu daya, seduhan segar dari pagi, dan menu hangat yang bisa dipesan sekaligus saat reservasi meja.',
-                'image_path' => '/images/bistro-patio-table.jpg',
+                'image_path' => '/images/bistro-patio-table.webp',
                 'cta_label' => 'Lihat selengkapnya',
                 'cta_url' => '/cerita',
                 'is_active' => true,
@@ -1013,7 +1013,7 @@ class Redesign2026Seeder extends Seeder
             ['title' => 'Pesan meja sekalian menu tanpa antre'],
             [
                 'description' => 'Pilih jadwal kedatangan minimal 2 orang, tentukan permintaan tempat duduk, lalu kunci karcis meja lewat QRIS.',
-                'image_path' => '/images/hero-banner-full.jpg',
+                'image_path' => '/images/hero-banner-full.webp',
                 'cta_label' => 'Lihat selengkapnya',
                 'cta_url' => '/reservasi',
                 'is_active' => true,
@@ -1025,7 +1025,7 @@ class Redesign2026Seeder extends Seeder
             ['title' => 'Racikan kopi susu & penyegar non-kopi'],
             [
                 'description' => 'Dari Aren Coffee sampai Matcha Oat dan mocktail dingin tanpa kopi, diracik segar per pesanan di bar.',
-                'image_path' => '/images/drinks-trio-banner.jpg',
+                'image_path' => '/images/drinks-trio-banner.webp',
                 'cta_label' => 'Lihat selengkapnya',
                 'cta_url' => '/menu',
                 'is_active' => true,
@@ -1037,7 +1037,7 @@ class Redesign2026Seeder extends Seeder
             ['title' => 'Menu hangat & kudapan dari pagi'],
             [
                 'description' => 'Temani sesi kerja kelompok atau ngobrol sore dengan camilan gurih dan sajian manis yang siap disiapkan meja.',
-                'image_path' => '/images/hero-iced-coffee-splash.jpg',
+                'image_path' => '/images/hero-iced-coffee-splash.webp',
                 'cta_label' => 'Lihat selengkapnya',
                 'cta_url' => '/menu',
                 'is_active' => true,
@@ -1139,10 +1139,10 @@ class Redesign2026Seeder extends Seeder
             ['group' => 'makanan', 'orientation' => 'portrait', 'image_path' => '/storage/menu/nasi-ayam-sambal-matah-800.webp', 'caption' => 'Makan siang kampus tanpa repot', 'sort' => 6],
 
             // Diagonal gallery (bebas semua rasio — portrait, square, landscape tanpa duplikasi gambar bersebelahan)
-            ['group' => 'suasana', 'orientation' => 'diagonal', 'image_path' => '/images/bistro-patio-table.jpg', 'caption' => 'Meja sore paling sering dipilih', 'sort' => 7],
-            ['group' => 'suasana', 'orientation' => 'diagonal', 'image_path' => '/images/hero-banner-full.jpg', 'caption' => 'Halaman teduh depan kedai', 'sort' => 8],
-            ['group' => 'kopi', 'orientation' => 'diagonal', 'image_path' => '/images/drinks-trio-banner.jpg', 'caption' => 'Tiga gelas meja diskusi', 'sort' => 9],
-            ['group' => 'kopi', 'orientation' => 'diagonal', 'image_path' => '/images/hero-iced-coffee-splash.jpg', 'caption' => 'Susu segar bertemu espresso', 'sort' => 10],
+            ['group' => 'suasana', 'orientation' => 'diagonal', 'image_path' => '/images/bistro-patio-table.webp', 'caption' => 'Meja sore paling sering dipilih', 'sort' => 7],
+            ['group' => 'suasana', 'orientation' => 'diagonal', 'image_path' => '/images/hero-banner-full.webp', 'caption' => 'Halaman teduh depan kedai', 'sort' => 8],
+            ['group' => 'kopi', 'orientation' => 'diagonal', 'image_path' => '/images/drinks-trio-banner.webp', 'caption' => 'Tiga gelas meja diskusi', 'sort' => 9],
+            ['group' => 'kopi', 'orientation' => 'diagonal', 'image_path' => '/images/hero-iced-coffee-splash.webp', 'caption' => 'Susu segar bertemu espresso', 'sort' => 10],
             ['group' => 'kopi', 'orientation' => 'diagonal', 'image_path' => '/storage/menu/americano-800.webp', 'caption' => 'Americano dingin sebelum kelas', 'sort' => 11],
             ['group' => 'makanan', 'orientation' => 'diagonal', 'image_path' => '/storage/menu/mix-platter-800.webp', 'caption' => 'Mix platter teman nugas', 'sort' => 12],
             ['group' => 'kopi', 'orientation' => 'diagonal', 'image_path' => '/storage/menu/caramel-latte-800.webp', 'caption' => 'Caramel Latte di jam istirahat', 'sort' => 13],

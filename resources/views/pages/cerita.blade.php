@@ -26,11 +26,11 @@
         return asset('storage/' . ltrim($src, '/'));
     };
 
-    $heroImg = $resolveImg($hero?->media['desktop'] ?? null, '/images/bistro-patio-table.jpg');
-    $historyImg = $resolveImg($history?->media['desktop'] ?? null, '/images/hero-banner-full.jpg');
-    $founderImg = $resolveImg($founder?->media['desktop'] ?? null, '/images/hero-iced-coffee-splash.jpg');
+    $heroImg = $resolveImg($hero?->media['desktop'] ?? null, '/images/bistro-patio-table.webp');
+    $historyImg = $resolveImg($history?->media['desktop'] ?? null, '/images/hero-banner-full.webp');
+    $founderImg = $resolveImg($founder?->media['desktop'] ?? null, '/images/hero-iced-coffee-splash.webp');
     $valuesImg = $resolveImg($values?->media['desktop'] ?? null, '/images/drinks-trio-banner.webp');
-    $collabImg = $resolveImg($collab?->media['desktop'] ?? null, '/images/bistro-patio-table.jpg');
+    $collabImg = $resolveImg($collab?->media['desktop'] ?? null, '/images/bistro-patio-table.webp');
 
     $milestones = $history?->data['milestones'] ?? [
         '2024' => 'Gagasan kedai kampus untuk ruang nugas dan diskusi mahasiswa UMRI mulai dirumuskan.',

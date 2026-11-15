@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BeanOrigin;
 use App\Models\Facility;
 use App\Models\GalleryItem;
 use App\Models\PageSection;
@@ -29,7 +28,6 @@ class AboutController extends Controller
 
         return view('pages.cerita', [
             'sections' => $sections,
-            'beanOrigins' => BeanOrigin::orderBy('altitude')->get(),
             'storyBlocks' => $storyBlocks,
             'facilities' => $facilities,
             'streetStalls' => StreetStall::where('is_active', true)->orderBy('sort')->get(),

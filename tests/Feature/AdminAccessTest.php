@@ -1,7 +1,6 @@
 <?php
 
 use App\Actions\Reservations\CreateReservation as CreateReservationAction;
-use App\Filament\Pages\CrowdPatternPage;
 use App\Filament\Pages\ManageSettings;
 use App\Filament\Pages\ReservationReports;
 use App\Filament\Resources\ActivityLogs\ActivityLogResource;
@@ -54,7 +53,6 @@ test('enforces Section 12.5 Filament permission matrix across owner, admin, and 
         ->and(SpendTierResource::canAccess())->toBeTrue()
         ->and(SeatingOptionResource::canAccess())->toBeTrue()
         ->and(BeanOriginResource::canAccess())->toBeTrue()
-        ->and(CrowdPatternPage::canAccess())->toBeTrue()
         ->and(BannerResource::canAccess())->toBeTrue()
         ->and(StoryBlockResource::canAccess())->toBeTrue()
         ->and(GalleryItemResource::canAccess())->toBeTrue()
@@ -79,7 +77,6 @@ test('enforces Section 12.5 Filament permission matrix across owner, admin, and 
         ->and(SpendTierResource::canAccess())->toBeFalse()
         ->and(SeatingOptionResource::canAccess())->toBeFalse()
         ->and(BeanOriginResource::canAccess())->toBeFalse()
-        ->and(CrowdPatternPage::canAccess())->toBeFalse()
         ->and(BannerResource::canAccess())->toBeFalse()
         ->and(StoryBlockResource::canAccess())->toBeFalse()
         ->and(GalleryItemResource::canAccess())->toBeFalse()

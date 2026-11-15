@@ -34,7 +34,6 @@ class PublicContentObserver
         Cache::forget('umco_page_sections_cerita');
         Cache::forget('umco_rules');
         Cache::forget('umco_spend_tiers');
-        Cache::forget('umco_crowd_patterns');
         Cache::forget('umco_seating_options');
         Cache::forget('umco_bean_origins');
     }

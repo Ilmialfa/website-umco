@@ -6,7 +6,6 @@ use App\Models\ActivityLog;
 use App\Models\Banner;
 use App\Models\BeanOrigin;
 use App\Models\ClosedDate;
-use App\Models\CrowdPattern;
 use App\Models\Facility;
 use App\Models\GalleryItem;
 use App\Models\MenuCategory;
@@ -115,7 +114,6 @@ class AppServiceProvider extends ServiceProvider
         foreach ([
             Banner::class,
             BeanOrigin::class,
-            CrowdPattern::class,
             Facility::class,
             GalleryItem::class,
             PageSection::class,
@@ -149,7 +147,6 @@ class AppServiceProvider extends ServiceProvider
         Rule::observe(PublicContentObserver::class);
         SpendTier::observe(PublicContentObserver::class);
         SeatingOption::observe(PublicContentObserver::class);
-        CrowdPattern::observe(PublicContentObserver::class);
         BeanOrigin::observe(PublicContentObserver::class);
 
         $flushAdminStats = static function (): void {

@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Banner;
 use App\Models\BeanOrigin;
-use App\Models\CrowdPattern;
 use App\Models\Facility;
 use App\Models\Faq;
 use App\Models\GalleryItem;
@@ -33,7 +32,6 @@ class Redesign2026Seeder extends Seeder
         $this->seedSettings();
         $this->seedSpendTiers();
         $this->seedSeatingOptions();
-        $this->seedCrowdPatterns();
         $this->seedRules();
         $this->seedFaqs();
         $this->seedBeanOrigins();
@@ -201,32 +199,6 @@ class Redesign2026Seeder extends Seeder
                 ['label' => $opt['label']],
                 ['sort' => $opt['sort'], 'is_active' => true]
             );
-        }
-    }
-
-    private function seedCrowdPatterns(): void
-    {
-        // Jam 07..22 untuk 7 hari (1=Senin .. 7=Minggu)
-        $weekdayCurve = [
-            7 => 12, 8 => 28, 9 => 46, 10 => 62, 11 => 58,
-            12 => 72, 13 => 68, 14 => 74, 15 => 86, 16 => 92,
-            17 => 88, 18 => 64, 19 => 78, 20 => 84, 21 => 70, 22 => 36,
-        ];
-        $weekendCurve = [
-            7 => 10, 8 => 22, 9 => 38, 10 => 50, 11 => 56,
-            12 => 64, 13 => 68, 14 => 72, 15 => 80, 16 => 88,
-            17 => 90, 18 => 75, 19 => 94, 20 => 96, 21 => 82, 22 => 45,
-        ];
-
-        for ($day = 1; $day <= 7; $day++) {
-            $curve = $day >= 6 ? $weekendCurve : $weekdayCurve;
-            foreach ($curve as $hour => $level) {
-                $jitter = ($day % 3 - 1) * 4;
-                CrowdPattern::updateOrCreate(
-                    ['day_of_week' => $day, 'hour' => $hour],
-                    ['level' => max(5, min(100, $level + $jitter))]
-                );
-            }
         }
     }
 

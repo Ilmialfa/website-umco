@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Banner;
 use App\Models\ClosedDate;
-use App\Models\CrowdPattern;
 use App\Models\Faq;
 use App\Models\GalleryItem;
 use App\Models\MenuCategory;
@@ -72,18 +71,12 @@ class HomeController extends Controller
             ->mapWithKeys(fn ($row) => [$row->date->format('Y-m-d') => $row->reason ?: 'Tutup'])
             ->all();
 
-        $crowdPatterns = CrowdPattern::all()
-            ->groupBy('day_of_week')
-            ->map(fn ($rows) => $rows->pluck('level', 'hour')->all())
-            ->all();
-
         return view('pages.home', [
             'sections' => $sections,
             'activeBanners' => $activeBanners,
             'menuCategories' => $categories,
             'favoriteMenuItems' => $favoriteMenuItems,
             'soldOutCount' => MenuItem::where('is_active', true)->where('is_available', false)->count(),
-            'crowdPatterns' => $crowdPatterns,
             'spendTiers' => $spendTiers,
             'closedDates' => $closedDates,
             'rules' => Rule::where('is_active', true)->orderBy('sort')->get(),

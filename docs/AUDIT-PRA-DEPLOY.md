@@ -48,10 +48,13 @@ Dokumen ini adalah **daftar kerja** untuk AI agent yang akan memperbaiki codebas
 
 ### P0-05 · Fitur "Pola Jam Ramai" tidak tampil di mana pun [Terverifikasi]
 - **Bukti:** `CrowdPatternPage` (admin) berkata "Grafik ini tampil di beranda", `HomeController` meng-query `CrowdPattern::all()` (baris 75–78), tetapi tidak ada satu pun view publik yang memakai `$crowdPatterns` dan tidak ada key section di `$partialMap` (`pages/home.blade.php`).
-- **Perbaikan (pilih satu, tanyakan klien bila ragu):**
-  - **A (disarankan):** Hidupkan kembali section grafik "Kapan sepi, kapan penuh" sebagai partial baru `sections/home/sXX-crowd.blade.php`, daftarkan key `crowd_pattern` di `$partialMap` + seeder `page_sections`, sehingga bisa diaktif/nonaktif & diurutkan dari backoffice.
-  - **B:** Hapus `CrowdPatternPage`, model/policy terkait dari navigasi, dan query di `HomeController`.
-- **Selesai jika:** tidak ada lagi menu admin yang mengedit sesuatu yang tidak tampil.
+- **KEPUTUSAN KLIEN (final): HAPUS fitur ini.** Jangan menghidupkan kembali grafik di beranda.
+- **Perbaikan:**
+  - Hapus `app/Filament/Pages/CrowdPatternPage.php` dan `resources/views/filament/pages/crowd-pattern-page.blade.php` beserta gaya `.umco-crowd-*` di tema admin.
+  - Hapus query `CrowdPattern` di `HomeController` dan semua referensi lain (`grep -ri crowd app resources routes database tests`), termasuk `PublicContentObserver` registration di `AppServiceProvider`, policy mapping, seeder, factory, dan assertion test (`AdminAccessTest`, `SeedDataTest`, dll.) yang menyebut `CrowdPatternPage`/`CrowdPattern`.
+  - Hapus model `app/Models/CrowdPattern.php`. Buat **migrasi baru** `drop_crowd_patterns_table` (dengan `down()` yang membuat ulang tabel) — jangan mengedit migrasi lama.
+  - Hapus juga JS/CSS publik yang hanya dipakai grafik tersebut jika ada.
+- **Selesai jika:** `grep -ri "crowd"` di `app/`, `resources/`, `routes/`, `tests/`, `database/seeders/` tidak menemukan apa pun (kecuali migrasi lama + migrasi drop baru), menu "Pola Jam Ramai" hilang, test lulus.
 
 ### P0-06 · Section terdaftar di DB tapi tidak dirender [Terverifikasi]
 - **Bukti:** `page_sections` (page `home`) berisi key `rules` (sort 10, aktif) yang **tidak** ada di `$partialMap` → admin bisa mengeditnya tapi tidak ada efek. Page `cerita` berisi key `altimeter` — cek apakah `pages/cerita.blade.php` memakainya [Perlu dicek].
@@ -93,7 +96,7 @@ Keluhan klien: latar krem/stone membuat kusam dan pusing, keterbacaan rendah, si
 - **Rapikan grup** (saat ini ±20 item dalam 4 grup sangat panjang): usulan
   1. **Hari Ini** — Dasbor, Daftar Reservasi (badge jumlah menunggu), Jadwal Libur Khusus
   2. **Menu** — Katalog Menu, Kategori Menu
-  3. **Konten Beranda** — Section & Urutan, Banner, Galeri, Ulasan, FAQ, Pola Jam Ramai
+  3. **Konten Beranda** — Section & Urutan, Banner, Galeri, Ulasan, FAQ
   4. **Konten Cerita** — Narasi Editorial, Fasilitas, Stan Street Food
   5. **Aturan Reservasi** — Aturan Main, Tabel Minimal Belanja, Pilihan Area Duduk
   6. **Laporan** — Laporan & Rekap DP, Audit Log
@@ -146,7 +149,12 @@ Rute starter sudah ditutup (`Fortify::ignoreRoutes()`), tetapi file berikut tida
 - `resources/views/pages/auth/*` (7 file), `resources/views/pages/settings/*` (8 file, termasuk nama berawalan `⚡`)
 - `resources/views/flux/**`, `components/{app-logo,app-logo-icon,auth-header,auth-session-status,desktop-user-menu,passkey-registration,passkey-verify,placeholder-pattern}.blade.php`, `partials/{head,settings-heading}.blade.php`
 - `resources/js/passkeys.js` (masih jadi entry di `vite.config.js` → ikut build 12 kB), `app/Livewire/Actions/Logout.php`, `app/Actions/Fortify/{CreateNewUser,ResetUserPassword}.php`
-- **Hati-hati:** Model `User` memakai trait `PasskeyAuthenticatable`, `TwoFactorAuthenticatable` dan interface `MustVerifyEmail`, `PasskeyUser`. Putuskan: jika passkey/2FA tidak dipakai di Filament, hapus trait/interface + paket terkait dari `composer.json` dan buat migrasi yang aman (jangan hapus migrasi lama; buat migrasi baru untuk drop kolom/tabel hanya jika disetujui). Jika ragu, cukup hapus view/rute/JS yang mati.
+- **KEPUTUSAN KLIEN (final): HAPUS Passkey dan 2FA sepenuhnya.** Login staf cukup email + kata sandi di `/admin/login`.
+  - Dari `app/Models/User.php`: hapus trait `PasskeyAuthenticatable`, `TwoFactorAuthenticatable`, interface `PasskeyUser`, dan `MustVerifyEmail` (verifikasi email tidak dipakai); hapus `two_factor_secret`, `two_factor_recovery_codes` dari `#[Hidden]`.
+  - Hapus `resources/js/passkeys.js` dan entry-nya di `vite.config.js`; hapus komponen `passkey-registration`, `passkey-verify`.
+  - Cek `composer.json` untuk paket passkey (mis. `spatie/laravel-passkeys` / `laravel/passkeys` atau sejenis) — hapus dengan `composer remove`, lalu pastikan tidak ada service provider/konfigurasi yang tertinggal. Pertahankan `laravel/fortify` **hanya jika** masih dibutuhkan sesuatu; jika tidak ada pemakaian sama sekali setelah `Fortify::ignoreRoutes()`, hapus juga `FortifyServiceProvider`, `config/fortify.php`, dan paketnya, lalu pastikan rate limit login Filament tetap aktif (Filament punya throttle bawaan).
+  - Buat **migrasi baru** untuk drop tabel `passkeys` dan kolom `two_factor_secret`, `two_factor_recovery_codes`, `two_factor_confirmed_at` dari `users` (dengan `down()` yang mengembalikannya). Jangan mengedit migrasi lama.
+  - Perbarui/hapus test terkait (`tests/Feature/Auth/TwoFactorChallengeTest.php`, `PasswordConfirmationTest.php`, `EmailVerificationTest.php`, dll.) agar tetap menguji bahwa rute tersebut `404`, tanpa bergantung pada paket yang dihapus.
 - **Selesai jika:** `grep` tidak menemukan referensi ke file yang dihapus, `php artisan view:cache` & `npm run build` sukses, test lulus.
 
 ### P2-02 · Partial & modul JS yang tidak dipakai [Terverifikasi]

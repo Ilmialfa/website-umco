@@ -31,7 +31,7 @@ ATURAN KERAS
 - Jangan pernah menampilkan data palsu (like, komentar, rating, ulasan) sebagai data nyata.
 - Keamanan: pertahankan SecurityHeaders/CSP, policy per role, rate limit, validasi upload. Jangan membuka kembali rute starter kit (register, forgot-password, settings).
 - Jika menemukan masalah baru di luar audit, catat di bagian "Temuan Tambahan" pada `docs/AUDIT-PRA-DEPLOY.md` beserta perbaikannya.
-- Bila ada keputusan produk yang ambigu (contoh P0-05 opsi A vs B), pilih opsi yang disarankan di audit dan catat alasannya di `docs/DECISIONS.md`.
+- Keputusan klien yang sudah final di `docs/AUDIT-PRA-DEPLOY.md` wajib dijalankan apa adanya: **`P0-05` hapus fitur Pola Jam Ramai (`CrowdPattern`) sepenuhnya** dan **`P2-01` hapus fitur Passkey & 2FA staf sepenuhnya**. Bila masih ada detail teknis minor yang perlu dipilih, catat alasannya di `docs/DECISIONS.md`.
 
 VERIFIKASI WAJIB SEBELUM MENYATAKAN SELESAI
 1. `php vendor/bin/pest` → 0 failed, 0 skipped. Tambahkan test untuk: timezone, fallback Instagram tanpa angka palsu, sinkronisasi page_sections ↔ partial, Settings unik (group,key), paksa ganti sandi.
@@ -56,5 +56,5 @@ LAPORAN AKHIR (Bahasa Indonesia)
 
 ## Catatan untuk Anda (bukan untuk agent)
 
-- Siapkan sebelum menjalankan agent: logo final (sudah di `docs/logo UMCO.png`), keputusan apakah grafik "Kapan sepi, kapan penuh" ingin ditampilkan lagi di beranda (rekomendasi: ya), dan apakah fitur passkey/2FA staf ingin dipertahankan (rekomendasi: hapus agar sederhana, kecuali klien minta).
-- Data yang harus dari klien: token Instagram Graph API, gambar QRIS resmi, rekening bank, foto menu yang belum lengkap (`docs/Menu Umco - belum lengkap`), ulasan Google asli beserta izin.
+- Keputusan yang sudah dikunci untuk agent: gunakan logo final di `docs/logo UMCO.png`, hapus fitur Pola Jam Ramai (`CrowdPattern`), dan hapus Passkey/2FA staf.
+- Data yang masih harus dilengkapi dari klien sebelum rilis produksi: token Instagram Graph API (atau putuskan matikan feed jika belum ada), gambar QRIS resmi, nomor rekening bank, foto menu yang belum lengkap (`docs/Menu Umco - belum lengkap`), ulasan Google asli beserta izin, serta sandi akun `owner` produksi.

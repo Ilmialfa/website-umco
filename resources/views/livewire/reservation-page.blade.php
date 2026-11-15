@@ -257,7 +257,7 @@
                                 <button
                                     type="button"
                                     wire:click="nextStep"
-                                    class="px-7 py-3 rounded-full bg-[var(--tinta)] text-[var(--kertas-terang)] font-semibold text-sm hover:bg-[var(--mentega)] hover:text-[var(--tinta)] transition-colors"
+                                    class="px-7 py-3 rounded-full bg-[var(--tinta)] text-[var(--kertas-terang)] font-semibold text-sm hover:bg-[var(--mentega)] hover:text-white transition-colors"
                                 >
                                     Lanjut ke pilih tempat
                                 </button>
@@ -327,7 +327,7 @@
                                 <button
                                     type="button"
                                     wire:click="nextStep"
-                                    class="px-7 py-3 rounded-full bg-[var(--tinta)] text-[var(--kertas-terang)] font-semibold text-sm hover:bg-[var(--mentega)] hover:text-[var(--tinta)] transition-colors"
+                                    class="px-7 py-3 rounded-full bg-[var(--tinta)] text-[var(--kertas-terang)] font-semibold text-sm hover:bg-[var(--mentega)] hover:text-white transition-colors"
                                 >
                                     Lanjut pilih menu
                                 </button>
@@ -484,7 +484,7 @@
                                                                 type="button"
                                                                 wire:click="setMenuOption({{ $menu->id }}, null, '{{ $tOpt }}')"
                                                                 class="px-2.5 py-0.5 rounded-full text-xs border {{ $activeTemp === $tOpt
-                                                                    ? 'bg-[var(--mentega)] text-[var(--tinta)] border-[var(--tinta)] font-semibold'
+                                                                    ? 'bg-[var(--mentega)] text-white border-[var(--mentega)] font-semibold'
                                                                     : 'border-[var(--garis)] text-[var(--tinta-70)]' }}"
                                                             >{{ $tOpt }}</button>
                                                         @endforeach
@@ -517,7 +517,7 @@
                                     type="button"
                                     wire:click="nextStep"
                                     @disabled($this->menuRequired && ! $quoteData['meets_min_spend'])
-                                    class="px-7 py-3 rounded-full bg-[var(--tinta)] text-[var(--kertas-terang)] font-semibold text-sm disabled:opacity-40 hover:bg-[var(--mentega)] hover:text-[var(--tinta)] transition-colors"
+                                    class="px-7 py-3 rounded-full bg-[var(--tinta)] text-[var(--kertas-terang)] font-semibold text-sm disabled:opacity-40 hover:bg-[var(--mentega)] hover:text-white transition-colors"
                                 >
                                     Lanjut isi data
                                 </button>
@@ -589,7 +589,7 @@
                                 <button
                                     type="button"
                                     wire:click="nextStep"
-                                    class="px-7 py-3 rounded-full bg-[var(--tinta)] text-[var(--kertas-terang)] font-semibold text-sm hover:bg-[var(--mentega)] hover:text-[var(--tinta)] transition-colors"
+                                    class="px-7 py-3 rounded-full bg-[var(--tinta)] text-[var(--kertas-terang)] font-semibold text-sm hover:bg-[var(--mentega)] hover:text-white transition-colors"
                                 >
                                     Lanjut ke pembayaran
                                 </button>
@@ -777,7 +777,7 @@
                                     type="button"
                                     wire:click="submitReservation"
                                     wire:loading.attr="disabled"
-                                    class="px-8 py-3 rounded-full bg-[var(--mentega)] text-[var(--tinta)] font-display font-bold text-sm hover:bg-[var(--tinta)] hover:text-[var(--kertas-terang)] transition-colors disabled:opacity-50"
+                                    class="px-8 py-3 rounded-full bg-[var(--mentega)] text-white font-display font-bold text-sm hover:bg-[var(--tinta)] hover:text-[var(--kertas-terang)] transition-colors disabled:opacity-50"
                                 >
                                     <span wire:loading.remove wire:target="submitReservation">Kirim & cetak karcis</span>
                                     <span wire:loading wire:target="submitReservation">Mengirim reservasi...</span>
@@ -830,7 +830,7 @@
                             type="button"
                             wire:click="submitReservation"
                             wire:loading.attr="disabled"
-                            class="flex-1 py-2.5 rounded-full bg-[var(--mentega)] text-[var(--tinta)] font-display font-bold text-sm"
+                            class="flex-1 py-2.5 rounded-full bg-[var(--mentega)] text-white font-display font-bold text-sm"
                         >Kirim & cetak karcis</button>
                     @endif
                 </div>
@@ -933,7 +933,7 @@
                             href="{{ $createdWaLink }}"
                             target="_blank"
                             rel="noopener noreferrer"
-                            class="px-6 py-3 rounded-full bg-[var(--mentega)] text-[var(--tinta)] font-display font-bold text-sm text-center hover:bg-[var(--tinta)] hover:text-[var(--kertas-terang)] transition-colors"
+                            class="px-6 py-3 rounded-full bg-[var(--mentega)] text-white font-display font-bold text-sm text-center hover:bg-[var(--tinta)] hover:text-[var(--kertas-terang)] transition-colors"
                         >
                             Kirim ke WhatsApp UMCO
                         </a>
@@ -941,7 +941,7 @@
                         <button
                             type="button"
                             @click="if (window.umcoDownloadKarcis) window.umcoDownloadKarcis(@js($karcisPayload))"
-                            class="px-6 py-3 rounded-full bg-[var(--tinta)] text-[var(--kertas-terang)] font-semibold text-sm hover:bg-[var(--mentega)] hover:text-[var(--tinta)] transition-colors"
+                            class="px-6 py-3 rounded-full bg-[var(--tinta)] text-[var(--kertas-terang)] font-semibold text-sm hover:bg-[var(--mentega)] hover:text-white transition-colors"
                         >
                             Simpan karcis
                         </button>

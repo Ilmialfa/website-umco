@@ -133,13 +133,13 @@
         data-theme="{{ $initialNavTheme }}"
         data-scrolled="0"
         data-hidden="0"
-        class="fixed top-0 inset-x-0 z-50 pointer-events-none"
+        class="fixed top-0 inset-x-0 z-50"
     >
-        {{-- Desktop & Tablet (>=640px): Strict 3-zone bar — Left (Menu, Cerita) | Center (UMCO) | Right (Reservasi) --}}
-        <div class="hidden sm:block pt-3 lg:pt-4">
+        {{-- Desktop & Tablet (>=640px): Clean full-width 3-zone header — Left (Menu, Cerita) | Center (UMCO) | Right (Reservasi) --}}
+        <div class="nav-bar hidden sm:block">
             <div class="umco-container">
-                <div class="nav-pill pointer-events-auto grid grid-cols-3 items-center h-12 lg:h-[52px] px-5 lg:px-7 rounded-full">
-                    <nav class="flex items-center gap-5 lg:gap-7 text-[14px] lg:text-[15px] font-medium justify-self-start" aria-label="Navigasi utama">
+                <div class="grid grid-cols-3 items-center h-16 lg:h-[72px]">
+                    <nav class="flex items-center gap-6 lg:gap-8 text-[14px] lg:text-[15px] font-medium justify-self-start" aria-label="Navigasi utama">
                         @foreach ($navItems as $item)
                             <a
                                 href="{{ $item['href'] }}"
@@ -155,7 +155,7 @@
                     <a
                         href="{{ url('/') }}"
                         wire:navigate
-                        class="justify-self-center font-display font-semibold text-[17px] lg:text-[19px] tracking-[0.08em]"
+                        class="justify-self-center font-display font-semibold text-[18px] lg:text-[20px] tracking-[0.12em]"
                     >
                         UMCO
                     </a>
@@ -164,7 +164,7 @@
                         <a
                             href="{{ url('/reservasi') }}"
                             wire:navigate
-                            class="btn-umco btn-umco-primary min-h-0 h-8 lg:h-9 px-4 lg:px-5 text-[13px] lg:text-[14px]"
+                            class="btn-umco btn-umco-primary min-h-0 h-9 lg:h-10 px-5 text-[13px] lg:text-[14px]"
                         >
                             <span class="btn-roll">
                                 <span>Reservasi</span>
@@ -176,10 +176,10 @@
             </div>
         </div>
 
-        {{-- Mobile (<640px): Compact 3-zone bar — Left (Menu, Cerita) | Center (UMCO) | Right (Reservasi) --}}
-        <div class="sm:hidden">
-            <div class="nav-pill pointer-events-auto grid grid-cols-3 items-center h-14 px-4">
-                <nav class="flex items-center gap-3 text-[13px] font-medium justify-self-start" aria-label="Navigasi utama">
+        {{-- Mobile (<640px): Compact 3-zone header — Left (Menu, Cerita) | Center (UMCO) | Right (Reservasi) --}}
+        <div class="nav-bar sm:hidden">
+            <div class="grid grid-cols-3 items-center h-14 px-4">
+                <nav class="flex items-center gap-3.5 text-[13px] font-medium justify-self-start" aria-label="Navigasi utama">
                     <a
                         href="{{ url('/menu') }}"
                         wire:navigate
@@ -198,7 +198,7 @@
                     </a>
                 </nav>
 
-                <a href="{{ url('/') }}" wire:navigate class="justify-self-center font-display font-semibold text-base tracking-[0.08em]">
+                <a href="{{ url('/') }}" wire:navigate class="justify-self-center font-display font-semibold text-base tracking-[0.12em]">
                     UMCO
                 </a>
 
@@ -206,7 +206,7 @@
                     <a
                         href="{{ url('/reservasi') }}"
                         wire:navigate
-                        class="inline-flex items-center justify-center h-8 px-3.5 rounded-full bg-[var(--mentega)] text-[var(--tinta)] text-xs font-semibold tracking-wide"
+                        class="inline-flex items-center justify-center h-8 px-3.5 rounded-full bg-[var(--mentega)] text-white text-xs font-semibold tracking-wide"
                     >
                         Reservasi
                     </a>
@@ -231,15 +231,15 @@
         <div class="umco-container">
             <div class="grid grid-cols-1 sm:grid-cols-12 gap-8 sm:gap-10 pb-12 border-b border-white/15">
                 <div class="sm:col-span-5 space-y-3">
-                    <p class="font-display font-bold text-xl tracking-tight">UMCO</p>
+                    <p class="font-display font-bold text-xl tracking-[0.06em]">UMCO</p>
                     <p class="text-sm sm:text-[15px] text-[var(--kertas)]/80 leading-relaxed max-w-sm">
                         {{ $address }}. Buka setiap hari pukul {{ $openTime }} - {{ $closeTime }} WIB.
                     </p>
                     <div class="flex flex-wrap items-center gap-4 pt-1 text-sm font-medium">
-                        <a href="{{ $mapsUrl }}" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4 hover:text-[var(--mentega)] transition-colors">
+                        <a href="{{ $mapsUrl }}" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4 hover:text-[#9FD3B6] transition-colors">
                             Buka di Google Maps
                         </a>
-                        <a href="{{ $waLink }}" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4 hover:text-[var(--mentega)] transition-colors">
+                        <a href="{{ $waLink }}" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4 hover:text-[#9FD3B6] transition-colors">
                             WhatsApp kasir
                         </a>
                     </div>
@@ -249,18 +249,18 @@
                     <div class="space-y-2.5">
                         <p class="font-semibold text-[var(--kertas)]">Halaman</p>
                         <ul class="space-y-2 text-[var(--kertas)]/75">
-                            <li><a href="{{ url('/') }}" wire:navigate class="hover:text-[var(--mentega)] transition-colors">Beranda</a></li>
-                            <li><a href="{{ url('/menu') }}" wire:navigate class="hover:text-[var(--mentega)] transition-colors">Menu</a></li>
-                            <li><a href="{{ url('/cerita') }}" wire:navigate class="hover:text-[var(--mentega)] transition-colors">Cerita kami</a></li>
-                            <li><a href="{{ url('/reservasi') }}" wire:navigate class="hover:text-[var(--mentega)] transition-colors">Pesan meja</a></li>
+                            <li><a href="{{ url('/') }}" wire:navigate class="hover:text-[#9FD3B6] transition-colors">Beranda</a></li>
+                            <li><a href="{{ url('/menu') }}" wire:navigate class="hover:text-[#9FD3B6] transition-colors">Menu</a></li>
+                            <li><a href="{{ url('/cerita') }}" wire:navigate class="hover:text-[#9FD3B6] transition-colors">Cerita kami</a></li>
+                            <li><a href="{{ url('/reservasi') }}" wire:navigate class="hover:text-[#9FD3B6] transition-colors">Pesan meja</a></li>
                         </ul>
                     </div>
                     <div class="space-y-2.5">
                         <p class="font-semibold text-[var(--kertas)]">Kontak</p>
                         <ul class="space-y-2 text-[var(--kertas)]/75">
-                            <li><a href="{{ $instagramUrl }}" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--mentega)] transition-colors">Instagram</a></li>
-                            <li><a href="{{ $waLink }}" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--mentega)] transition-colors">WhatsApp</a></li>
-                            <li><a href="{{ url('/admin') }}" class="hover:text-[var(--mentega)] transition-colors">Staf</a></li>
+                            <li><a href="{{ $instagramUrl }}" target="_blank" rel="noopener noreferrer" class="hover:text-[#9FD3B6] transition-colors">Instagram</a></li>
+                            <li><a href="{{ $waLink }}" target="_blank" rel="noopener noreferrer" class="hover:text-[#9FD3B6] transition-colors">WhatsApp</a></li>
+                            <li><a href="{{ url('/admin') }}" class="hover:text-[#9FD3B6] transition-colors">Staf</a></li>
                         </ul>
                     </div>
                 </div>
@@ -271,10 +271,10 @@
                 </div>
             </div>
 
-            <div class="relative pt-12 sm:pt-16 pb-4 flex flex-col items-center justify-end overflow-hidden select-none">
+            <div class="relative pt-10 sm:pt-14 pb-2 flex flex-col items-center justify-end overflow-hidden select-none">
                 <div
                     data-footer-wordmark
-                    class="w-full font-display font-semibold text-[21vw] sm:text-[18vw] leading-[0.82] tracking-[-0.02em] text-[var(--kertas)] text-center whitespace-nowrap will-change-transform"
+                    class="w-full font-display font-semibold text-[22vw] sm:text-[18vw] leading-[0.84] tracking-[-0.015em] text-[var(--kertas)] text-center whitespace-nowrap will-change-transform"
                 >
                     UMCO
                 </div>
@@ -283,11 +283,11 @@
                     data-footer-cutout
                     src="{{ asset('/images/footer-cutout.webp') }}"
                     alt="Segelas kopi susu dingin UMCO"
-                    width="299"
+                    width="295"
                     height="629"
                     loading="lazy"
                     decoding="async"
-                    class="relative z-10 -mt-[21vw] sm:-mt-[17vw] w-28 sm:w-40 lg:w-48 h-auto pointer-events-none"
+                    class="relative z-10 -mt-[20vw] sm:-mt-[16vw] w-28 sm:w-40 lg:w-44 h-auto pointer-events-none"
                 >
             </div>
         </div>

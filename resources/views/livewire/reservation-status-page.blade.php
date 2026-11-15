@@ -86,7 +86,7 @@
 
                     <button
                         type="submit"
-                        class="w-full py-3 rounded-full bg-[var(--tinta)] text-[var(--kertas-terang)] font-semibold text-sm hover:bg-[var(--mentega)] hover:text-[var(--tinta)] transition-colors"
+                        class="w-full py-3 rounded-full bg-[var(--tinta)] text-[var(--kertas-terang)] font-semibold text-sm hover:bg-[var(--mentega)] hover:text-white transition-colors"
                     >
                         Buka karcis
                     </button>
@@ -156,7 +156,7 @@
                                 <button
                                     type="submit"
                                     @disabled(! $newProof)
-                                    class="w-full py-2.5 rounded-full bg-[var(--mentega)] text-[var(--tinta)] font-display font-bold text-sm disabled:opacity-40"
+                                    class="w-full py-2.5 rounded-full bg-[var(--mentega)] text-white font-display font-bold text-sm disabled:opacity-40"
                                 >
                                     Kirim bukti baru
                                 </button>
@@ -182,7 +182,7 @@
                             <button
                                 type="button"
                                 @click="if (window.umcoDownloadKarcis) window.umcoDownloadKarcis(@js($karcisPayload))"
-                                class="w-full py-2.5 rounded-full bg-[var(--tinta)] text-[var(--kertas-terang)] font-semibold text-sm hover:bg-[var(--mentega)] hover:text-[var(--tinta)] transition-colors"
+                                class="w-full py-2.5 rounded-full bg-[var(--tinta)] text-[var(--kertas-terang)] font-semibold text-sm hover:bg-[var(--mentega)] hover:text-white transition-colors"
                             >
                                 Simpan karcis
                             </button>
@@ -198,7 +198,7 @@
                                 href="{{ $this->umcoWaLink }}"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                class="w-full py-2.5 rounded-full bg-[var(--mentega)] text-[var(--tinta)] text-center font-semibold text-sm hover:bg-[var(--tinta)] hover:text-[var(--kertas-terang)] transition-colors"
+                                class="w-full py-2.5 rounded-full bg-[var(--mentega)] text-white text-center font-semibold text-sm hover:bg-[var(--mentega-tua)] transition-colors"
                             >
                                 Chat WhatsApp UMCO
                             </a>

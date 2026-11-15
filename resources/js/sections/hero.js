@@ -20,7 +20,7 @@ export function init(el) {
         video.muted = true;
         video.playsInline = true;
         video.preload = 'metadata';
-        video.className = 'w-full h-full object-cover opacity-75';
+        video.className = 'w-full h-full object-cover opacity-100';
         videoHost.innerHTML = '';
         videoHost.appendChild(video);
     }

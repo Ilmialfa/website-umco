@@ -46,7 +46,7 @@
                     alt="Suasana kedai kopi UMCO di Kampus UMRI Pekanbaru"
                     fetchpriority="high"
                     decoding="async"
-                    class="w-full h-full object-cover object-center opacity-75"
+                    class="w-full h-full object-cover object-center opacity-95"
                 >
             </picture>
             @if ($videoSrc)
@@ -57,8 +57,8 @@
                     class="hidden lg:block absolute inset-0 pointer-events-none"
                 ></div>
             @endif
-            <div class="hidden sm:block absolute inset-0 bg-gradient-to-t from-[var(--tinta)] via-[var(--tinta)]/35 to-[var(--tinta)]/25"></div>
-            <div class="sm:hidden absolute inset-0 bg-gradient-to-t from-[var(--tinta)]/50 via-transparent to-[var(--tinta)]/30"></div>
+            <div class="hidden sm:block absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-[#171C19]/90 via-[#171C19]/40 to-transparent"></div>
+            <div class="sm:hidden absolute inset-0 bg-gradient-to-t from-[#171C19]/45 via-transparent to-[#171C19]/25"></div>
         </div>
 
         {{-- Tablet & Desktop: Komposisi Arsitektural Bersih (tanpa stiker & tanpa huruf raksasa menumpuk) --}}

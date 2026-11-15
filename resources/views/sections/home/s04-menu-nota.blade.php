@@ -87,29 +87,29 @@
             </a>
         </div>
 
-        {{-- Tab kategori HP (<640px) --}}
-        <div class="flex sm:hidden gap-2 overflow-x-auto pb-1 scrollbar-none">
+        {{-- Tab kategori aktif di semua layar agar daftar ringkas & cepat --}}
+        <div class="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
             <template x-for="cat in categories" :key="cat.slug">
                 <button
                     type="button"
                     @click="activeTab = cat.slug"
-                    class="px-4 h-10 rounded-full text-sm font-semibold whitespace-nowrap transition-colors"
-                    :class="activeTab === cat.slug ? 'bg-[var(--tinta)] text-[var(--kertas)]' : 'bg-[var(--kertas-terang)] text-[var(--tinta)]'"
+                    class="px-4 sm:px-5 h-10 rounded-full text-sm font-semibold whitespace-nowrap transition-colors cursor-pointer"
+                    :class="activeTab === cat.slug ? 'bg-[var(--mentega)] text-white' : 'bg-[var(--kertas-terang)] text-[var(--tinta)] border border-[var(--garis)] hover:border-[var(--mentega)]'"
                     x-text="cat.name"
                 ></button>
             </template>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-            {{-- Kiri: Daftar menu bergaya nota --}}
-            <div class="lg:col-span-7 space-y-10">
+            {{-- Kiri: Daftar menu bergaya nota sesuai tab aktif --}}
+            <div class="lg:col-span-7 space-y-6">
                 <template x-for="cat in categories" :key="cat.slug">
-                    <div x-show="window.innerWidth >= 640 || activeTab === cat.slug" class="space-y-3">
-                        <p class="text-sm font-semibold text-[var(--tinta)]/75 border-b border-[var(--tinta)]/25 pb-2" x-text="cat.name"></p>
+                    <div x-show="activeTab === cat.slug" class="space-y-3">
+                        <p class="text-sm font-semibold text-[var(--mentega-tua)] border-b border-[var(--garis-kuwat)] pb-2" x-text="cat.name"></p>
 
-                        <div class="divide-y divide-[var(--tinta)]/15">
+                        <div class="divide-y divide-[var(--garis)]">
                             <template x-for="item in cat.items" :key="item.id">
-                                <div class="py-3.5">
+                                <div class="py-4 transition-colors" :class="nota.some(r => r.id === item.id) ? 'bg-[var(--aksen-soft)]/55 -mx-3 px-3 rounded-xl' : ''">
                                     <div class="flex items-baseline gap-3">
                                         <button
                                             type="button"
@@ -118,30 +118,30 @@
                                             class="menu-row-trigger text-left flex-1 flex items-baseline gap-3 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
                                             <span
-                                                class="menu-row-name text-[1.375rem] sm:text-[1.75rem] leading-tight"
-                                                :class="!item.available ? 'line-through decoration-[var(--cabai)] decoration-2' : ''"
+                                                class="menu-row-name text-[1.25rem] sm:text-[1.55rem] leading-tight"
+                                                :class="!item.available ? 'line-through opacity-50' : ''"
                                                 x-text="item.name"
                                             ></span>
-                                            <span class="hidden sm:block flex-1 border-b border-dotted border-[var(--tinta)]/40"></span>
+                                            <span class="hidden sm:block flex-1 border-b border-dotted border-[var(--tinta)]/30"></span>
                                         </button>
 
-                                        <span class="font-sans font-semibold text-sm sm:text-base tabular-nums whitespace-nowrap" x-text="formatRibu(item.price)"></span>
+                                        <span class="font-sans font-semibold text-sm sm:text-base tabular-nums whitespace-nowrap text-[var(--mentega-tua)]" x-text="formatRibu(item.price)"></span>
                                     </div>
 
-                                    <div class="mt-1 flex items-center gap-4 text-xs text-[var(--tinta)]/75">
+                                    <div class="mt-1.5 flex items-center gap-4 text-xs text-[var(--tinta-70)]">
                                         <button
                                             type="button"
                                             @click="toggleIng(item.id)"
                                             class="underline underline-offset-4 hover:text-[var(--tinta)] cursor-pointer"
-                                            x-text="openIng[item.id] ? 'Tutup' : 'Keterangan'"
+                                            x-text="openIng[item.id] ? 'Tutup detail' : 'Lihat komposisi'"
                                         ></button>
-                                        <span x-show="!item.available" class="text-[var(--cabai)] font-semibold">Habis</span>
+                                        <span x-show="!item.available" class="text-[var(--tinta-70)] font-semibold">Sedang habis</span>
                                     </div>
 
                                     <p
                                         x-show="openIng[item.id]"
                                         x-transition
-                                        class="mt-2 text-sm text-[var(--tinta)]/85 max-w-lg"
+                                        class="mt-2 text-sm text-[var(--tinta-70)] max-w-lg"
                                         x-text="item.ingredients"
                                     ></p>
                                 </div>

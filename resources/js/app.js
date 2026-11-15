@@ -37,16 +37,16 @@ function initFooter() {
     if (wordmark) {
         gsap.fromTo(
             wordmark,
-            { scaleX: 0.96, letterSpacing: '-0.02em', transformOrigin: '50% 50%' },
+            { scaleX: 0.94, letterSpacing: '-0.015em', transformOrigin: '50% 50%' },
             {
-                scaleX: 1.18,
-                letterSpacing: '0.14em',
+                scaleX: 1.14,
+                letterSpacing: '0.11em',
                 ease: 'power1.out',
                 scrollTrigger: {
                     trigger: footer,
                     start: 'top 95%',
                     end: 'bottom bottom',
-                    scrub: 2.4,
+                    scrub: 1.8,
                 },
             }
         );
@@ -56,9 +56,9 @@ function initFooter() {
     if (cutout && window.innerWidth >= 1024) {
         gsap.fromTo(
             cutout,
-            { y: 18 },
+            { y: 16 },
             {
-                y: -16,
+                y: -14,
                 ease: 'none',
                 scrollTrigger: {
                     trigger: footer,
@@ -72,13 +72,13 @@ function initFooter() {
 }
 
 async function initLenisIfEnabled() {
-    const enabled = document.documentElement.dataset.smoothScroll === '1';
+    const enabled = (document.body?.dataset.smoothScroll || document.documentElement.dataset.smoothScroll) === '1';
     const desktopFinePointer = window.matchMedia('(min-width: 1024px) and (pointer: fine)').matches;
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!enabled || !desktopFinePointer || reduced) return;
 
     const { default: Lenis } = await import('lenis');
-    lenisInstance = new Lenis({ lerp: 0.1 });
+    lenisInstance = new Lenis({ lerp: 0.09 });
     lenisInstance.on('scroll', ScrollTrigger.update);
     rafCallback = (time) => lenisInstance?.raf(time * 1000);
     gsap.ticker.add(rafCallback);

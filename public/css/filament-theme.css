@@ -17,14 +17,14 @@
 }
 
 :root {
-    --umco-canvas: #F4F2ED;
+    --umco-canvas: #F5F5F1;
     --umco-surface: #FFFFFF;
-    --umco-surface-alt: #EFECE5;
-    --umco-tinta: #161615;
-    --umco-tinta-70: #52514D;
-    --umco-aksen: #C4933F;
-    --umco-aksen-tua: #A87A2C;
-    --umco-aksen-soft: #F3EDE0;
+    --umco-surface-alt: #EAECE6;
+    --umco-tinta: #171C19;
+    --umco-tinta-70: #525B55;
+    --umco-aksen: #2F6B4F;
+    --umco-aksen-tua: #23523C;
+    --umco-aksen-soft: #E4ECE6;
     --font-sans: 'Instrument Sans', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
 }
 
@@ -157,7 +157,7 @@ textarea {
 /* Tombol Aksi & Badge */
 .fi-btn-color-primary:not(.fi-btn-outlined) {
     background-color: var(--umco-aksen) !important;
-    color: #161615 !important;
+    color: #FFFFFF !important;
     font-weight: 600 !important;
     border: none !important;
     border-radius: 9999px !important;

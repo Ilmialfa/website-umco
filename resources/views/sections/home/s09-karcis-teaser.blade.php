@@ -116,7 +116,7 @@
                                 :disabled="Boolean(d.closedReason)"
                                 @click="selectedDate = d.date"
                                 class="px-4 py-2 rounded-full border text-left transition-colors cursor-pointer disabled:opacity-45 disabled:cursor-not-allowed"
-                                :class="selectedDate === d.date ? 'bg-[var(--tinta)] text-[var(--kertas)] border-[var(--tinta)]' : 'bg-[var(--kertas-terang)] text-[var(--tinta)] border-[var(--garis)] hover:border-[var(--tinta)]'"
+                                :class="selectedDate === d.date ? 'bg-[var(--mentega)] text-white border-[var(--mentega)]' : 'bg-[var(--kertas-terang)] text-[var(--tinta)] border-[var(--garis)] hover:border-[var(--mentega)]'"
                             >
                                 <span class="block text-sm font-semibold" :class="d.closedReason ? 'line-through' : ''" x-text="d.label"></span>
                                 <span class="block text-[11px] opacity-75" x-text="d.closedReason ? d.closedReason : d.sub"></span>

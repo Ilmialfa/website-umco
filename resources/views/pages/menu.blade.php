@@ -290,7 +290,7 @@
                                                 </div>
                                             </template>
 
-                                            <span x-show="item.is_new" class="absolute top-2.5 left-2.5 px-2.5 py-1 text-[11px] font-semibold bg-[var(--mentega)] text-[var(--tinta)]">Baru</span>
+                                            <span x-show="item.is_new" class="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[var(--mentega)] text-white">Baru</span>
                                             <span x-show="!item.is_available" class="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[var(--batu)] text-[var(--tinta-70)]">Habis</span>
                                         </div>
 

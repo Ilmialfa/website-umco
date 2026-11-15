@@ -12,10 +12,10 @@ export function initNav() {
         const scrolled = y > 80;
         header.dataset.scrolled = scrolled ? '1' : '0';
 
-        // Sembunyi saat scroll ke bawah di luar posisi atas, tampil saat scroll ke atas
-        if (!isReservationPage && y > 160 && y > lastY + 6) {
+        // Sembunyi halus hanya saat scroll cepat ke bawah melewati hero, langsung tampil saat scroll naik
+        if (!isReservationPage && y > 360 && y > lastY + 8) {
             header.dataset.hidden = '1';
-        } else if (y < lastY - 4 || y <= 160) {
+        } else if (y < lastY - 4 || y <= 360) {
             header.dataset.hidden = '0';
         }
 

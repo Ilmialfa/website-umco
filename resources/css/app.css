@@ -9,40 +9,40 @@
     --font-hand: 'Reenie Beanie', 'Segoe Print', cursive;
     --font-led: 'Plus Jakarta Sans', 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
 
-    /* UMCO 3-Color Architectural Palette: Primer (Warm Alabaster), Sekunder (Espresso Obsidian), Aksen (Roasted Amber Gold) */
-    --color-kertas: #F7F5F0;
+    /* UMCO Botanical 3-Color Palette: Primer (Warm Ivory Stone), Sekunder (Deep Botanical Charcoal), Aksen (UMCO Botanical Pine Green) */
+    --color-kertas: #F6F5F0;
     --color-kertas-terang: #FFFFFF;
-    --color-batu: #EFECE5;
-    --color-tinta: #161615;
-    --color-tinta-70: #52514D;
-    --color-tinta-40: #8A8882;
-    --color-garis: rgba(22, 22, 21, 0.09);
-    --color-mentega: #C4933F;
-    --color-mentega-tua: #A87A2C;
-    --color-matcha: #EFECE5;
+    --color-batu: #EAECE6;
+    --color-tinta: #171C19;
+    --color-tinta-70: #525B55;
+    --color-tinta-40: #7D8780;
+    --color-garis: rgba(23, 28, 25, 0.09);
+    --color-mentega: #2F6B4F;
+    --color-mentega-tua: #23523C;
+    --color-matcha: #EAECE6;
     --color-susu-stroberi: #FFFFFF;
-    --color-stempel: #9A6B26;
+    --color-stempel: #23523C;
 }
 
 :root {
-    --kertas: #F7F5F0;
+    --kertas: #F6F5F0;
     --kertas-terang: #FFFFFF;
-    --batu: #EFECE5;
-    --tinta: #161615;
-    --tinta-70: #52514D;
-    --tinta-muted: #52514D;
-    --tinta-40: #8A8882;
-    --garis: rgba(22, 22, 21, 0.09);
-    --garis-kuwat: rgba(22, 22, 21, 0.22);
-    --mentega: #C4933F;
-    --mentega-tua: #A87A2C;
-    --aksen-soft: #F3EDE0;
-    --matcha: #EFECE5;
-    --zaitun: #EFECE5;
+    --batu: #EAECE6;
+    --tinta: #171C19;
+    --tinta-70: #525B55;
+    --tinta-muted: #525B55;
+    --tinta-40: #7D8780;
+    --garis: rgba(23, 28, 25, 0.09);
+    --garis-kuwat: rgba(23, 28, 25, 0.22);
+    --mentega: #2F6B4F;
+    --mentega-tua: #23523C;
+    --aksen-soft: #E4ECE6;
+    --matcha: #EAECE6;
+    --zaitun: #EAECE6;
     --susu-stroberi: #FFFFFF;
     --blush: #FFFFFF;
-    --stempel: #9A6B26;
-    --cabai: #9A6B26;
+    --stempel: #23523C;
+    --cabai: #2F6B4F;
 
     --font-display: 'Plus Jakarta Sans', 'Instrument Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     --font-sans: 'Instrument Sans', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -75,7 +75,7 @@
 
     ::selection {
         background-color: var(--mentega);
-        color: #161615;
+        color: #FFFFFF;
     }
 
     :focus-visible {
@@ -241,12 +241,13 @@
 }
 .btn-umco-primary {
     background-color: var(--mentega);
-    color: var(--tinta);
+    color: #FFFFFF;
     border: 1px solid var(--mentega);
 }
 .btn-umco-primary:hover:not(:disabled) {
     background-color: var(--mentega-tua);
     border-color: var(--mentega-tua);
+    color: #FFFFFF;
 }
 .btn-umco-secondary {
     background-color: transparent;
@@ -286,30 +287,30 @@
     transform: translateY(-100%);
 }
 
-/* Navbar 3-state (flat architectural surface) */
+/* Navbar 3-state (arsitektural full-width bersih tanpa pill melayang) */
 #umco-navbar {
     transition: transform var(--dur-2) var(--ease-out);
 }
 #umco-navbar[data-hidden="1"] {
-    transform: translateY(-120%);
+    transform: translateY(-110%);
 }
-#umco-navbar .nav-pill {
-    transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
+#umco-navbar .nav-bar {
+    transition: background-color 240ms var(--ease-out), color 240ms var(--ease-out), border-color 240ms var(--ease-out);
 }
-#umco-navbar[data-theme="dark"] .nav-pill {
-    background-color: rgba(22, 22, 21, 0.72);
-    color: var(--kertas);
-    border: 1px solid rgba(247, 245, 240, 0.14);
+#umco-navbar[data-theme="dark"] .nav-bar {
+    background: linear-gradient(to bottom, rgba(23, 28, 25, 0.72), rgba(23, 28, 25, 0));
+    color: #FFFFFF;
+    border-bottom: 1px solid transparent;
 }
-#umco-navbar[data-theme="light"] .nav-pill {
-    background-color: rgba(247, 245, 240, 0.92);
+#umco-navbar[data-theme="light"] .nav-bar {
+    background-color: rgba(246, 245, 240, 0.96);
     color: var(--tinta);
-    border: 1px solid var(--garis);
+    border-bottom: 1px solid var(--garis);
 }
-#umco-navbar[data-theme="solid"] .nav-pill {
-    background-color: var(--kertas-terang);
+#umco-navbar[data-theme="solid"] .nav-bar {
+    background-color: rgba(255, 255, 255, 0.97);
     color: var(--tinta);
-    border: 1px solid var(--garis);
+    border-bottom: 1px solid var(--garis);
 }
 
 /* Link navbar underline tumbuh dari kiri */
@@ -411,7 +412,7 @@
     appearance: none;
     width: 100%;
     height: 3px;
-    background-color: rgba(22, 22, 21, 0.16);
+    background-color: rgba(23, 28, 25, 0.14);
     border-radius: 9999px;
     outline: none;
 }
@@ -421,20 +422,21 @@
     width: 22px;
     height: 22px;
     border-radius: 9999px;
-    background-color: var(--tinta);
-    border: 3px solid var(--mentega);
+    background-color: var(--mentega);
+    border: 3px solid #FFFFFF;
     cursor: pointer;
-    transition: transform var(--dur-1) var(--ease-out);
+    transition: transform var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
 }
 .umco-range::-webkit-slider-thumb:hover {
     transform: scale(1.1);
+    background-color: var(--mentega-tua);
 }
 .umco-range::-moz-range-thumb {
     width: 22px;
     height: 22px;
     border-radius: 9999px;
-    background-color: var(--tinta);
-    border: 3px solid var(--mentega);
+    background-color: var(--mentega);
+    border: 3px solid #FFFFFF;
     cursor: pointer;
 }
 

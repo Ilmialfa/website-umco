@@ -63,26 +63,26 @@ export function init(el) {
             if (isDesktopOrTab) {
                 btn.className = 'group relative flex flex-col items-center justify-end h-56 sm:h-64 flex-1 focus:outline-none';
                 btn.innerHTML = `
-                    ${isPeak ? '<span class="absolute -top-7 whitespace-nowrap font-hand text-xl text-[var(--cabai)]">biasanya penuh</span>' : ''}
-                    <span class="opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity absolute -top-9 z-10 px-2.5 py-1 rounded-full bg-[var(--tinta)] text-[var(--kertas)] text-[11px] font-medium whitespace-nowrap pointer-events-none">
+                    ${isPeak ? '<span class="absolute -top-7 whitespace-nowrap font-hand text-xl text-[var(--mentega-tua)]">biasanya penuh</span>' : ''}
+                    <span class="opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity absolute -top-9 z-10 px-2.5 py-1 rounded-full bg-[var(--tinta)] text-white text-[11px] font-medium whitespace-nowrap pointer-events-none">
                         Pesan ${jamText}
                     </span>
                     <span
-                        class="w-full max-w-[30px] rounded-t-md transition-[height,background-color] duration-300"
-                        style="height: ${level}%; background-color: ${isNow ? 'var(--mentega)' : 'var(--tinta)'}; transition-delay: ${index * 20}ms"
+                        class="w-full max-w-[30px] rounded-t-md transition-[height,background-color] duration-300 group-hover:bg-[var(--mentega-tua)]"
+                        style="height: ${level}%; background-color: ${isNow ? 'var(--mentega)' : 'rgba(23, 28, 25, 0.24)'}; transition-delay: ${index * 20}ms"
                     ></span>
-                    <span class="mt-2.5 text-xs tabular-nums ${isNow ? 'font-bold text-[var(--tinta)]' : 'text-[var(--tinta-70)]'}">
+                    <span class="mt-2.5 text-xs tabular-nums ${isNow ? 'font-bold text-[var(--mentega)]' : 'text-[var(--tinta-70)]'}">
                         ${String(hr).padStart(2, '0')}
                     </span>
                 `;
             } else {
                 btn.className = 'flex items-center gap-3 py-1.5';
                 btn.innerHTML = `
-                    <span class="w-12 shrink-0 text-xs tabular-nums font-medium ${isNow ? 'font-bold text-[var(--cabai)]' : 'text-[var(--tinta-70)]'}">${jamText}</span>
-                    <span class="flex-1 h-4 bg-[var(--garis)]/50 rounded-r-md overflow-hidden">
-                        <span class="block h-full rounded-r-md" style="width: ${level}%; background-color: ${isNow ? 'var(--mentega)' : 'var(--tinta)'};"></span>
+                    <span class="w-12 shrink-0 text-xs tabular-nums font-medium ${isNow ? 'font-bold text-[var(--mentega)]' : 'text-[var(--tinta-70)]'}">${jamText}</span>
+                    <span class="flex-1 h-4 bg-[var(--garis)] rounded-r-md overflow-hidden">
+                        <span class="block h-full rounded-r-md" style="width: ${level}%; background-color: ${isNow ? 'var(--mentega)' : 'rgba(23, 28, 25, 0.28)'};"></span>
                     </span>
-                    <span class="w-20 shrink-0 text-right font-hand text-base text-[var(--cabai)]">${isPeak ? 'penuh' : ''}</span>
+                    <span class="w-20 shrink-0 text-right font-hand text-base text-[var(--mentega-tua)]">${isPeak ? 'penuh' : ''}</span>
                 `;
             }
 
@@ -100,8 +100,8 @@ export function init(el) {
             const isActive = Number(btn.dataset.crowdDay) === activeDay;
             btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
             btn.className = isActive
-                ? 'px-4 h-10 rounded-full bg-[var(--tinta)] text-[var(--kertas)] text-sm font-semibold whitespace-nowrap cursor-pointer'
-                : 'px-4 h-10 rounded-full bg-transparent border border-[var(--garis)] text-[var(--tinta)] text-sm font-medium whitespace-nowrap cursor-pointer hover:border-[var(--tinta)]';
+                ? 'px-4 h-10 rounded-full bg-[var(--mentega)] text-white text-sm font-semibold whitespace-nowrap cursor-pointer'
+                : 'px-4 h-10 rounded-full bg-transparent border border-[var(--garis)] text-[var(--tinta)] text-sm font-medium whitespace-nowrap cursor-pointer hover:border-[var(--mentega)]';
         });
     };
 

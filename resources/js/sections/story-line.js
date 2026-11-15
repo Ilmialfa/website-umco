@@ -17,16 +17,16 @@ export function init(el) {
 
     const anim = gsap.fromTo(
         words,
-        { opacity: 0.2 },
+        { opacity: 0.34 },
         {
             opacity: 1,
-            stagger: 0.04,
+            stagger: 0.03,
             ease: 'none',
             scrollTrigger: {
                 trigger: el,
-                start: 'top 78%',
-                end: 'center 42%',
-                scrub: 0.5,
+                start: 'top 82%',
+                end: 'center 55%',
+                scrub: 0.35,
             },
         }
     );

@@ -1,73 +1,65 @@
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-gsap.registerPlugin(ScrollTrigger);
-
 export function init(el) {
     const track = el.querySelector('[data-reel-track]');
     const cards = Array.from(el.querySelectorAll('[data-reel-card]'));
     const bar = el.querySelector('[data-reel-progress]');
+    const prevBtn = el.querySelector('[data-reel-prev]');
+    const nextBtn = el.querySelector('[data-reel-next]');
     if (!track || !cards.length) return () => {};
 
-    const desktopMq = window.matchMedia('(min-width: 1024px)');
-    const reducedMq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    let st = null;
+    let isDragging = false;
+    let startX = 0;
+    let scrollStart = 0;
 
-    const highlightIndex = (activeIdx) => {
-        cards.forEach((card, idx) => {
-            card.style.opacity = idx === activeIdx ? '1' : '0.52';
-        });
-    };
-
-    const onScrollNative = () => {
+    const syncProgress = () => {
         const maxScroll = Math.max(1, track.scrollWidth - track.clientWidth);
         const ratio = Math.min(1, Math.max(0, track.scrollLeft / maxScroll));
         if (bar) {
-            bar.style.transform = `scaleX(${Math.max(0.15, ratio)})`;
+            bar.style.transform = `scaleX(${Math.max(0.18, ratio)})`;
         }
-        const activeIdx = Math.min(cards.length - 1, Math.round(ratio * (cards.length - 1)));
-        highlightIndex(activeIdx);
+        if (prevBtn) prevBtn.disabled = track.scrollLeft <= 8;
+        if (nextBtn) nextBtn.disabled = track.scrollLeft >= maxScroll - 8;
     };
 
-    if (desktopMq.matches && !reducedMq.matches) {
-        const getScrollAmount = () => Math.max(0, track.scrollWidth - el.clientWidth + 64);
+    const stepBy = (dir) => {
+        const cardW = cards[0]?.getBoundingClientRect().width || 340;
+        track.scrollBy({ left: dir * (cardW + 24), behavior: 'smooth' });
+    };
 
-        if (getScrollAmount() > 40) {
-            const tween = gsap.to(track, {
-                x: () => -getScrollAmount(),
-                ease: 'none',
-                scrollTrigger: {
-                    trigger: el,
-                    pin: true,
-                    scrub: 0.8,
-                    start: 'top top',
-                    end: () => `+=${getScrollAmount()}`,
-                    invalidateOnRefresh: true,
-                    onUpdate: (self) => {
-                        if (bar) {
-                            bar.style.transform = `scaleX(${Math.max(0.12, self.progress)})`;
-                        }
-                        const activeIdx = Math.min(cards.length - 1, Math.round(self.progress * (cards.length - 1)));
-                        highlightIndex(activeIdx);
-                    },
-                },
-            });
-            st = tween.scrollTrigger;
-            highlightIndex(0);
-            return () => {
-                st?.kill();
-                gsap.set(track, { clearProps: 'transform' });
-                cards.forEach((c) => { c.style.opacity = ''; });
-            };
-        }
-    }
+    const onPrev = () => stepBy(-1);
+    const onNext = () => stepBy(1);
 
-    // Mobile & tablet scroll-snap handler
-    track.addEventListener('scroll', onScrollNative, { passive: true });
-    onScrollNative();
+    const onPointerDown = (e) => {
+        if (e.button !== 0 || e.target.closest('a')) return;
+        isDragging = true;
+        startX = e.pageX - track.offsetLeft;
+        scrollStart = track.scrollLeft;
+        track.classList.add('cursor-grabbing');
+    };
+    const onPointerMove = (e) => {
+        if (!isDragging) return;
+        e.preventDefault();
+        const x = e.pageX - track.offsetLeft;
+        track.scrollLeft = scrollStart - (x - startX) * 1.15;
+    };
+    const onPointerUp = () => {
+        isDragging = false;
+        track.classList.remove('cursor-grabbing');
+    };
+
+    track.addEventListener('scroll', syncProgress, { passive: true });
+    prevBtn?.addEventListener('click', onPrev);
+    nextBtn?.addEventListener('click', onNext);
+    track.addEventListener('mousedown', onPointerDown);
+    window.addEventListener('mousemove', onPointerMove);
+    window.addEventListener('mouseup', onPointerUp);
+    syncProgress();
 
     return () => {
-        track.removeEventListener('scroll', onScrollNative);
-        st?.kill();
+        track.removeEventListener('scroll', syncProgress);
+        prevBtn?.removeEventListener('click', onPrev);
+        nextBtn?.removeEventListener('click', onNext);
+        track.removeEventListener('mousedown', onPointerDown);
+        window.removeEventListener('mousemove', onPointerMove);
+        window.removeEventListener('mouseup', onPointerUp);
     };
 }

@@ -4,6 +4,8 @@
     $founder = $sections['founder'] ?? null;
     $values = $sections['values'] ?? null;
     $facilitiesSec = $sections['facilities'] ?? null;
+    $stallsSec = $sections['stalls'] ?? null;
+    $gallerySec = $sections['gallery_preview'] ?? null;
     $collab = $sections['collab'] ?? null;
 
     $rawWa = \App\Support\Settings::get('contact.phone_wa', '02248001571');
@@ -200,7 +202,7 @@
     </section>
 
     {{-- 5. Ruang & Fasilitas (Editable via Filament Facilities Resource & Section facilities) --}}
-    @if (($facilities ?? collect())->isNotEmpty())
+    @if (($facilities ?? collect())->isNotEmpty() && ($facilitiesSec?->is_active ?? true))
         <section data-nav-theme="light" class="umco-section bg-[var(--kertas)] text-[var(--tinta)]">
             <div class="umco-container space-y-8">
                 <div class="max-w-2xl space-y-2.5">
@@ -265,14 +267,14 @@
     @endif
 
     {{-- 6. Teman jajan --}}
-    @if ($streetStalls->isNotEmpty())
+    @if ($streetStalls->isNotEmpty() && ($stallsSec?->is_active ?? true))
         <section data-nav-theme="light" class="umco-section bg-[var(--kertas-terang)] text-[var(--tinta)]">
             <div class="umco-container space-y-8">
                 <div class="max-w-xl space-y-2">
-                    <p class="font-hand text-2xl text-[var(--mentega)]">Sekitar Halaman Kedai</p>
-                    <h2 data-reveal="rise" class="type-h2 font-display font-semibold">Teman jajan</h2>
+                    <p class="font-hand text-2xl text-[var(--mentega)]">{{ $stallsSec?->subheading ?: 'Sekitar Halaman Kedai' }}</p>
+                    <h2 data-reveal="rise" class="type-h2 font-display font-semibold">{{ $stallsSec?->heading ?: 'Teman jajan' }}</h2>
                     <p class="type-body text-[var(--tinta-70)]">
-                        Stan makanan di sekitar halaman UMCO yang bisa dipesan langsung di tempat.
+                        {{ $stallsSec?->body ?: 'Stan makanan di sekitar halaman UMCO yang bisa dipesan langsung di tempat.' }}
                     </p>
                 </div>
 
@@ -304,20 +306,21 @@
         </section>
     @endif
 
-    {{-- 7. Cuplikan Galeri + Kolaborasi, Acara & Komunitas (Editable Section: cerita/collab) --}}
-    <section data-nav-theme="light" class="umco-section bg-[var(--kertas)] text-[var(--tinta)]">
-        <div class="umco-container space-y-14">
-            @if ($galleryItems->isNotEmpty())
-                <div class="space-y-6">
-                    <div class="flex flex-wrap items-end justify-between gap-4">
-                        <div class="space-y-1.5">
-                            <p class="font-hand text-2xl text-[var(--mentega)]">Potret Ruang</p>
-                            <h2 class="type-h2 font-display font-semibold">Suasana dari waktu ke waktu</h2>
+    {{-- 7. Cuplikan Galeri + Kolaborasi, Acara & Komunitas (Editable Section: cerita/gallery_preview & cerita/collab) --}}
+    @if (($galleryItems->isNotEmpty() && ($gallerySec?->is_active ?? true)) || ($collab?->is_active ?? true))
+        <section data-nav-theme="light" class="umco-section bg-[var(--kertas)] text-[var(--tinta)]">
+            <div class="umco-container space-y-14">
+                @if ($galleryItems->isNotEmpty() && ($gallerySec?->is_active ?? true))
+                    <div class="space-y-6">
+                        <div class="flex flex-wrap items-end justify-between gap-4">
+                            <div class="space-y-1.5">
+                                <p class="font-hand text-2xl text-[var(--mentega)]">{{ $gallerySec?->subheading ?: 'Potret Ruang' }}</p>
+                                <h2 class="type-h2 font-display font-semibold">{{ $gallerySec?->heading ?: 'Suasana dari waktu ke waktu' }}</h2>
+                            </div>
+                            <a href="{{ url($gallerySec?->cta_url ?: '/galeri') }}" wire:navigate class="text-sm font-semibold underline underline-offset-4 hover:text-[var(--mentega)]">
+                                {{ $gallerySec?->cta_label ?: 'Buka seluruh galeri' }} &rarr;
+                            </a>
                         </div>
-                        <a href="{{ url('/galeri') }}" wire:navigate class="text-sm font-semibold underline underline-offset-4 hover:text-[var(--mentega)]">
-                            Buka seluruh galeri &rarr;
-                        </a>
-                    </div>
 
                     <div data-reveal-stagger class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5">
                         @foreach ($galleryItems->take(6) as $g)
@@ -339,47 +342,50 @@
                 </div>
             @endif
 
-            <div class="rounded-2xl bg-[var(--kertas-terang)] p-7 sm:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                <div class="lg:col-span-7 space-y-3">
-                    <p class="font-hand text-2xl text-[var(--mentega)]">
-                        {{ $collab?->subheading ?: 'Kolaborasi & Reservasi Rombongan' }}
-                    </p>
-                    <h2 class="type-h2 font-display font-semibold">
-                        {{ $collab?->heading ?: 'Mau bikin acara, bedah buku, atau kumpul komunitas?' }}
-                    </h2>
-                    <p class="type-body text-[var(--tinta-70)] leading-relaxed">
-                        {{ $collab?->body ?: 'Diskusi organisasi mahasiswa, komunitas kreatif, buka puasa bareng jurusan, sampai mini workshop sering mampir ke UMCO. Kabari kami beberapa hari sebelumnya untuk atur tata meja dan paket minuman.' }}
-                    </p>
-                    <div class="pt-2 flex flex-wrap gap-3">
-                        <a
-                            href="{{ $collabUrl }}"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="btn-umco btn-umco-primary"
+            @if ($collab?->is_active ?? true)
+                <div class="rounded-2xl bg-[var(--kertas-terang)] p-7 sm:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <div class="lg:col-span-7 space-y-3">
+                        <p class="font-hand text-2xl text-[var(--mentega)]">
+                            {{ $collab?->subheading ?: 'Kolaborasi & Reservasi Rombongan' }}
+                        </p>
+                        <h2 class="type-h2 font-display font-semibold">
+                            {{ $collab?->heading ?: 'Mau bikin acara, bedah buku, atau kumpul komunitas?' }}
+                        </h2>
+                        <p class="type-body text-[var(--tinta-70)] leading-relaxed">
+                            {{ $collab?->body ?: 'Diskusi organisasi mahasiswa, komunitas kreatif, buka puasa bareng jurusan, sampai mini workshop sering mampir ke UMCO. Kabari kami beberapa hari sebelumnya untuk atur tata meja dan paket minuman.' }}
+                        </p>
+                        <div class="pt-2 flex flex-wrap gap-3">
+                            <a
+                                href="{{ $collabUrl }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="btn-umco btn-umco-primary"
+                            >
+                                <span>{{ $collab?->cta_label ?: 'Hubungi tim kolaborasi' }}</span>
+                                <svg class="w-4 h-4 shrink-0"><use href="#icon-arrow-right"/></svg>
+                            </a>
+                            <a
+                                href="{{ url($collab?->cta_url ?: '/reservasi') }}"
+                                wire:navigate
+                                class="btn-umco bg-[var(--batu)] text-[var(--tinta)] hover:bg-[var(--tinta)] hover:text-[var(--kertas)]"
+                            >
+                                <span>{{ $collab?->data['secondary_label'] ?? 'Pesan meja grup' }}</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div data-reveal-media class="lg:col-span-5 rounded-2xl overflow-hidden aspect-[4/3] bg-[var(--batu)]">
+                        <img
+                            src="{{ $collabImg }}"
+                            alt="Kolaborasi acara komunitas di UMCO"
+                            loading="lazy"
+                            decoding="async"
+                            class="w-full h-full object-cover"
                         >
-                            <span>{{ $collab?->cta_label ?: 'Hubungi tim kolaborasi' }}</span>
-                            <svg class="w-4 h-4 shrink-0"><use href="#icon-arrow-right"/></svg>
-                        </a>
-                        <a
-                            href="{{ url($collab?->cta_url ?: '/reservasi') }}"
-                            wire:navigate
-                            class="btn-umco bg-[var(--batu)] text-[var(--tinta)] hover:bg-[var(--tinta)] hover:text-[var(--kertas)]"
-                        >
-                            <span>{{ $collab?->data['secondary_label'] ?? 'Pesan meja grup' }}</span>
-                        </a>
                     </div>
                 </div>
-
-                <div data-reveal-media class="lg:col-span-5 rounded-2xl overflow-hidden aspect-[4/3] bg-[var(--batu)]">
-                    <img
-                        src="{{ $collabImg }}"
-                        alt="Kolaborasi acara komunitas di UMCO"
-                        loading="lazy"
-                        decoding="async"
-                        class="w-full h-full object-cover"
-                    >
-                </div>
-            </div>
+            @endif
         </div>
     </section>
+    @endif
 </x-layouts.public>

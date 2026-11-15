@@ -14,7 +14,6 @@ class AboutController extends Controller
     public function __invoke()
     {
         $sections = PageSection::where('page', 'cerita')
-            ->where('is_active', true)
             ->orderBy('sort')
             ->get()
             ->keyBy('key');

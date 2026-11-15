@@ -671,7 +671,11 @@ class Redesign2026Seeder extends Seeder
     private function seedPageSections(): void
     {
         PageSection::where('page', 'home')
-            ->whereIn('key', ['led_board', 'story_line', 'brew', 'crowd', 'gallery', 'location', 'menu_nota', 'gallery_portrait'])
+            ->whereIn('key', ['led_board', 'story_line', 'brew', 'crowd', 'gallery', 'location', 'menu_nota', 'gallery_portrait', 'rules'])
+            ->delete();
+
+        PageSection::where('page', 'cerita')
+            ->where('key', 'altimeter')
             ->delete();
 
         $homeSections = [
@@ -855,15 +859,25 @@ class Redesign2026Seeder extends Seeder
             ],
             [
                 'page' => 'cerita',
-                'key' => 'altimeter',
+                'key' => 'stalls',
                 'sort' => 6,
-                'heading' => 'Dari mana bijinya datang',
-                'subheading' => 'Gulir pelan untuk melihat asal biji yang sering masuk ke grinder bar.',
+                'heading' => 'Teman jajan',
+                'subheading' => 'Sekitar Halaman Kedai',
+                'body' => 'Stan makanan di sekitar halaman UMCO yang bisa dipesan langsung di tempat.',
+            ],
+            [
+                'page' => 'cerita',
+                'key' => 'gallery_preview',
+                'sort' => 7,
+                'heading' => 'Suasana dari waktu ke waktu',
+                'subheading' => 'Potret Ruang',
+                'cta_label' => 'Buka seluruh galeri',
+                'cta_url' => '/galeri',
             ],
             [
                 'page' => 'cerita',
                 'key' => 'collab',
-                'sort' => 7,
+                'sort' => 8,
                 'heading' => 'Mau bikin acara, bedah buku, atau kumpul komunitas?',
                 'subheading' => 'Kolaborasi & Reservasi Rombongan',
                 'body' => 'Diskusi organisasi mahasiswa, komunitas kreatif, buka puasa bareng jurusan, sampai mini workshop sering mampir ke UMCO. Kabari kami beberapa hari sebelumnya untuk atur tata meja dan paket minuman.',

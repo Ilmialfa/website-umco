@@ -34,7 +34,46 @@ class PageSectionResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Section & Urutan Landing';
 
+    protected static ?string $navigationLabel = 'Section & Urutan';
+
     protected static ?int $navigationSort = 1;
+
+    /**
+     * Daftar resmi kunci section per halaman yang benar-benar dirender oleh template Blade.
+     *
+     * @var array<string, list<string>>
+     */
+    public const RENDERED_KEYS = [
+        'home' => [
+            'hero',
+            'promo_banner',
+            'marquee',
+            'signature_reel',
+            'karcis_teaser',
+            'gallery_diagonal',
+            'faq',
+            'testimonials',
+            'instagram_feed',
+            'cta_footer',
+        ],
+        'menu' => ['hero'],
+        'galeri' => ['hero'],
+        'cerita' => [
+            'hero',
+            'history',
+            'founder',
+            'values',
+            'facilities',
+            'stalls',
+            'gallery_preview',
+            'collab',
+        ],
+    ];
+
+    public static function isRendered(PageSection $record): bool
+    {
+        return in_array($record->key, self::RENDERED_KEYS[$record->page] ?? [], true);
+    }
 
     public static function canAccess(): bool
     {
@@ -58,25 +97,18 @@ class PageSectionResource extends Resource
 
                 TextInput::make('key')
                     ->label('Kunci Section')
+                    ->helperText('Sesuai daftar section aktif pada halaman terkait.')
                     ->disabledOn('edit')
-                    ->required(),
-
-                Select::make('bg_token')
-                    ->label('Warna Latar Section')
-                    ->options([
-                        'kertas' => 'Kertas (#F5F2EA)',
-                        'mentega' => 'Mentega (#EFC94C)',
-                        'tinta' => 'Tinta (#22263A)',
-                        'matcha' => 'Matcha (#C8D5AE)',
-                        'blush' => 'Susu Stroberi (#F0D2C9)',
-                    ])
-                    ->default('kertas')
                     ->required(),
 
                 TextInput::make('sort')
                     ->label('Urutan Tampil')
                     ->numeric()
                     ->required(),
+
+                Toggle::make('is_active')
+                    ->label('Tampilkan di Website')
+                    ->default(true),
 
                 TextInput::make('heading')
                     ->label('Judul Section')
@@ -92,15 +124,24 @@ class PageSectionResource extends Resource
                     ->columnSpanFull(),
 
                 TextInput::make('cta_label')
-                    ->label('Teks Tombol CTA'),
+                    ->label('Teks Tombol Utama'),
 
                 TextInput::make('cta_url')
-                    ->label('Tautan Tombol CTA'),
+                    ->label('Tautan Tombol Utama'),
 
-                Toggle::make('is_active')
-                    ->label('Tampilkan di Website')
-                    ->default(true)
-                    ->columnSpanFull(),
+                TextInput::make('data.eyebrow')
+                    ->label('Label Kecil Atas / Eyebrow (Opsional)')
+                    ->placeholder('Contoh: Menu Andalan'),
+
+                TextInput::make('data.hand_note')
+                    ->label('Catatan Tulisan Tangan (Opsional)')
+                    ->placeholder('Contoh: ~ seduhan hangat & dingin'),
+
+                TextInput::make('data.secondary_label')
+                    ->label('Teks Tombol Kedua (Opsional)'),
+
+                TextInput::make('data.secondary_url')
+                    ->label('Tautan Tombol Kedua (Opsional)'),
 
                 FileUpload::make('media.desktop')
                     ->label('Gambar Utama Section (Opsional)')
@@ -111,7 +152,7 @@ class PageSectionResource extends Resource
                     ->columnSpanFull(),
 
                 KeyValue::make('data')
-                    ->label('Data Khusus Section (key-value)')
+                    ->label('Data Tambahan Lainnya (key-value)')
                     ->columnSpanFull(),
             ])
             ->columns(2);
@@ -126,6 +167,14 @@ class PageSectionResource extends Resource
                 TextColumn::make('page')
                     ->label('Halaman')
                     ->badge()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'home' => 'Beranda',
+                        'menu' => 'Menu',
+                        'galeri' => 'Galeri',
+                        'cerita' => 'Cerita',
+                        default => ucfirst($state),
+                    })
+                    ->color('info')
                     ->sortable(),
 
                 TextColumn::make('key')
@@ -138,10 +187,11 @@ class PageSectionResource extends Resource
                     ->limit(42)
                     ->searchable(),
 
-                TextColumn::make('bg_token')
-                    ->label('Latar')
+                TextColumn::make('status_render')
+                    ->label('Status Render')
+                    ->state(fn (PageSection $record): string => self::isRendered($record) ? 'Aktif di Halaman' : 'Tidak Dipakai di Halaman')
                     ->badge()
-                    ->color('gray'),
+                    ->color(fn (string $state): string => $state === 'Aktif di Halaman' ? 'success' : 'warning'),
 
                 ToggleColumn::make('is_active')
                     ->label('Tayang'),

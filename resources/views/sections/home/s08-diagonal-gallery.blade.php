@@ -98,6 +98,6 @@
                 Tutup
             </button>
         </div>
-        <img data-gallery-dialog-img src="" alt="" class="w-full max-h-[75svh] object-contain bg-[var(--kertas)]">
+        <img data-gallery-dialog-img alt="" class="w-full max-h-[75svh] object-contain bg-[var(--kertas)]">
     </dialog>
 </section>

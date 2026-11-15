@@ -42,8 +42,8 @@ class AdminPanelProvider extends PanelProvider
             ->brandName('UMCO')
             ->brandLogo(fn (): HtmlString => new HtmlString(
                 '<span class="inline-flex items-center gap-2.5">'
-                .'<img src="/images/umco-logo.webp" alt="Logo UMCO" class="h-7 w-7 shrink-0 rounded-full object-cover" />'
-                .'<span class="umco-brand-label font-semibold tracking-tight text-slate-900">UMCO Backoffice</span>'
+                .'<img src="/images/umco-logo.webp" alt="Logo UMCO" width="28" height="28" style="height:1.75rem;width:1.75rem;border-radius:9999px;object-fit:cover;flex-shrink:0;" class="h-7 w-7 shrink-0 rounded-full object-cover" />'
+                .'<span class="umco-brand-label font-semibold tracking-tight text-slate-900 whitespace-nowrap">UMCO Backoffice</span>'
                 .'</span>'
             ))
             ->brandLogoHeight('1.75rem')

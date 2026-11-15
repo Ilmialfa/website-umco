@@ -8,6 +8,7 @@ test('legacy starter kit settings security routes are closed', function () {
     $this->actingAs($user)->get('/settings/security')->assertNotFound();
     $this->actingAs($user)->get('/settings/appearance')->assertNotFound();
     $this->actingAs($user)->get('/settings/password')->assertNotFound();
+    $this->get('/.well-known/passkey-endpoints')->assertNotFound();
 });
 
 test('public and admin responses enforce hardening security headers', function () {

@@ -4,48 +4,49 @@
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
 @theme {
-    --font-display: 'Plus Jakarta Sans', 'Instrument Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-    --font-sans: 'Instrument Sans', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-display: 'Barlow Condensed', 'Plus Jakarta Sans', 'Instrument Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-sans: 'Plus Jakarta Sans', 'Instrument Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     --font-hand: 'Reenie Beanie', 'Segoe Print', cursive;
     --font-led: 'Plus Jakarta Sans', 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
 
-    /* UMCO Botanical 3-Color Palette: Primer (Warm Ivory Stone), Sekunder (Deep Botanical Charcoal), Aksen (UMCO Botanical Pine Green) */
-    --color-kertas: #F6F5F0;
+    /* UMCO Botanical Forest & Jade Palette: Primer (Warm Oat Ivory), Sekunder (Deep Espresso Pine), Aksen (UMCO Forest Jade) */
+    --color-kertas: #F6F4ED;
     --color-kertas-terang: #FFFFFF;
-    --color-batu: #EAECE6;
-    --color-tinta: #171C19;
-    --color-tinta-70: #525B55;
-    --color-tinta-40: #7D8780;
-    --color-garis: rgba(23, 28, 25, 0.09);
-    --color-mentega: #2F6B4F;
-    --color-mentega-tua: #23523C;
-    --color-matcha: #EAECE6;
+    --color-batu: #EBE7DB;
+    --color-tinta: #141916;
+    --color-tinta-70: #4D5751;
+    --color-tinta-40: #79837D;
+    --color-garis: rgba(20, 25, 22, 0.09);
+    --color-mentega: #1B5E42;
+    --color-mentega-tua: #134731;
+    --color-matcha: #EBE7DB;
     --color-susu-stroberi: #FFFFFF;
-    --color-stempel: #23523C;
+    --color-stempel: #134731;
 }
 
 :root {
-    --kertas: #F6F5F0;
+    --kertas: #F6F4ED;
     --kertas-terang: #FFFFFF;
-    --batu: #EAECE6;
-    --tinta: #171C19;
-    --tinta-70: #525B55;
-    --tinta-muted: #525B55;
-    --tinta-40: #7D8780;
-    --garis: rgba(23, 28, 25, 0.09);
-    --garis-kuwat: rgba(23, 28, 25, 0.22);
-    --mentega: #2F6B4F;
-    --mentega-tua: #23523C;
-    --aksen-soft: #E4ECE6;
-    --matcha: #EAECE6;
-    --zaitun: #EAECE6;
+    --batu: #EBE7DB;
+    --tinta: #141916;
+    --tinta-70: #4D5751;
+    --tinta-muted: #4D5751;
+    --tinta-40: #79837D;
+    --garis: rgba(20, 25, 22, 0.09);
+    --garis-kuwat: rgba(20, 25, 22, 0.22);
+    --mentega: #1B5E42;
+    --mentega-tua: #134731;
+    --umco-hutan: #154934;
+    --aksen-soft: #DCEBE1;
+    --matcha: #EBE7DB;
+    --zaitun: #EBE7DB;
     --susu-stroberi: #FFFFFF;
     --blush: #FFFFFF;
-    --stempel: #23523C;
-    --cabai: #2F6B4F;
+    --stempel: #134731;
+    --cabai: #1B5E42;
 
-    --font-display: 'Plus Jakarta Sans', 'Instrument Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-    --font-sans: 'Instrument Sans', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-display: 'Barlow Condensed', 'Plus Jakarta Sans', 'Instrument Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-sans: 'Plus Jakarta Sans', 'Instrument Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     --font-hand: 'Reenie Beanie', 'Segoe Print', cursive;
     --font-led: 'Plus Jakarta Sans', 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
 
@@ -94,56 +95,56 @@
     visibility: hidden !important;
 }
 
-/* Skala Tipografi Halus & Proporsional (Non-Chunky) */
+/* Skala Tipografi Tegas Condensed (Barlow Condensed) + Sans (Plus Jakarta Sans) */
 .type-display-xl {
     font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 3rem;
-    line-height: 0.98;
-    letter-spacing: -0.03em;
+    font-weight: 700;
+    font-size: 3.35rem;
+    line-height: 0.94;
+    letter-spacing: -0.015em;
 }
 .type-display-l {
     font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 2.25rem;
-    line-height: 1.02;
-    letter-spacing: -0.025em;
+    font-weight: 700;
+    font-size: 2.5rem;
+    line-height: 0.96;
+    letter-spacing: -0.015em;
 }
 .type-display-m {
     font-family: var(--font-display);
     font-weight: 600;
-    font-size: 1.625rem;
-    line-height: 1.08;
-    letter-spacing: -0.02em;
+    font-size: 1.85rem;
+    line-height: 1.02;
+    letter-spacing: -0.01em;
 }
 .type-title,
 .type-h3 {
     font-family: var(--font-display);
     font-weight: 600;
-    font-size: 1.2rem;
-    line-height: 1.22;
-    letter-spacing: -0.015em;
+    font-size: 1.35rem;
+    line-height: 1.15;
+    letter-spacing: -0.005em;
 }
 .type-display {
     font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 2.25rem;
-    line-height: 1.04;
-    letter-spacing: -0.025em;
+    font-weight: 700;
+    font-size: 2.75rem;
+    line-height: 0.96;
+    letter-spacing: -0.015em;
 }
 .type-h1 {
     font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 1.875rem;
-    line-height: 1.08;
-    letter-spacing: -0.025em;
+    font-weight: 700;
+    font-size: 2.25rem;
+    line-height: 1;
+    letter-spacing: -0.015em;
 }
 .type-h2 {
     font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 1.5rem;
-    line-height: 1.12;
-    letter-spacing: -0.02em;
+    font-weight: 700;
+    font-size: 1.9rem;
+    line-height: 1.02;
+    letter-spacing: -0.01em;
 }
 .type-body-l {
     font-size: 1.0625rem;
@@ -159,26 +160,26 @@
 }
 
 @media (min-width: 640px) {
-    .type-display-xl { font-size: 4.5rem; }
-    .type-display-l, .type-display { font-size: 3.25rem; }
-    .type-display-m { font-size: 2.125rem; }
-    .type-h1 { font-size: 2.5rem; }
-    .type-h2 { font-size: 2rem; }
-    .type-title, .type-h3 { font-size: 1.35rem; }
+    .type-display-xl { font-size: 5rem; }
+    .type-display-l, .type-display { font-size: 3.85rem; }
+    .type-display-m { font-size: 2.45rem; }
+    .type-h1 { font-size: 3rem; }
+    .type-h2 { font-size: 2.65rem; }
+    .type-title, .type-h3 { font-size: 1.55rem; }
     .type-body-l { font-size: 1.125rem; }
     .type-body { font-size: 1rem; }
     .type-small { font-size: 0.8125rem; }
 }
 
 @media (min-width: 1024px) {
-    .type-display-xl { font-size: clamp(5rem, 8.5vw, 8.5rem); }
-    .type-display-l { font-size: clamp(3.5rem, 5.2vw, 5.25rem); }
-    .type-display { font-size: clamp(3rem, 4.4vw, 4.35rem); }
-    .type-display-m { font-size: 2.5rem; }
-    .type-h1 { font-size: clamp(2.5rem, 3.3vw, 3.25rem); }
-    .type-h2 { font-size: clamp(1.875rem, 2.5vw, 2.5rem); }
-    .type-title, .type-h3 { font-size: 1.45rem; }
-    .type-body-l { font-size: 1.1875rem; }
+    .type-display-xl { font-size: clamp(5.5rem, 9.2vw, 9.5rem); }
+    .type-display-l { font-size: clamp(4rem, 5.8vw, 5.8rem); }
+    .type-display { font-size: clamp(3.75rem, 5.4vw, 5.25rem); }
+    .type-display-m { font-size: 2.85rem; }
+    .type-h1 { font-size: clamp(3rem, 4vw, 4rem); }
+    .type-h2 { font-size: clamp(2.5rem, 3.6vw, 3.5rem); }
+    .type-title, .type-h3 { font-size: 1.65rem; }
+    .type-body-l { font-size: 1.125rem; }
     .type-body { font-size: 1.0625rem; }
     .type-small { font-size: 0.875rem; }
 }
@@ -447,13 +448,67 @@
     transform: translateY(10px) rotate(1.5deg);
 }
 
+/* Gradasi UMCO (Hero, CTA -> Footer transisi mulus tanpa hijau gelap/hitam) */
+.umco-hero-gradient {
+    background:
+        radial-gradient(62% 70% at 72% 48%, rgba(169, 214, 187, 0.24) 0%, rgba(169, 214, 187, 0) 70%),
+        linear-gradient(150deg, #0D3526 0%, #17533B 46%, #2C7254 100%);
+}
+.umco-cta-gradient {
+    background: linear-gradient(180deg, #F6F4ED 0%, #DFEDE4 44%, #95C5AB 78%, #226649 100%);
+}
+.umco-footer-gradient {
+    background:
+        radial-gradient(65% 42% at 50% 96%, rgba(212, 232, 219, 0.22) 0%, rgba(212, 232, 219, 0) 72%),
+        linear-gradient(180deg, #226649 0%, #19523A 62%, #1D5A40 100%);
+}
+
+/* Efek uap dingin halus di dasar gelas footer */
+@keyframes umco-vapor-rise {
+    0%, 100% { transform: translateY(0) scaleX(1); opacity: 0.45; }
+    50% { transform: translateY(-10px) scaleX(1.06); opacity: 0.72; }
+}
+.umco-vapor-wisp {
+    background: radial-gradient(ellipse at 50% 62%, rgba(246, 244, 237, 0.52) 0%, rgba(216, 235, 222, 0.22) 45%, rgba(216, 235, 222, 0) 78%);
+    filter: blur(18px);
+    animation: umco-vapor-rise 5.5s ease-in-out infinite;
+    pointer-events: none;
+}
+
+/* Loop vertikal parallax testimoni 3 kolom */
+@keyframes umco-marquee-y-up {
+    from { transform: translateY(0); }
+    to { transform: translateY(-50%); }
+}
+@keyframes umco-marquee-y-down {
+    from { transform: translateY(-50%); }
+    to { transform: translateY(0); }
+}
+.umco-col-loop-up {
+    display: flex;
+    flex-direction: column;
+    animation: umco-marquee-y-up 28s linear infinite;
+}
+.umco-col-loop-down {
+    display: flex;
+    flex-direction: column;
+    animation: umco-marquee-y-down 30s linear infinite;
+}
+.umco-col-loop-up:hover,
+.umco-col-loop-down:hover {
+    animation-play-state: paused;
+}
+
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 150ms !important;
     }
-    .umco-marquee-track {
+    .umco-marquee-track,
+    .umco-col-loop-up,
+    .umco-col-loop-down,
+    .umco-vapor-wisp {
         animation: none !important;
     }
 }

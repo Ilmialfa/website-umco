@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Banner;
 use App\Models\BeanOrigin;
 use App\Models\CrowdPattern;
 use App\Models\GalleryItem;
@@ -84,6 +85,7 @@ class Redesign2026Seeder extends Seeder
             ['group' => 'brand', 'key' => 'tagline', 'payload' => 'Kopi hangat, meja lapang di Kampus UMRI Pekanbaru.'],
             ['group' => 'brand', 'key' => 'story_snippet', 'payload' => 'Kedai kami di Kampus 2 UMRI buka tiap hari buat kamu yang butuh tempat nugas, diskusi kelompok, atau ngopi santai sampai malam.'],
             ['group' => 'brand', 'key' => 'footer_wordmark', 'payload' => 'UMCO'],
+            ['group' => 'brand', 'key' => 'hero_cutout_image', 'payload' => '/images/hero-cutout.webp'],
             ['group' => 'brand', 'key' => 'footer_cutout_image', 'payload' => '/images/footer-cutout.webp'],
             ['group' => 'brand', 'key' => 'signature_drink_image', 'payload' => '/images/footer-cutout.webp'],
             ['group' => 'brand', 'key' => 'hero_headline', 'payload' => 'Kopi hangat, meja lapang di tepi kampus.'],
@@ -692,133 +694,116 @@ class Redesign2026Seeder extends Seeder
 
     private function seedPageSections(): void
     {
+        PageSection::where('page', 'home')
+            ->whereIn('key', ['led_board', 'story_line', 'brew', 'crowd', 'gallery', 'location'])
+            ->delete();
+
         $homeSections = [
             [
                 'page' => 'home',
                 'key' => 'hero',
                 'sort' => 1,
                 'heading' => 'Kopi hangat, meja lapang di tepi kampus.',
-                'subheading' => 'Kampus 2 UMRI, Pekanbaru. Buka tiap hari jam 08.00 sampai 22.00.',
-                'body' => 'Bawa laptop, bawa teman, atau duduk sebentar sebelum masuk kelas.',
+                'subheading' => 'Buka tiap hari 08.00 - 22.00 WIB di Kampus 2 UMRI Pekanbaru. Pesan meja dan menu langsung sebelum datang.',
+                'body' => 'Kampus 2 UMRI, Pekanbaru',
                 'cta_label' => 'Pesan meja',
                 'cta_url' => '/reservasi',
-                'media' => ['desktop' => '/images/hero-banner-full.jpg', 'mobile' => '/images/hero-photo.jpg'],
+                'media' => ['cutout' => '/images/hero-cutout.webp'],
                 'data' => ['karcis_no' => '0127', 'default_people' => 2],
             ],
             [
                 'page' => 'home',
                 'key' => 'marquee',
                 'sort' => 2,
-                'heading' => 'UMCO Kampus UMRI',
+                'heading' => 'Semua yang kamu butuh buat duduk tenang',
+                'subheading' => 'Dari kopi pagi sebelum kelas sampai meja panjang untuk diskusi malam di Kampus 2 UMRI.',
                 'data' => [
+                    'eyebrow' => 'Suasana Kedai',
                     'phrases' => [
-                        'Buka 08.00 - 22.00',
+                        'Buka tiap hari 08.00 - 22.00 WIB',
                         'Aren Coffee Rp 25.500',
                         'Minimal pesan meja 2 orang',
                         'Nasi Ayam Sambal Matah Rp 24.000',
                         'Colokan di banyak sudut',
+                        'Seduhan V60 tiap hari',
                     ],
                 ],
             ],
             [
                 'page' => 'home',
-                'key' => 'led_board',
+                'key' => 'promo_banner',
                 'sort' => 3,
-                'heading' => 'Yang lagi jalan hari ini',
-                'data' => [
-                    'tiles' => [
-                        ['label' => 'Status kedai', 'value' => 'Buka · Kursi tersedia'],
-                        ['label' => 'Biji hari ini', 'value' => 'Gayo Pantan Musara'],
-                        ['label' => 'Seduhan V60', 'value' => 'Rp 22.000'],
-                        ['label' => 'Catatan dapur', 'value' => 'Sambal matah siap dari jam 10'],
-                    ],
-                ],
-            ],
-            [
-                'page' => 'home',
-                'key' => 'menu_nota',
-                'sort' => 4,
-                'heading' => 'Pilih duluan sebelum datang.',
-                'subheading' => 'Klik menu di kiri, isiannya otomatis turun ke nota di kanan. Dibawa langsung pas pesan meja.',
-                'cta_label' => 'Lihat semua 39 menu',
-                'cta_url' => '/menu',
+                'heading' => 'Meja lapang, fokus kerja, kopi siap diantar',
+                'subheading' => 'Ruang nyaman di kawasan kampus buat nugas sendirian, kerja kelompok, atau diskusi komunitas.',
+                'cta_label' => 'Lihat selengkapnya',
+                'cta_url' => '/cerita',
+                'media' => ['banner' => '/images/bistro-patio-table.jpg'],
+                'data' => ['eyebrow' => 'Sorotan UMCO'],
             ],
             [
                 'page' => 'home',
                 'key' => 'signature_reel',
+                'sort' => 4,
+                'heading' => 'Racikan yang sering balik dipesan',
+                'subheading' => 'Lima menu favorit pengunjung di meja bar dan sudut diskusi UMCO.',
+                'data' => ['eyebrow' => 'Menu Andalan'],
+            ],
+            [
+                'page' => 'home',
+                'key' => 'menu_nota',
                 'sort' => 5,
-                'heading' => 'Yang sering balik dipesan',
-                'subheading' => 'Delapan menu yang hampir selalu ada di meja mahasiswa dan tamu sore.',
-            ],
-            [
-                'page' => 'home',
-                'key' => 'story_line',
-                'sort' => 6,
-                'heading' => 'Kenapa banyak yang betah',
-                'body' => 'UMCO itu tempat kopi Nusantara, nasi ayam sambal matah, dan [img:1] meja panjang buat kamu yang betah lama. Datang sendiri atau [img:2] ramean, kursinya cukup.',
-                'cta_label' => 'Baca ceritanya',
-                'cta_url' => '/cerita',
-                'media' => [
-                    'inline_1' => '/images/bistro-patio-table.jpg',
-                    'inline_2' => '/images/drinks-trio-banner.jpg',
-                ],
-            ],
-            [
-                'page' => 'home',
-                'key' => 'brew',
-                'sort' => 7,
-                'heading' => 'Coba takar seduhanmu',
-                'subheading' => 'Geser tiga tuas di bawah ini untuk mengira-ngira rasa. Cuma buat seru-seruan, bukan buat dipesan.',
-                'data' => [
-                    'verdicts' => [
-                        'under' => 'Kemudaan. Kayak air cucian gelas.',
-                        'balanced' => 'Pas. Ini yang biasanya kami keluarkan di bar.',
-                        'over' => 'Pahit sekali. Kamu lagi kejar deadline ya?',
-                    ],
-                ],
-            ],
-            [
-                'page' => 'home',
-                'key' => 'crowd',
-                'sort' => 8,
-                'heading' => 'Kapan sepi, kapan penuh',
-                'subheading' => 'Kalau cari tenang, pilih jam yang batangnya pendek. Klik jam mana saja buat lanjut pesan meja.',
+                'heading' => 'Pilih duluan sebelum datang',
+                'subheading' => 'Klik menu di kiri, isiannya otomatis masuk ke nota di kanan. Langsung terbawa saat lanjut pesan meja.',
+                'cta_label' => 'Lihat semua 39 menu',
+                'cta_url' => '/menu',
+                'data' => ['eyebrow' => 'Nota Pilihan'],
             ],
             [
                 'page' => 'home',
                 'key' => 'karcis_teaser',
-                'sort' => 9,
-                'heading' => 'Pesan meja. Karcisnya terisi sendiri.',
-                'subheading' => 'Pilih hari dan jumlah orang dulu di sini, lalu lanjut atur jam, permintaan tempat, dan menu.',
+                'sort' => 6,
+                'heading' => 'Pesan meja, karcis terisi sendiri',
+                'subheading' => 'Atur hari dan jumlah orang di sini, cek ketentuannya, lalu lanjut pilih jam, tempat duduk, dan pembayaran.',
                 'cta_label' => 'Lanjut pilih jam, tempat, dan menu',
                 'cta_url' => '/reservasi',
+                'data' => ['eyebrow' => 'Reservasi Meja'],
             ],
             [
                 'page' => 'home',
-                'key' => 'rules',
-                'sort' => 10,
-                'heading' => 'Biar sama-sama enak',
-                'subheading' => 'Tujuh hal penting sebelum kamu mencetak karcis meja.',
+                'key' => 'gallery_portrait',
+                'sort' => 7,
+                'heading' => 'Ruang untuk melambat sebentar',
+                'subheading' => 'Potret suasana kedai dan cangkir harian yang terus bergulir. Geser kiri atau kanan sesukamu.',
+                'data' => ['eyebrow' => 'Galeri Portrait'],
+            ],
+            [
+                'page' => 'home',
+                'key' => 'gallery_diagonal',
+                'sort' => 8,
+                'heading' => 'Momen dari berbagai sudut',
+                'subheading' => 'Tampilan bebas semua rasio foto dalam alur diagonal yang bergerak mengikuti guliranmu.',
+                'data' => ['eyebrow' => 'Galeri Bebas Rasio'],
             ],
             [
                 'page' => 'home',
                 'key' => 'testimonials',
-                'sort' => 11,
-                'heading' => 'Kata mereka yang pernah duduk di sini',
+                'sort' => 9,
+                'heading' => 'Kenapa banyak yang balik lagi',
+                'subheading' => 'Suara nyata mahasiswa, pekerja lepas, dan komunitas yang sering singgah.',
+                'data' => ['eyebrow' => 'Kata Pengunjung'],
             ],
             [
                 'page' => 'home',
-                'key' => 'gallery',
-                'sort' => 12,
-                'heading' => 'Potret ruang dan cangkir',
-            ],
-            [
-                'page' => 'home',
-                'key' => 'location',
-                'sort' => 13,
-                'heading' => 'Singgah ke UMCO',
-                'subheading' => 'Di dalam kawasan Kampus 2 UMRI, Pekanbaru.',
-                'media' => ['map_preview' => '/images/bistro-patio-table.jpg'],
+                'key' => 'cta_footer',
+                'sort' => 10,
+                'heading' => 'Mampir dulu, kursimu kami siapkan.',
+                'subheading' => 'Buka setiap hari pukul 08.00 - 22.00 WIB di Kampus 2 UMRI. Pesan meja lebih dulu atau hubungi kami untuk acara dan kolaborasi.',
+                'cta_label' => 'Pesan meja',
+                'cta_url' => '/reservasi',
+                'data' => [
+                    'eyebrow' => 'Kampus 2 UMRI · Pekanbaru',
+                    'secondary_label' => 'Hubungi kami',
+                ],
             ],
         ];
 
@@ -951,6 +936,30 @@ class Redesign2026Seeder extends Seeder
             );
         }
 
+        Banner::updateOrCreate(
+            ['title' => 'Meja lapang buat diskusi dan tugas sore'],
+            [
+                'description' => 'Meja panjang bercatu daya, seduhan segar dari pagi, dan menu hangat yang bisa dipesan sekaligus saat reservasi meja.',
+                'image_path' => '/images/bistro-patio-table.jpg',
+                'cta_label' => 'Lihat selengkapnya',
+                'cta_url' => '/cerita',
+                'is_active' => true,
+                'sort' => 1,
+            ]
+        );
+
+        Banner::updateOrCreate(
+            ['title' => 'Pesan meja sekalian menu tanpa antre'],
+            [
+                'description' => 'Pilih jadwal kedatangan minimal 2 orang, tentukan permintaan tempat duduk, lalu kunci karcis meja lewat QRIS.',
+                'image_path' => '/images/hero-banner-full.jpg',
+                'cta_label' => 'Lihat selengkapnya',
+                'cta_url' => '/reservasi',
+                'is_active' => true,
+                'sort' => 2,
+            ]
+        );
+
         $testimonials = [
             [
                 'name' => 'Rani',
@@ -992,6 +1001,26 @@ class Redesign2026Seeder extends Seeder
                 'is_sample' => true,
                 'sort' => 4,
             ],
+            [
+                'name' => 'Nadia Putri',
+                'role' => 'Mahasiswi Akuntansi · Ulasan Google',
+                'rating' => 5,
+                'body' => 'Baristanya ramah, nggak pernah bikin sungkan buat nanya menu non-kopi. Tempat paling aman kalau butuh wifi kencang sebelum presentasi.',
+                'source' => 'google',
+                'is_featured' => true,
+                'is_sample' => true,
+                'sort' => 5,
+            ],
+            [
+                'name' => 'Reza Mahendra',
+                'role' => 'Alumni UMRI · Ulasan Google',
+                'rating' => 5,
+                'body' => 'Dulu cuma mampir buat ngopi cepat, sekarang sering jadi titik ketemu klien atau teman lama karena lokasinya gampang dicari dan parkir lega.',
+                'source' => 'google',
+                'is_featured' => true,
+                'is_sample' => true,
+                'sort' => 6,
+            ],
         ];
 
         // Bersihkan testimonial lama yang masih menyinggung narasi bangunan/AC lama
@@ -1012,32 +1041,43 @@ class Redesign2026Seeder extends Seeder
             );
         }
 
-        // Galeri 7 item tanpa tag indoor/outdoor
+        // Galeri Portrait & Diagonal Campuran tanpa duplikasi berlebih
         GalleryItem::query()->whereIn('group', ['indoor', 'outdoor'])->update(['group' => 'ruang']);
 
-        if (GalleryItem::count() < 7) {
-            $gallerySeeds = [
-                ['group' => 'ruang', 'image_path' => '/images/hero-banner-full.jpg', 'caption' => 'Pagi sebelum jam kuliah pertama', 'sort' => 1],
-                ['group' => 'bar', 'image_path' => '/images/hero-photo.jpg', 'caption' => 'Di balik meja seduh', 'sort' => 2],
-                ['group' => 'minuman', 'image_path' => '/images/drinks-trio-banner.jpg', 'caption' => 'Tiga gelas meja sudut', 'sort' => 3],
-                ['group' => 'ruang', 'image_path' => '/images/bistro-patio-table.jpg', 'caption' => 'Kursi sore paling sering dipilih', 'sort' => 4],
-                ['group' => 'minuman', 'image_path' => '/images/hero-iced-coffee-splash.jpg', 'caption' => 'Susu segar ketemu espresso', 'sort' => 5],
-                ['group' => 'makanan', 'image_path' => '/images/bistro-patio-table.jpg', 'caption' => 'Jam makan siang kampus', 'sort' => 6],
-                ['group' => 'malam', 'image_path' => '/images/hero-banner-full.jpg', 'caption' => 'Lampu malam dan diskusi panjang', 'sort' => 7],
-            ];
+        $gallerySeeds = [
+            // Portrait infinite gallery (ratio 3:4 & 1:1 clean crops)
+            ['group' => 'kopi', 'orientation' => 'portrait', 'image_path' => '/storage/menu/aren-coffee-800.webp', 'caption' => 'Aren Coffee andalan meja pagi', 'sort' => 1],
+            ['group' => 'kopi', 'orientation' => 'portrait', 'image_path' => '/storage/menu/matcha-800.webp', 'caption' => 'Matcha dingin di sudut terang', 'sort' => 2],
+            ['group' => 'kopi', 'orientation' => 'portrait', 'image_path' => '/storage/menu/v60-800.webp', 'caption' => 'Seduhan V60 manual tiap pagi', 'sort' => 3],
+            ['group' => 'kopi', 'orientation' => 'portrait', 'image_path' => '/storage/menu/bliss-butter-cream-800.webp', 'caption' => 'Bliss Butter Cream favorit sore', 'sort' => 4],
+            ['group' => 'kopi', 'orientation' => 'portrait', 'image_path' => '/storage/menu/vietnam-drip-800.webp', 'caption' => 'Tetesan pelan Vietnam Drip', 'sort' => 5],
+            ['group' => 'makanan', 'orientation' => 'portrait', 'image_path' => '/storage/menu/nasi-ayam-sambal-matah-800.webp', 'caption' => 'Makan siang kampus tanpa repot', 'sort' => 6],
 
-            foreach ($gallerySeeds as $g) {
-                GalleryItem::updateOrCreate(
-                    ['caption' => $g['caption']],
-                    [
-                        'group' => $g['group'],
-                        'type' => 'image',
-                        'image_path' => $g['image_path'],
-                        'sort' => $g['sort'],
-                        'is_active' => true,
-                    ]
-                );
-            }
+            // Diagonal gallery (bebas semua rasio — portrait, square, landscape tanpa duplikasi gambar bersebelahan)
+            ['group' => 'suasana', 'orientation' => 'diagonal', 'image_path' => '/images/bistro-patio-table.jpg', 'caption' => 'Meja sore paling sering dipilih', 'sort' => 7],
+            ['group' => 'suasana', 'orientation' => 'diagonal', 'image_path' => '/images/hero-banner-full.jpg', 'caption' => 'Halaman teduh depan kedai', 'sort' => 8],
+            ['group' => 'kopi', 'orientation' => 'diagonal', 'image_path' => '/images/drinks-trio-banner.jpg', 'caption' => 'Tiga gelas meja diskusi', 'sort' => 9],
+            ['group' => 'kopi', 'orientation' => 'diagonal', 'image_path' => '/images/hero-iced-coffee-splash.jpg', 'caption' => 'Susu segar bertemu espresso', 'sort' => 10],
+            ['group' => 'kopi', 'orientation' => 'diagonal', 'image_path' => '/storage/menu/americano-800.webp', 'caption' => 'Americano dingin sebelum kelas', 'sort' => 11],
+            ['group' => 'makanan', 'orientation' => 'diagonal', 'image_path' => '/storage/menu/mix-platter-800.webp', 'caption' => 'Mix platter teman nugas', 'sort' => 12],
+            ['group' => 'kopi', 'orientation' => 'diagonal', 'image_path' => '/storage/menu/caramel-latte-800.webp', 'caption' => 'Caramel Latte di jam istirahat', 'sort' => 13],
+            ['group' => 'kopi', 'orientation' => 'diagonal', 'image_path' => '/storage/menu/japanese-800.webp', 'caption' => 'Japanese iced filter brew', 'sort' => 14],
+        ];
+
+        GalleryItem::query()->whereNotIn('caption', collect($gallerySeeds)->pluck('caption'))->delete();
+
+        foreach ($gallerySeeds as $g) {
+            GalleryItem::updateOrCreate(
+                ['caption' => $g['caption']],
+                [
+                    'group' => $g['group'],
+                    'type' => 'image',
+                    'orientation' => $g['orientation'],
+                    'image_path' => $g['image_path'],
+                    'sort' => $g['sort'],
+                    'is_active' => true,
+                ]
+            );
         }
     }
 }

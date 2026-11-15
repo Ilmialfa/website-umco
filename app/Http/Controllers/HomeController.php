@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Banner;
 use App\Models\ClosedDate;
 use App\Models\CrowdPattern;
 use App\Models\GalleryItem;
@@ -11,7 +12,6 @@ use App\Models\PageSection;
 use App\Models\Rule;
 use App\Models\SpendTier;
 use App\Models\Testimonial;
-use Illuminate\Support\Facades\Cache;
 
 class HomeController extends Controller
 {
@@ -29,7 +29,7 @@ class HomeController extends Controller
                     ->where('is_active', true)
                     ->orderByDesc('show_on_home')
                     ->orderBy('sort')
-                    ->limit(4),
+                    ->limit(5),
             ])
             ->limit(4)
             ->get();
@@ -49,10 +49,19 @@ class HomeController extends Controller
                 ->get();
         }
 
-        $crowdPatterns = CrowdPattern::all()
-            ->groupBy('day_of_week')
-            ->map(fn ($rows) => $rows->pluck('level', 'hour')->all())
-            ->all();
+        $activeBanners = Banner::active()->get();
+
+        $portraitGallery = GalleryItem::active()
+            ->whereIn('orientation', ['portrait', 'mixed'])
+            ->orderBy('sort')
+            ->limit(10)
+            ->get();
+
+        $diagonalGallery = GalleryItem::active()
+            ->whereIn('orientation', ['diagonal', 'mixed'])
+            ->orderBy('sort')
+            ->limit(14)
+            ->get();
 
         $spendTiers = SpendTier::orderBy('party_min')->get();
 
@@ -61,8 +70,14 @@ class HomeController extends Controller
             ->mapWithKeys(fn ($row) => [$row->date->format('Y-m-d') => $row->reason ?: 'Tutup'])
             ->all();
 
+        $crowdPatterns = CrowdPattern::all()
+            ->groupBy('day_of_week')
+            ->map(fn ($rows) => $rows->pluck('level', 'hour')->all())
+            ->all();
+
         return view('pages.home', [
             'sections' => $sections,
+            'activeBanners' => $activeBanners,
             'menuCategories' => $categories,
             'favoriteMenuItems' => $favoriteMenuItems,
             'soldOutCount' => MenuItem::where('is_active', true)->where('is_available', false)->count(),
@@ -71,7 +86,9 @@ class HomeController extends Controller
             'closedDates' => $closedDates,
             'rules' => Rule::where('is_active', true)->orderBy('sort')->get(),
             'testimonials' => Testimonial::where('is_featured', true)->orderBy('sort')->get(),
-            'galleryItems' => GalleryItem::where('is_active', true)->orderBy('sort')->limit(12)->get(),
+            'portraitGallery' => $portraitGallery,
+            'diagonalGallery' => $diagonalGallery,
+            'galleryItems' => $portraitGallery->merge($diagonalGallery)->unique('id')->values(),
         ]);
     }
 }

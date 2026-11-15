@@ -11,12 +11,11 @@ window.umcoFormatters = { terbilang, formatRupiah, formatRibu, loadNota, saveNot
 const modules = {
     'scroll-meter': () => import('./sections/scroll-meter.js'),
     'hero': () => import('./sections/hero.js'),
-    'led-board': () => import('./sections/led-board.js'),
+    'marquee-collage': () => import('./sections/marquee-collage.js'),
     'signature-reel': () => import('./sections/signature-reel.js'),
-    'story-line': () => import('./sections/story-line.js'),
-    'brew-toy': () => import('./sections/brew-toy.js'),
-    'crowd-chart': () => import('./sections/crowd-chart.js'),
-    'testimonials-slider': () => import('./sections/testimonials-slider.js'),
+    'gallery-infinite': () => import('./sections/gallery-infinite.js'),
+    'gallery-diagonal': () => import('./sections/gallery-diagonal.js'),
+    'testimonials-parallax': () => import('./sections/testimonials-parallax.js'),
     'gallery-mosaic': () => import('./sections/gallery-mosaic.js'),
     'reservasi-tools': () => import('./sections/reservasi-tools.js'),
 };
@@ -30,44 +29,44 @@ function initFooter() {
     const footer = document.getElementById('public-footer');
     if (!footer) return;
 
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduced) return;
-
     const wordmark = footer.querySelector('[data-footer-wordmark]');
-    if (wordmark) {
-        gsap.fromTo(
-            wordmark,
-            { scaleX: 0.94, letterSpacing: '-0.015em', transformOrigin: '50% 50%' },
-            {
-                scaleX: 1.14,
-                letterSpacing: '0.11em',
-                ease: 'power1.out',
-                scrollTrigger: {
-                    trigger: footer,
-                    start: 'top 95%',
-                    end: 'bottom bottom',
-                    scrub: 1.8,
-                },
-            }
-        );
+    const cutout = footer.querySelector('[data-footer-cutout]');
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) {
+        if (wordmark) gsap.set(wordmark, { scaleX: 1.02, letterSpacing: '0.04em', y: 0, opacity: 1 });
+        return;
     }
 
-    const cutout = footer.querySelector('[data-footer-cutout]');
-    if (cutout && window.innerWidth >= 1024) {
-        gsap.fromTo(
-            cutout,
-            { y: 16 },
-            {
-                y: -14,
-                ease: 'none',
-                scrollTrigger: {
-                    trigger: footer,
-                    start: 'top bottom',
-                    end: 'bottom bottom',
-                    scrub: 0.8,
-                },
-            }
-        );
+    if (wordmark) {
+        gsap.set(wordmark, { scaleX: 0.70, letterSpacing: '-0.025em', y: 40, opacity: 0.25, transformOrigin: '50% 80%' });
+        gsap.to(wordmark, {
+            scaleX: 1.12,
+            letterSpacing: '0.06em',
+            y: 0,
+            opacity: 1,
+            ease: 'power2.out',
+            scrollTrigger: {
+                trigger: footer,
+                start: 'top 95%',
+                end: 'bottom bottom',
+                scrub: 1.4,
+            },
+        });
+    }
+
+    if (cutout) {
+        gsap.set(cutout, { y: 36, opacity: 0.75 });
+        gsap.to(cutout, {
+            y: 0,
+            opacity: 1,
+            ease: 'power2.out',
+            scrollTrigger: {
+                trigger: footer,
+                start: 'top 92%',
+                end: 'bottom 96%',
+                scrub: 1.1,
+            },
+        });
     }
 }
 

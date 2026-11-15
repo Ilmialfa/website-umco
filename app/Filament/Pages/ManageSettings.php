@@ -64,6 +64,9 @@ class ManageSettings extends Page implements HasForms
             'hero_headline' => $all['brand.hero_headline'] ?? '',
             'hero_description' => $all['brand.hero_description'] ?? '',
             'today_note' => $all['brand.today_note'] ?? '',
+            'hero_cutout_upload' => $all['brand.hero_cutout_upload'] ?? null,
+            'hero_cutout_image' => $all['brand.hero_cutout_image'] ?? '/images/hero-cutout.webp',
+            'footer_cutout_upload' => $all['brand.footer_cutout_upload'] ?? null,
             'footer_cutout_image' => $all['brand.footer_cutout_image'] ?? '/images/footer-cutout.webp',
             'smooth_scroll' => (bool) ($all['motion.smooth_scroll'] ?? false),
 
@@ -139,9 +142,22 @@ class ManageSettings extends Page implements HasForms
                                 TextInput::make('tagline')->label('Tagline'),
                                 Textarea::make('hero_headline')->label('Headline Hero Beranda')->rows(2)->columnSpanFull(),
                                 Textarea::make('hero_description')->label('Sub-headline Hero Beranda')->rows(2)->columnSpanFull(),
-                                Textarea::make('today_note')->label('Catatan Hari Ini (Papan LED S03)')->rows(2)->columnSpanFull(),
+                                Textarea::make('today_note')->label('Catatan Hari Ini')->rows(2)->columnSpanFull(),
                                 Textarea::make('story_snippet')->label('Cuplikan Cerita')->rows(2)->columnSpanFull(),
-                                TextInput::make('footer_cutout_image')->label('Path Gambar Cutout Footer'),
+                                FileUpload::make('hero_cutout_upload')
+                                    ->label('Unggah Foto Hero Tanpa Background (PNG/WebP)')
+                                    ->disk('public')
+                                    ->directory('hero-cutouts')
+                                    ->image()
+                                    ->helperText('Disarankan gambar PNG/WebP transparan agar menyatu mulus dengan latar gradasi hijau hero.'),
+                                FileUpload::make('footer_cutout_upload')
+                                    ->label('Unggah Foto Gelas Footer Tanpa Background (PNG/WebP)')
+                                    ->disk('public')
+                                    ->directory('footer-cutouts')
+                                    ->image()
+                                    ->helperText('Muncul di depan tulisan besar UMCO pada bagian footer.'),
+                                TextInput::make('hero_cutout_image')->label('Path Default Gambar Hero'),
+                                TextInput::make('footer_cutout_image')->label('Path Default Gambar Footer'),
                                 Toggle::make('smooth_scroll')->label('Aktifkan Smooth Scroll Lenis (hanya desktop mouse)'),
                             ])
                             ->columns(2),
@@ -294,7 +310,14 @@ class ManageSettings extends Page implements HasForms
             'brand.hero_headline' => $state['hero_headline'] ?? '',
             'brand.hero_description' => $state['hero_description'] ?? '',
             'brand.today_note' => $state['today_note'] ?? '',
-            'brand.footer_cutout_image' => $state['footer_cutout_image'] ?? '/images/footer-cutout.webp',
+            'brand.hero_cutout_upload' => (string) ($state['hero_cutout_upload'] ?? ''),
+            'brand.hero_cutout_image' => ! empty($state['hero_cutout_upload'])
+                ? '/storage/' . ltrim((string) $state['hero_cutout_upload'], '/')
+                : ($state['hero_cutout_image'] ?? '/images/hero-cutout.webp'),
+            'brand.footer_cutout_upload' => (string) ($state['footer_cutout_upload'] ?? ''),
+            'brand.footer_cutout_image' => ! empty($state['footer_cutout_upload'])
+                ? '/storage/' . ltrim((string) $state['footer_cutout_upload'], '/')
+                : ($state['footer_cutout_image'] ?? '/images/footer-cutout.webp'),
             'motion.smooth_scroll' => ! empty($state['smooth_scroll']) ? '1' : '0',
 
             'contact.phone_wa' => $state['phone_wa'] ?? '02248001571',

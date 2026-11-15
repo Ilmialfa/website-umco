@@ -17,15 +17,15 @@
 }
 
 :root {
-    --umco-canvas: #F5F5F1;
+    --umco-canvas: #F6F4ED;
     --umco-surface: #FFFFFF;
-    --umco-surface-alt: #EAECE6;
-    --umco-tinta: #171C19;
-    --umco-tinta-70: #525B55;
-    --umco-aksen: #2F6B4F;
-    --umco-aksen-tua: #23523C;
-    --umco-aksen-soft: #E4ECE6;
-    --font-sans: 'Instrument Sans', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --umco-surface-alt: #EBE7DB;
+    --umco-tinta: #141916;
+    --umco-tinta-70: #4D5751;
+    --umco-aksen: #1B5E42;
+    --umco-aksen-tua: #134731;
+    --umco-aksen-soft: #DCEBE1;
+    --font-sans: 'Plus Jakarta Sans', 'Instrument Sans', system-ui, -apple-system, sans-serif;
 }
 
 body,

@@ -8,7 +8,10 @@ it('renders home page without legacy copy, emojis, or external fonts', function 
     $response = $this->get('/');
     $response->assertStatus(200);
     $response->assertSee('UMCO');
-    foreach (['hero', 'marquee', 'hari-ini', 'menu-nota', 'signature-reel', 'story-line', 'seduh', 'jam-ramai', 'karcis-teaser', 'aturan', 'kata-mereka', 'galeri', 'lokasi'] as $sectionId) {
+    $response->assertSee('UM.CO');
+    $response->assertSee('Hubungi Kami');
+    $response->assertSee('Reservasi');
+    foreach (['hero', 'marquee', 'banner-utama', 'signature-reel', 'menu-nota', 'karcis-teaser', 'galeri', 'galeri-diagonal', 'kata-mereka', 'cta-footer'] as $sectionId) {
         $response->assertSee("id=\"{$sectionId}\"", false);
     }
     $response->assertDontSee('Wing Barat');

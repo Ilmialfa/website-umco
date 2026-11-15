@@ -46,6 +46,17 @@ class GalleryItemForm
                                                 ])
                                                 ->default('image')
                                                 ->required(),
+
+                                            Select::make('orientation')
+                                                ->label('Penempatan Galeri Beranda')
+                                                ->options([
+                                                    'portrait' => 'Galeri Portrait Infinite (Rasio 3:4)',
+                                                    'diagonal' => 'Galeri Diagonal Campuran (Semua Rasio)',
+                                                    'mixed' => 'Tampil di Keduanya (Otomatis)',
+                                                ])
+                                                ->default('mixed')
+                                                ->required()
+                                                ->columnSpanFull(),
                                         ]),
 
                                     FileUpload::make('image_path')

@@ -12,6 +12,7 @@ class GalleryItem extends Model
     protected $fillable = [
         'group',
         'type',
+        'orientation',
         'image_path',
         'caption',
         'sort',

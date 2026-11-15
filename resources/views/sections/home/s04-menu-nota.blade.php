@@ -72,23 +72,26 @@
     class="umco-section bg-[var(--batu)] text-[var(--tinta)]"
 >
     <div class="umco-container space-y-10">
-        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-            <div class="space-y-2 max-w-2xl">
-                <h2 data-reveal="rise" class="type-h2 font-display font-semibold">
-                    {{ $section?->heading ?: 'Pilih duluan sebelum datang.' }}
-                </h2>
-                <p class="type-body text-[var(--tinta-70)]">
-                    {{ $section?->subheading ?: 'Ketuk nama menu, isiannya turun langsung ke nota.' }}
-                </p>
+        <div class="max-w-2xl mx-auto text-center space-y-3">
+            <p class="text-xs font-semibold tracking-[0.08em] text-[var(--mentega)]">
+                {{ $section?->data['eyebrow'] ?? 'Nota Pilihan' }}
+            </p>
+            <h2 data-reveal="rise" class="type-display-l font-display font-bold">
+                {{ $section?->heading ?: 'Pilih duluan sebelum datang' }}
+            </h2>
+            <p class="type-body text-[var(--tinta-70)] max-w-lg mx-auto">
+                {{ $section?->subheading ?: 'Ketuk nama menu, isiannya turun langsung ke nota.' }}
+            </p>
+            <div class="pt-1">
+                <a href="{{ url('/menu') }}" wire:navigate class="inline-flex items-center gap-2 text-sm font-semibold text-[var(--tinta)] underline underline-offset-4 hover:text-[var(--mentega)]">
+                    <span>{{ $section?->cta_label ?: 'Lihat semua menu' }}</span>
+                    <svg class="w-4 h-4"><use href="#icon-arrow-right"/></svg>
+                </a>
             </div>
-            <a href="{{ url('/menu') }}" wire:navigate class="inline-flex items-center gap-2 font-semibold text-[var(--tinta)] underline underline-offset-4 hover:text-[var(--mentega-tua)] shrink-0">
-                <span>{{ $section?->cta_label ?: 'Lihat semua menu' }}</span>
-                <svg class="w-4 h-4"><use href="#icon-arrow-right"/></svg>
-            </a>
         </div>
 
         {{-- Tab kategori aktif di semua layar agar daftar ringkas & cepat --}}
-        <div class="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+        <div class="flex gap-2 overflow-x-auto sm:justify-center pb-1 scrollbar-none">
             <template x-for="cat in categories" :key="cat.slug">
                 <button
                     type="button"

@@ -77,10 +77,22 @@
             return url;
         }
     }"
-    class="umco-section bg-[var(--batu)] text-[var(--tinta)]"
+    class="umco-section bg-[var(--kertas-terang)] text-[var(--tinta)]"
 >
-    <div class="umco-container">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+    <div class="umco-container space-y-10 sm:space-y-12">
+        <div class="max-w-2xl mx-auto text-center space-y-3">
+            <p class="text-xs font-semibold tracking-[0.08em] text-[var(--mentega)]">
+                {{ $section?->data['eyebrow'] ?? 'Reservasi Meja' }}
+            </p>
+            <h2 data-reveal="rise" class="type-display-l font-display font-bold">
+                {{ $section?->heading ?: 'Pesan meja, karcis terisi sendiri' }}
+            </h2>
+            <p class="type-body text-[var(--tinta-70)] max-w-lg mx-auto">
+                {{ $section?->subheading ?: 'Pilih hari dan jumlah orang dulu di sini, lalu lanjut atur jam, tempat duduk, dan pembayaran.' }}
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
             {{-- Karcis preview --}}
             <div class="order-2 lg:order-2 lg:col-span-5">
                 <div class="sm:max-w-sm lg:ml-auto">
@@ -96,16 +108,8 @@
                 </div>
             </div>
 
-            {{-- Pilihan cepat --}}
+            {{-- Pilihan cepat + Ringkasan Ketentuan --}}
             <div class="order-1 lg:order-1 lg:col-span-7 space-y-7">
-                <div class="space-y-3 max-w-xl">
-                    <h2 data-reveal="rise" class="type-h2 font-display font-semibold">
-                        {{ $section?->heading ?: 'Pesan meja. Karcisnya terisi sendiri.' }}
-                    </h2>
-                    <p class="type-body text-[var(--tinta-70)]">
-                        {{ $section?->subheading ?: 'Pilih hari dan jumlah orang dulu di sini.' }}
-                    </p>
-                </div>
 
                 <div class="space-y-3">
                     <p class="text-sm font-semibold">Mau datang hari apa?</p>
@@ -166,6 +170,29 @@
                         <svg class="w-4 h-4 shrink-0"><use href="#icon-arrow-right"/></svg>
                     </a>
                 </div>
+
+                @if ($rules->isNotEmpty())
+                    <div class="border-t border-[var(--garis)] pt-6 space-y-2" x-data="{ openRule: null }">
+                        <p class="text-xs font-semibold tracking-[0.06em] text-[var(--tinta-70)] pb-1">Ketentuan Singkat Kedai</p>
+                        <div class="divide-y divide-[var(--garis)]">
+                            @foreach ($rules->take(5) as $rIdx => $rule)
+                                <div class="py-2.5">
+                                    <button
+                                        type="button"
+                                        @click="openRule = openRule === {{ $rIdx + 1 }} ? null : {{ $rIdx + 1 }}"
+                                        class="w-full flex items-center justify-between gap-3 text-left text-sm font-medium hover:text-[var(--mentega)] cursor-pointer"
+                                    >
+                                        <span>{{ $rIdx + 1 }}. {{ $rule->title }}</span>
+                                        <span class="text-xs text-[var(--tinta-70)] shrink-0" x-text="openRule === {{ $rIdx + 1 }} ? 'Tutup' : 'Baca'"></span>
+                                    </button>
+                                    <p x-show="openRule === {{ $rIdx + 1 }}" x-transition class="pt-1.5 text-xs sm:text-sm text-[var(--tinta-70)] leading-relaxed">
+                                        {{ $rule->body }}
+                                    </p>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
     </div>

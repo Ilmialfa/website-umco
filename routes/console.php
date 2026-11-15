@@ -9,3 +9,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('reservations:remind')->everyMinute();
+Schedule::command('instagram:sync')->everyFifteenMinutes();

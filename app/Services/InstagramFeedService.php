@@ -19,6 +19,39 @@ class InstagramFeedService
     }
 
     /**
+     * Ambil feed Instagram hanya dari cache atau galeri kurasi tanpa HTTP sinkron.
+     * Dipakai saat merender beranda agar TTFB tetap cepat dan stabil.
+     *
+     * @return array<string, mixed>
+     */
+    public function getCachedOrFallback(int $limit = 8): array
+    {
+        $handle = ltrim((string) Settings::get('contact.instagram_handle', 'um.co_house'), '@') ?: 'um.co_house';
+        $profileUrl = (string) Settings::get('contact.instagram_url', 'https://www.instagram.com/um.co_house') ?: 'https://www.instagram.com/um.co_house';
+
+        $cached = Cache::get(self::CACHE_KEY);
+        if (is_array($cached) && ! empty($cached['posts'])) {
+            $cached['posts'] = array_slice($cached['posts'], 0, $limit);
+            $cached['profile_url'] = $profileUrl;
+            $cached['username'] = $handle;
+
+            return $cached;
+        }
+
+        $stale = Cache::get(self::STALE_CACHE_KEY);
+        if (is_array($stale) && ! empty($stale['posts'])) {
+            $stale['source'] = 'cache';
+            $stale['posts'] = array_slice($stale['posts'], 0, $limit);
+            $stale['profile_url'] = $profileUrl;
+            $stale['username'] = $handle;
+
+            return $stale;
+        }
+
+        return $this->buildCuratedFallback($handle, $profileUrl, $limit);
+    }
+
+    /**
      * Ambil daftar postingan Instagram UMCO secara otomatis & berkala.
      * Prioritas:
      * 1) Cache aktif (15 menit)
@@ -210,8 +243,8 @@ class InstagramFeedService
             ->limit($limit)
             ->get();
 
-        $posts = $gallery->map(function ($item, $idx) use ($profileUrl) {
-            $img = $item->image_path ?: '/images/bistro-patio-table.jpg';
+        $posts = $gallery->map(function ($item) use ($profileUrl) {
+            $img = $item->image_path ?: '/images/bistro-patio-table.webp';
             if (! str_starts_with($img, 'http') && ! str_starts_with($img, '/')) {
                 $img = '/storage/' . ltrim($img, '/');
             }
@@ -221,19 +254,20 @@ class InstagramFeedService
                 'image' => asset($img),
                 'caption' => $item->caption ?: 'Suasana harian dan sajian bar UMCO House Kampus 2 UMRI.',
                 'permalink' => $profileUrl,
-                'likes' => 42 + ($idx * 9),
-                'comments' => 4 + ($idx % 5),
-                'timestamp_human' => ($idx + 1) . ' hari lalu',
+                'likes' => null,
+                'comments' => null,
+                'timestamp_human' => null,
                 'is_video' => false,
             ];
         })->values()->all();
 
         if (empty($posts)) {
             $defaults = [
-                ['/images/hero-iced-coffee-splash.jpg', 'Racikan susu segar & espresso dingin sebelum kelas sore di @um.co_house.'],
-                ['/images/bistro-patio-table.jpg', 'Meja halaman teduh buat diskusi santai bareng teman kampus UMRI.'],
-                ['/images/drinks-trio-banner.jpg', 'Aren Coffee, Matcha Oat dingin, dan cokelat sore paling dicari.'],
-                ['/images/hero-banner-full.jpg', 'Pintu buka jam 08.00 - 22.00 WIB tiap hari di Jalan Tuanku Tambusai Ujung.'],
+                ['/images/hero-iced-coffee-splash.webp', 'Racikan susu segar & espresso dingin sebelum kelas sore di @um.co_house.'],
+                ['/images/bistro-patio-table.webp', 'Meja halaman teduh buat diskusi santai bareng teman kampus UMRI.'],
+                ['/images/drinks-trio-banner.webp', 'Aren Coffee, Matcha Oat dingin, dan cokelat sore paling dicari.'],
+                ['/images/hero-banner-full.webp', 'Pintu buka jam 08.00 - 22.00 WIB tiap hari di Jalan Tuanku Tambusai Ujung.'],
+                ['/images/hero-photo.webp', 'Sudut duduk nyaman dengan colokan dan Wi-Fi di Kampus 2 UMRI.'],
             ];
             foreach ($defaults as $idx => [$src, $cap]) {
                 $posts[] = [
@@ -241,9 +275,9 @@ class InstagramFeedService
                     'image' => asset($src),
                     'caption' => $cap,
                     'permalink' => $profileUrl,
-                    'likes' => 48 + ($idx * 11),
-                    'comments' => 5 + $idx,
-                    'timestamp_human' => ($idx + 1) . ' hari lalu',
+                    'likes' => null,
+                    'comments' => null,
+                    'timestamp_human' => null,
                     'is_video' => false,
                 ];
             }

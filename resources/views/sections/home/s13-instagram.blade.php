@@ -101,21 +101,25 @@
                     >
 
                     <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#101813]/88 via-[#101813]/45 to-transparent p-3.5 sm:p-4 pt-14 text-white space-y-2">
-                        <div class="flex items-center gap-3 text-[11px] sm:text-xs font-semibold text-white/90">
-                            <template x-if="post.likes !== null">
-                                <span class="inline-flex items-center gap-1 tabular-nums">
-                                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-                                    <span x-text="post.likes"></span>
-                                </span>
-                            </template>
-                            <template x-if="post.comments !== null">
-                                <span class="inline-flex items-center gap-1 tabular-nums">
-                                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
-                                    <span x-text="post.comments"></span>
-                                </span>
-                            </template>
-                            <span class="ml-auto text-[11px] text-white/75 truncate" x-text="post.timestamp_human"></span>
-                        </div>
+                        <template x-if="post.likes !== null || post.comments !== null || post.timestamp_human">
+                            <div class="flex items-center gap-3 text-[11px] sm:text-xs font-semibold text-white/90">
+                                <template x-if="post.likes !== null">
+                                    <span class="inline-flex items-center gap-1 tabular-nums">
+                                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                                        <span x-text="post.likes"></span>
+                                    </span>
+                                </template>
+                                <template x-if="post.comments !== null">
+                                    <span class="inline-flex items-center gap-1 tabular-nums">
+                                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
+                                        <span x-text="post.comments"></span>
+                                    </span>
+                                </template>
+                                <template x-if="post.timestamp_human">
+                                    <span class="ml-auto text-[11px] text-white/75 truncate" x-text="post.timestamp_human"></span>
+                                </template>
+                            </div>
+                        </template>
 
                         <p class="text-xs sm:text-[13px] leading-snug text-white/95 line-clamp-2" x-text="post.caption"></p>
 

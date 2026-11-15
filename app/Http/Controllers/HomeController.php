@@ -89,7 +89,7 @@ class HomeController extends Controller
             'rules' => Rule::where('is_active', true)->orderBy('sort')->get(),
             'faqs' => Faq::active()->get(),
             'testimonials' => Testimonial::where('is_featured', true)->orderBy('sort')->limit(9)->get(),
-            'instagramFeed' => app(InstagramFeedService::class)->getFeed(8),
+            'instagramFeed' => app(InstagramFeedService::class)->getCachedOrFallback(8),
             'portraitGallery' => $portraitGallery,
             'diagonalGallery' => $diagonalGallery,
             'galleryItems' => $portraitGallery->merge($diagonalGallery)->unique('id')->values(),

@@ -44,20 +44,23 @@
     $ownerName = $founder?->data['owner_name'] ?? 'Tim Pendiri UMCO House';
     $ownerRole = $founder?->data['owner_role'] ?? 'Founder & Pengelola Harian';
     $ownerQuote = $founder?->data['owner_quote'] ?? 'Kopi yang baik harusnya menenangkan kepala, bukan bikin dompet ikut tegang.';
+    $brandShort = \App\Support\Settings::get('brand.brand_short') ?: 'UMCO';
+    $storySnippet = trim((string) \App\Support\Settings::get('brand.story_snippet', ''));
+    $addressFallback = trim((string) \App\Support\Settings::get('contact.address', '')) ?: 'Kampus 2 UMRI, Jalan Tuanku Tambusai Ujung.';
 @endphp
 
 <x-layouts.public
     page="cerita"
     initial-nav-theme="light"
-    title="Cerita Kami — UMCO"
-    description="Dari Kampus 2 UMRI Pekanbaru: sejarah singkat UMCO, profil pengelola, tiga nilai kerja, fasilitas ruang, teman jajan, dan peluang kolaborasi komunitas."
+    :title="$hero?->data['meta_title'] ?? ('Cerita Kami — ' . $brandShort)"
+    :description="$hero?->data['meta_description'] ?? ($storySnippet ?: 'Dari Kampus 2 UMRI Pekanbaru: sejarah singkat UMCO, profil pengelola, tiga nilai kerja, fasilitas ruang, teman jajan, dan peluang kolaborasi komunitas.')"
 >
     {{-- 1. Pembuka --}}
     <section data-nav-theme="light" class="bg-[var(--kertas)] text-[var(--tinta)] pt-28 sm:pt-36 pb-14 sm:pb-20">
         <div class="umco-container space-y-10">
             <div class="max-w-3xl space-y-4">
                 <p data-reveal="fade" class="font-hand text-2xl sm:text-3xl text-[var(--mentega)]">
-                    {{ $hero?->subheading ?: 'Kampus 2 UMRI, Jalan Tuanku Tambusai Ujung.' }}
+                    {{ $hero?->subheading ?: $addressFallback }}
                 </p>
                 <h1 data-reveal="rise" class="type-h1 font-display font-semibold">
                     {{ $hero?->heading ?: 'Dari kampus, buat yang lagi butuh tempat.' }}

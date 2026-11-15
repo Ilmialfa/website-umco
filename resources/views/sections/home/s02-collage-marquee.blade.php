@@ -2,10 +2,11 @@
     $eyebrow = $section?->data['eyebrow'] ?? 'Suasana Kedai';
     $heading = $section?->heading ?: 'Semua buat duduk tenang';
     $subheading = $section?->subheading ?: 'Dari kopi pagi sebelum kelas sampai meja panjang untuk diskusi malam di Kampus 2 UMRI.';
+    $operatingDays = trim((string) \App\Support\Settings::get('hours.operating_days', '')) ?: 'Buka tiap hari 08.00 - 22.00 WIB';
     $phrases = $section?->data['phrases'] ?? [
-        'Buka tiap hari 08.00 - 22.00 WIB',
+        $operatingDays,
         'Aren Coffee Rp 25.500',
-        'Minimal pesan meja 2 orang',
+        'Minimal pesan meja ' . max(2, (int) \App\Support\Settings::get('reservation.min_party', 2)) . ' orang',
         'Nasi Ayam Sambal Matah Rp 24.000',
         'Colokan di banyak sudut',
     ];

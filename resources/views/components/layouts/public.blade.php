@@ -7,8 +7,15 @@
 
 @php
     $brandName = \App\Support\Settings::get('brand.brand_name', 'UMCO');
+    $brandShort = \App\Support\Settings::get('brand.brand_short') ?: 'UMCO';
+    $tagline = \App\Support\Settings::get('brand.tagline') ?: 'Kedai kopi di Kampus 2 UMRI Pekanbaru';
+    $storySnippet = trim((string) \App\Support\Settings::get('brand.story_snippet', ''));
     $metaTitle = $title ?? \App\Support\Settings::get('seo.meta_title', 'UMCO — Kedai Kopi di Kampus UMRI Pekanbaru');
-    $metaDescription = $description ?? \App\Support\Settings::get('seo.meta_description', 'Kedai kopi di Kampus 2 UMRI Pekanbaru. Tempat nongkrong, nugas, dan pesan meja dengan menu siap saji.');
+    $metaDescription = $description ?? (\App\Support\Settings::get('seo.meta_description') ?: $storySnippet ?: ($tagline . '. Tempat nongkrong, nugas, dan pesan meja dengan menu siap saji.'));
+    $ogImageRaw = trim((string) \App\Support\Settings::get('seo.og_image', ''));
+    $ogImageUrl = $ogImageRaw !== ''
+        ? (str_starts_with($ogImageRaw, 'http') || str_starts_with($ogImageRaw, '/') ? asset($ogImageRaw) : asset('storage/' . ltrim($ogImageRaw, '/')))
+        : asset('/images/hero-photo.webp');
     $rawWa = \App\Support\Settings::get('contact.phone_wa', '02248001571');
     $waDigits = method_exists(\App\Support\PhoneNumber::class, 'normalizeBusiness')
         ? \App\Support\PhoneNumber::normalizeBusiness($rawWa)
@@ -20,8 +27,12 @@
     $mapsUrl = \App\Support\Settings::get('contact.google_maps_url', 'https://maps.google.com/?q=UMRI+Pekanbaru');
     $instagramUrl = \App\Support\Settings::get('contact.instagram_url', 'https://www.instagram.com/um.co_house');
     $openTime = \App\Support\Settings::get('hours.opening_time', '08.00');
-    $closeTime = \App\Support\Settings::get('hours.closing_time', '21.00');
+    $closeTime = \App\Support\Settings::get('hours.closing_time', '22.00');
+    $operatingDays = trim((string) \App\Support\Settings::get('hours.operating_days', '')) ?: "Buka setiap hari pukul {$openTime} - {$closeTime} WIB";
     $address = \App\Support\Settings::get('contact.address', 'Kampus 2 UMRI, Jl. Tuanku Tambusai Ujung, Delima, Pekanbaru');
+    $coordinates = trim((string) \App\Support\Settings::get('contact.coordinates', ''));
+    $plusCode = trim((string) \App\Support\Settings::get('contact.plus_code', ''));
+    $priceRange = trim((string) \App\Support\Settings::get('rating.price_range', '')) ?: 'Rp 13.000 - Rp 25.500';
     $smoothScroll = \App\Support\Settings::get('motion.smooth_scroll', true) ? '1' : '0';
 
     $navItems = [
@@ -33,6 +44,50 @@
     $collabWaLink = $waDigits ? ('https://wa.me/' . $waDigits . '?text=' . rawurlencode($collabTemplate)) : $waLink;
     $footerCutout = \App\Support\Settings::get('brand.footer_cutout_image', '/images/footer-cutout.webp') ?: '/images/footer-cutout.webp';
     $footerWordmark = \App\Support\Settings::get('brand.footer_wordmark', 'UMCO') ?: 'UMCO';
+
+    $geoData = null;
+    if ($coordinates !== '' && str_contains($coordinates, ',')) {
+        [$rawLat, $rawLng] = array_map('trim', explode(',', $coordinates, 2));
+        if (is_numeric($rawLat) && is_numeric($rawLng)) {
+            $geoData = [
+                '@type' => 'GeoCoordinates',
+                'latitude' => (float) $rawLat,
+                'longitude' => (float) $rawLng,
+            ];
+        }
+    }
+
+    $jsonLdPayload = [
+        '@context' => 'https://schema.org',
+        '@type' => 'CafeOrCoffeeShop',
+        'name' => $brandName,
+        'alternateName' => $brandShort,
+        'description' => $metaDescription,
+        'image' => $ogImageUrl,
+        'url' => url('/'),
+        'telephone' => $rawWa,
+        'priceRange' => $priceRange,
+        'hasMap' => $mapsUrl,
+        'address' => [
+            '@type' => 'PostalAddress',
+            'streetAddress' => $address,
+            'addressLocality' => 'Pekanbaru',
+            'addressRegion' => 'Riau',
+            'postalCode' => '28291',
+            'addressCountry' => 'ID',
+        ],
+        'openingHoursSpecification' => [
+            [
+                '@type' => 'OpeningHoursSpecification',
+                'dayOfWeek' => ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+                'opens' => str_replace('.', ':', substr((string) $openTime, 0, 5)),
+                'closes' => str_replace('.', ':', substr((string) $closeTime, 0, 5)),
+            ],
+        ],
+    ];
+    if ($geoData !== null) {
+        $jsonLdPayload['geo'] = $geoData;
+    }
 @endphp
 
 <!DOCTYPE html>
@@ -46,10 +101,15 @@
     <meta name="description" content="{{ $metaDescription }}">
 
     <meta property="og:type" content="website">
+    <meta property="og:site_name" content="{{ $brandShort }}">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:title" content="{{ $metaTitle }}">
     <meta property="og:description" content="{{ $metaDescription }}">
-    <meta property="og:image" content="{{ asset('/images/hero-photo.jpg') }}">
+    <meta property="og:image" content="{{ $ogImageUrl }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $metaTitle }}">
+    <meta name="twitter:description" content="{{ $metaDescription }}">
+    <meta name="twitter:image" content="{{ $ogImageUrl }}">
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
@@ -100,33 +160,7 @@
     <link rel="stylesheet" href="/fonts/fonts-accent.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="/fonts/fonts-accent.css"></noscript>
 
-    <script type="application/ld+json">
-    {
-        "@@context": "https://schema.org",
-        "@@type": "CafeOrCoffeeShop",
-        "name": "{{ $brandName }}",
-        "image": "{{ asset('/images/hero-photo.jpg') }}",
-        "url": "{{ url('/') }}",
-        "telephone": "{{ $rawWa }}",
-        "priceRange": "Rp 18.000 - Rp 36.000",
-        "address": {
-            "@@type": "PostalAddress",
-            "streetAddress": "Kampus 2 UMRI, Jl. Tuanku Tambusai Ujung, Delima, Binawidya",
-            "addressLocality": "Pekanbaru",
-            "addressRegion": "Riau",
-            "postalCode": "28291",
-            "addressCountry": "ID"
-        },
-        "openingHoursSpecification": [
-            {
-                "@@type": "OpeningHoursSpecification",
-                "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-                "opens": "{{ str_replace('.', ':', $openTime) }}",
-                "closes": "{{ str_replace('.', ':', $closeTime) }}"
-            }
-        ]
-    }
-    </script>
+    <script type="application/ld+json">{!! json_encode($jsonLdPayload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
@@ -340,7 +374,7 @@
                         <span class="text-xs text-[var(--tinta-60)]">&rarr;</span>
                     </a>
                     <p class="pt-2 text-center text-[11px] tracking-wide text-[var(--tinta-60)]">
-                        Kampus 2 UMRI, Pekanbaru &middot; 08.00 &ndash; 22.00 WIB
+                        {{ $brandShort }} &middot; {{ $operatingDays }}
                     </p>
                 </div>
             </div>
@@ -363,10 +397,13 @@
         <div class="umco-container">
             <div class="grid grid-cols-1 sm:grid-cols-12 gap-8 sm:gap-10 pb-10 sm:pb-12">
                 <div class="sm:col-span-5 space-y-3">
-                    <p class="font-display font-bold text-2xl tracking-[0.06em] text-white">UM.CO</p>
+                    <p class="font-display font-bold text-2xl tracking-[0.06em] text-white">{{ $brandShort === 'UMCO' ? 'UM.CO' : $brandShort }}</p>
                     <p class="text-sm sm:text-[15px] text-white/85 leading-relaxed max-w-sm">
-                        {{ $address }}. Buka setiap hari pukul {{ $openTime }} - {{ $closeTime }} WIB.
+                        {{ $address }}. {{ $operatingDays }}.
                     </p>
+                    @if ($storySnippet !== '')
+                        <p class="text-xs text-white/70 leading-relaxed max-w-sm">{{ $storySnippet }}</p>
+                    @endif
                     <div class="flex flex-wrap items-center gap-4 pt-1 text-sm font-medium text-white">
                         <a href="{{ $mapsUrl }}" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4 hover:text-[var(--aksen-soft)] transition-colors">
                             Buka di Google Maps
@@ -399,8 +436,11 @@
                 </div>
 
                 <div class="sm:col-span-3 sm:text-right space-y-2 text-sm text-white/80">
-                    <p>&copy; {{ date('Y') }} UMCO House</p>
-                    <p>Kampus 2 UMRI, Pekanbaru</p>
+                    <p>&copy; {{ date('Y') }} {{ $brandName }}</p>
+                    <p>{{ $tagline }}</p>
+                    @if ($plusCode !== '')
+                        <p class="text-xs text-white/65">Plus Code: {{ $plusCode }}</p>
+                    @endif
                 </div>
             </div>
         </div>

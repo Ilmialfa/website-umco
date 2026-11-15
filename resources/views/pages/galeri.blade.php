@@ -1,4 +1,5 @@
 @php
+    $brandShort = \App\Support\Settings::get('brand.brand_short') ?: 'UMCO';
     $eyebrow = $hero?->data['eyebrow'] ?? 'Galeri Foto';
     $heading = $hero?->heading ?: 'Potret keseharian di UMCO';
     $subheading = $hero?->subheading ?: 'Sudut meja kerja, racikan hangat pagi hari, dan momen kumpul di tepi Kampus 2 UMRI.';
@@ -42,8 +43,8 @@
 <x-layouts.public
     page="galeri"
     initial-nav-theme="light"
-    title="Galeri — UMCO"
-    description="Koleksi foto suasana meja kerja, sudut diskusi, racikan kopi, dan sajian harian di UMCO House Kampus 2 UMRI Pekanbaru."
+    :title="$hero?->data['meta_title'] ?? ('Galeri — ' . $brandShort)"
+    :description="$hero?->data['meta_description'] ?? $subheading"
 >
     <div
         x-data="{

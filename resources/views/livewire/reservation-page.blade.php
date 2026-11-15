@@ -71,11 +71,18 @@
                 </h1>
                 <p class="mt-2 text-sm sm:text-base text-[var(--tinta-70)] max-w-xl">
                     @if ($step === 6)
-                        Tunjukkan kode karcis di kasir waktu datang. Kami tunggu 15 menit setelah jam pesan.
+                        Tunjukkan kode karcis di kasir waktu datang. Kami tunggu {{ \App\Support\Settings::get('reservation.grace_minutes', 15) }} menit setelah jam pesan.
                     @else
                         Minimal {{ $this->minParty }} orang, pilih menu sekalian, lalu bayar DP {{ $quoteData['dp_percentage'] }}% atau lunas.
                     @endif
                 </p>
+                @php $todayNote = trim((string) \App\Support\Settings::get('brand.today_note', '')); @endphp
+                @if ($step < 6 && $todayNote !== '')
+                    <p class="mt-3 inline-flex items-center gap-2 rounded-full bg-[var(--kertas-terang)] px-3.5 py-1.5 text-xs font-medium text-[var(--mentega-tua)]">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[var(--mentega)]" aria-hidden="true"></span>
+                        <span>{{ $todayNote }}</span>
+                    </p>
+                @endif
             </div>
 
             @if ($step < 6)
@@ -695,6 +702,13 @@
                                                 @endif
                                             @endforeach
                                         </div>
+                                    @endif
+
+                                    @php $paymentNotes = trim((string) \App\Support\Settings::get('payment.payment_notes', '')); @endphp
+                                    @if ($paymentNotes !== '')
+                                        <p class="pt-2 border-t border-[var(--garis)] text-xs text-[var(--tinta-70)] leading-relaxed">
+                                            {{ $paymentNotes }}
+                                        </p>
                                     @endif
                                 </div>
                             </div>

@@ -10,7 +10,7 @@ class Settings
     protected const CACHE_KEY = 'umco_all_settings';
 
     /**
-     * Get a setting by key (e.g. 'brand.name', 'contact.phone', 'reservation.dp_percent').
+     * Get a setting by key (e.g. 'brand.brand_name', 'contact.phone_wa', 'reservation.dp_percentage').
      */
     public static function get(string $key, mixed $default = null): mixed
     {
@@ -20,32 +20,35 @@ class Settings
             return $all[$key];
         }
 
-        // Check if key is formatted as group.key
-        if (str_contains($key, '.')) {
-            [$group, $itemKey] = explode('.', $key, 2);
-            if (isset($all[$itemKey])) {
-                return $all[$itemKey];
-            }
-        }
-
         return $default;
     }
 
     /**
-     * Get all settings as key => value dictionary from cache.
+     * Get all settings as a dictionary keyed by both 'group.key' (canonical) and bare 'key'.
+     *
+     * @return array<string, mixed>
      */
     public static function all(): array
     {
-        return Cache::rememberForever(self::CACHE_KEY, function () {
+        return Cache::rememberForever(self::CACHE_KEY, function (): array {
             try {
-                $settings = Setting::all();
+                $settings = Setting::query()->orderBy('id')->get();
                 $dict = [];
+
                 foreach ($settings as $setting) {
                     $val = $setting->payload;
-                    $decoded = json_decode($val, true);
-                    $dict[$setting->key] = (json_last_error() === JSON_ERROR_NONE && !is_numeric($val)) ? $decoded : $val;
-                    $dict["{$setting->group}.{$setting->key}"] = $dict[$setting->key];
+                    $decoded = is_string($val) ? json_decode($val, true) : null;
+                    $parsed = (is_string($val) && json_last_error() === JSON_ERROR_NONE && ! is_numeric($val))
+                        ? $decoded
+                        : $val;
+
+                    $dict["{$setting->group}.{$setting->key}"] = $parsed;
+
+                    if (! array_key_exists($setting->key, $dict)) {
+                        $dict[$setting->key] = $parsed;
+                    }
                 }
+
                 return $dict;
             } catch (\Throwable) {
                 return [];
@@ -55,6 +58,8 @@ class Settings
 
     /**
      * Get all settings in a specific group.
+     *
+     * @return array<string, mixed>
      */
     public static function group(string $group): array
     {
@@ -73,7 +78,7 @@ class Settings
     }
 
     /**
-     * Set a setting value and flush cache.
+     * Set a setting value keyed uniquely by (group, key) and flush cache.
      */
     public static function set(string $key, mixed $value, ?string $group = null): void
     {
@@ -84,22 +89,24 @@ class Settings
             $itemKey = $k;
         }
 
-        $group = $group ?? 'general';
-        $payload = is_array($value) || is_object($value) ? json_encode($value) : (string) $value;
+        $group = $group ?: 'general';
+        $payload = match (true) {
+            is_bool($value) => $value ? '1' : '0',
+            is_array($value) || is_object($value) => (string) json_encode($value),
+            $value === null => null,
+            default => (string) $value,
+        };
 
         Setting::updateOrCreate(
-            ['key' => $itemKey],
-            [
-                'group' => $group,
-                'payload' => $payload,
-            ]
+            ['group' => $group, 'key' => $itemKey],
+            ['payload' => $payload]
         );
 
         self::flush();
     }
 
     /**
-     * Flush cache.
+     * Flush settings cache.
      */
     public static function flush(): void
     {

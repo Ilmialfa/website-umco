@@ -4,11 +4,14 @@
     if ($cutoutSrc && ! str_starts_with($cutoutSrc, 'http') && ! str_starts_with($cutoutSrc, '/')) {
         $cutoutSrc = '/storage/' . ltrim($cutoutSrc, '/');
     }
-    $eyebrow = $section?->body ?: 'Kampus 2 UMRI · Pekanbaru';
+    $eyebrow = $section?->body ?: (\App\Support\Settings::get('brand.tagline') ?: 'Kampus 2 UMRI · Pekanbaru');
     $heading = $section?->heading ?: \App\Support\Settings::get('brand.hero_headline', 'Kopi hangat, meja lapang.');
     $subheading = $section?->subheading ?: \App\Support\Settings::get('brand.hero_description', 'Buka tiap hari 08.00 - 22.00 WIB di Kampus 2 UMRI Pekanbaru. Pesan meja dan menu langsung sebelum datang.');
+    $handNote = $section?->data['hand_note'] ?? (trim((string) \App\Support\Settings::get('brand.today_note', '')) ?: '~ seduhan hangat & dingin, tinggal pilih meja dulu');
     $ctaLabel = $section?->cta_label ?: 'Pesan meja';
     $ctaUrl = $section?->cta_url ?: '/reservasi';
+    $secondaryLabel = $section?->data['secondary_label'] ?? 'Lihat menu';
+    $secondaryUrl = $section?->data['secondary_url'] ?? '/menu';
 @endphp
 
 <section
@@ -37,7 +40,7 @@
                 </p>
 
                 <p data-reveal="fade" class="font-hand text-2xl sm:text-[28px] leading-none text-[#E2F1E7]">
-                    ~ seduhan hangat & dingin, tinggal pilih meja dulu
+                    {{ $handNote }}
                 </p>
 
                 <div data-reveal="rise" class="flex flex-wrap items-center gap-3 pt-1">
@@ -52,11 +55,11 @@
                         </span>
                     </a>
                     <a
-                        href="{{ url('/menu') }}"
+                        href="{{ url($secondaryUrl) }}"
                         wire:navigate
                         class="btn-umco bg-white/15 text-white hover:bg-white hover:text-[#141916]"
                     >
-                        Lihat menu
+                        {{ $secondaryLabel }}
                     </a>
                 </div>
             </div>

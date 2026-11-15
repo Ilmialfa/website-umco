@@ -1,8 +1,14 @@
+@php
+    $brandShort = \App\Support\Settings::get('brand.brand_short') ?: 'UMCO';
+    $menuTitle = $hero?->data['meta_title'] ?? ('Menu — ' . $brandShort);
+    $menuDescription = $hero?->data['meta_description'] ?? "Daftar lengkap {$itemsCount} menu kopi, teh, mocktail, makanan, camilan, dan roti bakar {$brandShort}.";
+@endphp
+
 <x-layouts.public
     page="menu"
     initial-nav-theme="light"
-    title="Menu — UMCO"
-    description="Daftar lengkap 39 menu kopi hitam, kopi susu, susu, teh, mocktail, makanan, camilan, dan roti bakar UMCO di Kampus 2 UMRI Pekanbaru."
+    :title="$menuTitle"
+    :description="$menuDescription"
 >
     <div
         x-data="{

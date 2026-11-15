@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Models\ActivityLog;
+use App\Services\InstagramFeedService;
 use App\Support\PhoneNumber;
 use App\Support\Settings;
 use BackedEnum;
@@ -40,6 +41,85 @@ class ManageSettings extends Page implements HasForms
 
     public ?array $data = [];
 
+    /**
+     * Peta terpusat antara nama field form Filament dan kunci penyimpanan Settings ('group.key').
+     *
+     * @var array<string, array{setting: string, default: mixed, type: 'string'|'bool'|'int'|'json'}>
+     */
+    private const FIELD_MAP = [
+        // Brand & Tampilan
+        'brand_name' => ['setting' => 'brand.brand_name', 'default' => 'UMCO', 'type' => 'string'],
+        'brand_short' => ['setting' => 'brand.brand_short', 'default' => 'UMCO', 'type' => 'string'],
+        'tagline' => ['setting' => 'brand.tagline', 'default' => '', 'type' => 'string'],
+        'story_snippet' => ['setting' => 'brand.story_snippet', 'default' => '', 'type' => 'string'],
+        'footer_wordmark' => ['setting' => 'brand.footer_wordmark', 'default' => 'UMCO', 'type' => 'string'],
+        'hero_headline' => ['setting' => 'brand.hero_headline', 'default' => '', 'type' => 'string'],
+        'hero_description' => ['setting' => 'brand.hero_description', 'default' => '', 'type' => 'string'],
+        'today_note' => ['setting' => 'brand.today_note', 'default' => '', 'type' => 'string'],
+        'hero_cutout_upload' => ['setting' => 'brand.hero_cutout_upload', 'default' => null, 'type' => 'string'],
+        'hero_cutout_image' => ['setting' => 'brand.hero_cutout_image', 'default' => '/images/hero-cutout.webp', 'type' => 'string'],
+        'footer_cutout_upload' => ['setting' => 'brand.footer_cutout_upload', 'default' => null, 'type' => 'string'],
+        'footer_cutout_image' => ['setting' => 'brand.footer_cutout_image', 'default' => '/images/footer-cutout.webp', 'type' => 'string'],
+        'smooth_scroll' => ['setting' => 'motion.smooth_scroll', 'default' => false, 'type' => 'bool'],
+
+        // Kontak & Lokasi
+        'address' => ['setting' => 'contact.address', 'default' => '', 'type' => 'string'],
+        'coordinates' => ['setting' => 'contact.coordinates', 'default' => '', 'type' => 'string'],
+        'plus_code' => ['setting' => 'contact.plus_code', 'default' => '', 'type' => 'string'],
+        'google_maps_url' => ['setting' => 'contact.google_maps_url', 'default' => '', 'type' => 'string'],
+        'instagram_url' => ['setting' => 'contact.instagram_url', 'default' => 'https://www.instagram.com/um.co_house', 'type' => 'string'],
+        'instagram_handle' => ['setting' => 'contact.instagram_handle', 'default' => '@um.co_house', 'type' => 'string'],
+        'instagram_access_token' => ['setting' => 'contact.instagram_access_token', 'default' => '', 'type' => 'string'],
+        'phone_wa' => ['setting' => 'contact.phone_wa', 'default' => '02248001571', 'type' => 'string'],
+        'business_wa' => ['setting' => 'contact.business_wa', 'default' => '622248001571', 'type' => 'string'],
+        'collab_template' => ['setting' => 'contact.collab_template', 'default' => '', 'type' => 'string'],
+
+        // Jam Buka & Rating
+        'opening_time' => ['setting' => 'hours.opening_time', 'default' => '08:00', 'type' => 'string'],
+        'closing_time' => ['setting' => 'hours.closing_time', 'default' => '22:00', 'type' => 'string'],
+        'operating_days' => ['setting' => 'hours.operating_days', 'default' => 'Buka setiap hari, 08.00 - 22.00 WIB', 'type' => 'string'],
+        'google_rating' => ['setting' => 'rating.google_rating', 'default' => '4.9', 'type' => 'string'],
+        'google_reviews_count' => ['setting' => 'rating.google_reviews_count', 'default' => '86', 'type' => 'string'],
+        'price_range' => ['setting' => 'rating.price_range', 'default' => 'Rp 13.000 - Rp 25.500', 'type' => 'string'],
+
+        // Aturan Reservasi
+        'min_party' => ['setting' => 'reservation.min_party', 'default' => 2, 'type' => 'int'],
+        'max_party_size_online' => ['setting' => 'reservation.max_party_size_online', 'default' => 12, 'type' => 'int'],
+        'menu_required' => ['setting' => 'reservation.menu_required', 'default' => true, 'type' => 'bool'],
+        'slot_interval' => ['setting' => 'reservation.slot_interval', 'default' => 30, 'type' => 'int'],
+        'last_slot_before_close' => ['setting' => 'reservation.last_slot_before_close', 'default' => 60, 'type' => 'int'],
+        'capacity_per_slot' => ['setting' => 'reservation.capacity_per_slot', 'default' => 40, 'type' => 'int'],
+        'min_advance_minutes' => ['setting' => 'reservation.min_advance_minutes', 'default' => 60, 'type' => 'int'],
+        'max_advance_days' => ['setting' => 'reservation.max_advance_days', 'default' => 14, 'type' => 'int'],
+        'dp_percentage' => ['setting' => 'reservation.dp_percentage', 'default' => 50, 'type' => 'int'],
+        'full_payment_enabled' => ['setting' => 'reservation.full_payment_enabled', 'default' => true, 'type' => 'bool'],
+        'grace_minutes' => ['setting' => 'reservation.grace_minutes', 'default' => 15, 'type' => 'int'],
+        'remind_before_minutes' => ['setting' => 'reservation.remind_before_minutes', 'default' => 15, 'type' => 'int'],
+        'sound_on_notification' => ['setting' => 'reservation.sound_on_notification', 'default' => false, 'type' => 'bool'],
+        'floor_plan_image_path' => ['setting' => 'reservation.floor_plan_image_path', 'default' => null, 'type' => 'string'],
+        'retention_days' => ['setting' => 'reservation.retention_days', 'default' => 90, 'type' => 'int'],
+
+        // Pembayaran & QRIS
+        'qris_image_path' => ['setting' => 'payment.qris_image_path', 'default' => null, 'type' => 'string'],
+        'bank_accounts' => ['setting' => 'payment.bank_accounts', 'default' => [], 'type' => 'json'],
+        'payment_notes' => ['setting' => 'payment.payment_notes', 'default' => '', 'type' => 'string'],
+
+        // WhatsApp & Gateway
+        'gateway_driver' => ['setting' => 'whatsapp_templates.gateway_driver', 'default' => 'log', 'type' => 'string'],
+        'gateway_token' => ['setting' => 'whatsapp_templates.gateway_token', 'default' => '', 'type' => 'string'],
+        'template_new_reservation' => ['setting' => 'whatsapp_templates.new_reservation', 'default' => '', 'type' => 'string'],
+        'template_confirmation' => ['setting' => 'whatsapp_templates.confirmation', 'default' => '', 'type' => 'string'],
+        'template_reminder' => ['setting' => 'whatsapp_templates.reminder', 'default' => '', 'type' => 'string'],
+        'template_follow_up_proof' => ['setting' => 'whatsapp_templates.follow_up_proof', 'default' => '', 'type' => 'string'],
+        'template_underpaid' => ['setting' => 'whatsapp_templates.underpaid', 'default' => '', 'type' => 'string'],
+        'template_cancellation' => ['setting' => 'whatsapp_templates.cancellation', 'default' => '', 'type' => 'string'],
+
+        // SEO
+        'meta_title' => ['setting' => 'seo.meta_title', 'default' => '', 'type' => 'string'],
+        'meta_description' => ['setting' => 'seo.meta_description', 'default' => '', 'type' => 'string'],
+        'og_image' => ['setting' => 'seo.og_image', 'default' => null, 'type' => 'string'],
+    ];
+
     public static function canAccess(): bool
     {
         return auth()->user()?->isOwner() ?? false;
@@ -48,84 +128,23 @@ class ManageSettings extends Page implements HasForms
     public function mount(): void
     {
         $all = Settings::all();
+        $filled = [];
 
-        $bankAccounts = $all['payment.bank_accounts'] ?? [];
-        if (is_string($bankAccounts)) {
-            $bankAccounts = json_decode($bankAccounts, true) ?: [];
+        foreach (self::FIELD_MAP as $field => $config) {
+            $raw = $all[$config['setting']] ?? $config['default'];
+
+            if ($config['type'] === 'bool') {
+                $filled[$field] = (bool) $raw;
+            } elseif ($config['type'] === 'json') {
+                $filled[$field] = is_string($raw) ? (json_decode($raw, true) ?: []) : (is_array($raw) ? $raw : []);
+            } elseif ($field === 'dp_percentage') {
+                $filled[$field] = max(50, (int) $raw);
+            } else {
+                $filled[$field] = $raw;
+            }
         }
 
-        $this->form->fill([
-            // Brand & Tampilan
-            'brand_name' => $all['brand.brand_name'] ?? 'UMCO',
-            'brand_short' => $all['brand.brand_short'] ?? 'UMCO',
-            'tagline' => $all['brand.tagline'] ?? '',
-            'story_snippet' => $all['brand.story_snippet'] ?? '',
-            'footer_wordmark' => $all['brand.footer_wordmark'] ?? 'UMCO',
-            'hero_headline' => $all['brand.hero_headline'] ?? '',
-            'hero_description' => $all['brand.hero_description'] ?? '',
-            'today_note' => $all['brand.today_note'] ?? '',
-            'hero_cutout_upload' => $all['brand.hero_cutout_upload'] ?? null,
-            'hero_cutout_image' => $all['brand.hero_cutout_image'] ?? '/images/hero-cutout.webp',
-            'footer_cutout_upload' => $all['brand.footer_cutout_upload'] ?? null,
-            'footer_cutout_image' => $all['brand.footer_cutout_image'] ?? '/images/footer-cutout.webp',
-            'smooth_scroll' => (bool) ($all['motion.smooth_scroll'] ?? false),
-
-            // Contact
-            'address' => $all['contact.address'] ?? '',
-            'coordinates' => $all['contact.coordinates'] ?? '',
-            'plus_code' => $all['contact.plus_code'] ?? '',
-            'google_maps_url' => $all['contact.google_maps_url'] ?? '',
-            'instagram_url' => $all['contact.instagram_url'] ?? 'https://www.instagram.com/um.co_house',
-            'instagram_handle' => $all['contact.instagram_handle'] ?? '@um.co_house',
-            'instagram_access_token' => $all['contact.instagram_access_token'] ?? '',
-            'phone_wa' => $all['contact.phone_wa'] ?? '02248001571',
-            'business_wa' => $all['contact.business_wa'] ?? '622248001571',
-            'collab_template' => $all['contact.collab_template'] ?? '',
-
-            // Hours & Rating
-            'opening_time' => $all['hours.opening_time'] ?? '08:00',
-            'closing_time' => $all['hours.closing_time'] ?? '22:00',
-            'operating_days' => $all['hours.operating_days'] ?? 'Buka setiap hari, 08.00 - 22.00 WIB',
-            'google_rating' => $all['rating.google_rating'] ?? '4.9',
-            'google_reviews_count' => $all['rating.google_reviews_count'] ?? '86',
-            'price_range' => $all['rating.price_range'] ?? 'Rp 13.000 - Rp 25.500',
-
-            // Reservation Rules
-            'min_party' => $all['reservation.min_party'] ?? '2',
-            'max_party_size_online' => $all['reservation.max_party_size_online'] ?? '12',
-            'menu_required' => (bool) ($all['reservation.menu_required'] ?? true),
-            'slot_interval' => $all['reservation.slot_interval'] ?? '30',
-            'last_slot_before_close' => $all['reservation.last_slot_before_close'] ?? '60',
-            'capacity_per_slot' => $all['reservation.capacity_per_slot'] ?? '40',
-            'min_advance_minutes' => $all['reservation.min_advance_minutes'] ?? '60',
-            'max_advance_days' => $all['reservation.max_advance_days'] ?? '14',
-            'dp_percentage' => max(50, (int) ($all['reservation.dp_percentage'] ?? 50)),
-            'full_payment_enabled' => (bool) ($all['reservation.full_payment_enabled'] ?? true),
-            'grace_minutes' => $all['reservation.grace_minutes'] ?? '15',
-            'remind_before_minutes' => $all['reservation.remind_before_minutes'] ?? '15',
-            'sound_on_notification' => (bool) ($all['reservation.sound_on_notification'] ?? false),
-            'floor_plan_image_path' => $all['reservation.floor_plan_image_path'] ?? null,
-            'retention_days' => $all['reservation.retention_days'] ?? '90',
-
-            // Payment
-            'qris_image_path' => $all['payment.qris_image_path'] ?? null,
-            'bank_accounts' => $bankAccounts,
-            'payment_notes' => $all['payment.payment_notes'] ?? '',
-
-            // WhatsApp Templates & Gateway
-            'gateway_driver' => $all['whatsapp_templates.gateway_driver'] ?? 'log',
-            'gateway_token' => $all['whatsapp_templates.gateway_token'] ?? '',
-            'template_new_reservation' => $all['whatsapp_templates.new_reservation'] ?? '',
-            'template_confirmation' => $all['whatsapp_templates.confirmation'] ?? '',
-            'template_reminder' => $all['whatsapp_templates.reminder'] ?? '',
-            'template_follow_up_proof' => $all['whatsapp_templates.follow_up_proof'] ?? '',
-            'template_underpaid' => $all['whatsapp_templates.underpaid'] ?? '',
-            'template_cancellation' => $all['whatsapp_templates.cancellation'] ?? '',
-
-            // SEO
-            'meta_title' => $all['seo.meta_title'] ?? '',
-            'meta_description' => $all['seo.meta_description'] ?? '',
-        ]);
+        $this->form->fill($filled);
     }
 
     public function form(Schema $schema): Schema
@@ -143,22 +162,30 @@ class ManageSettings extends Page implements HasForms
                                 TextInput::make('tagline')->label('Tagline'),
                                 Textarea::make('hero_headline')->label('Headline Hero Beranda')->rows(2)->columnSpanFull(),
                                 Textarea::make('hero_description')->label('Sub-headline Hero Beranda')->rows(2)->columnSpanFull(),
-                                Textarea::make('today_note')->label('Catatan Hari Ini')->rows(2)->columnSpanFull(),
-                                Textarea::make('story_snippet')->label('Cuplikan Cerita')->rows(2)->columnSpanFull(),
+                                Textarea::make('today_note')
+                                    ->label('Catatan Hari Ini (Opsional)')
+                                    ->helperText('Jika diisi, tampil sebagai catatan bar di hero dan pengumuman atas halaman reservasi.')
+                                    ->rows(2)
+                                    ->columnSpanFull(),
+                                Textarea::make('story_snippet')
+                                    ->label('Cuplikan Cerita Singkat Brand')
+                                    ->helperText('Tampil pada ringkasan footer dan pembuka halaman cerita.')
+                                    ->rows(2)
+                                    ->columnSpanFull(),
                                 FileUpload::make('hero_cutout_upload')
                                     ->label('Unggah Foto Hero Tanpa Background (PNG/WebP)')
                                     ->disk('public')
                                     ->directory('hero-cutouts')
                                     ->acceptedFileTypes(['image/png', 'image/webp'])
                                     ->maxSize(5120)
-                                    ->helperText('Disarankan gambar PNG/WebP transparan agar menyatu mulus dengan latar gradasi hijau hero.'),
+                                    ->helperText('Rekomendasi lebar minimal 1200 px (rasio ~3:2, PNG/WebP transparan, maks. 5 MB).'),
                                 FileUpload::make('footer_cutout_upload')
                                     ->label('Unggah Foto Gelas Footer Tanpa Background (PNG/WebP)')
                                     ->disk('public')
                                     ->directory('footer-cutouts')
                                     ->acceptedFileTypes(['image/png', 'image/webp'])
                                     ->maxSize(5120)
-                                    ->helperText('Muncul di depan tulisan besar UMCO pada bagian footer.'),
+                                    ->helperText('Rekomendasi lebar minimal 1024 px (rasio 3:2, PNG/WebP transparan, maks. 5 MB).'),
                                 TextInput::make('hero_cutout_image')->label('Path Default Gambar Hero'),
                                 TextInput::make('footer_cutout_image')->label('Path Default Gambar Footer'),
                                 Toggle::make('smooth_scroll')->label('Aktifkan Smooth Scroll Lenis (hanya desktop mouse)'),
@@ -183,8 +210,13 @@ class ManageSettings extends Page implements HasForms
                                     ->helperText('Jika kosong, website menyinkronkan profil publik @um.co_house otomatis. Isi Long-Lived Token untuk sync Graph API resmi.')
                                     ->columnSpanFull(),
                                 TextInput::make('google_maps_url')->label('URL Google Maps')->url(),
-                                TextInput::make('coordinates')->label('Koordinat'),
-                                TextInput::make('plus_code')->label('Plus Code'),
+                                TextInput::make('coordinates')
+                                    ->label('Koordinat GPS (Lat, Lng)')
+                                    ->placeholder('0.4712, 101.4105')
+                                    ->helperText('Digunakan otomatis untuk Schema.org GeoCoordinates Google Search.'),
+                                TextInput::make('plus_code')
+                                    ->label('Google Plus Code')
+                                    ->placeholder('FC66+XX Pekanbaru'),
                                 Textarea::make('address')->label('Alamat Lengkap')->rows(2)->columnSpanFull(),
                                 Textarea::make('collab_template')->label('Template WA Ajakan Kolaborasi')->rows(2)->columnSpanFull(),
                             ])
@@ -198,7 +230,7 @@ class ManageSettings extends Page implements HasForms
                                 TextInput::make('operating_days')->label('Keterangan Jam Buka'),
                                 TextInput::make('google_rating')->label('Rating Google Maps'),
                                 TextInput::make('google_reviews_count')->label('Jumlah Ulasan'),
-                                TextInput::make('price_range')->label('Rentang Harga'),
+                                TextInput::make('price_range')->label('Rentang Harga Menu'),
                             ])
                             ->columns(3),
 
@@ -215,16 +247,21 @@ class ManageSettings extends Page implements HasForms
                                 TextInput::make('dp_percentage')->label('Persentase DP (%) — Minimal 50%')->numeric()->minValue(50)->maxValue(100)->required(),
                                 TextInput::make('grace_minutes')->label('Batas Keterlambatan / Hangus (Menit)')->numeric()->minValue(5)->required(),
                                 TextInput::make('remind_before_minutes')->label('Pengingat Staf Sebelum Datang (Menit)')->numeric()->minValue(5)->required(),
-                                TextInput::make('retention_days')->label('Simpan Bukti Bayar (Hari)')->numeric(),
+                                TextInput::make('retention_days')
+                                    ->label('Simpan Bukti Bayar (Hari)')
+                                    ->numeric()
+                                    ->minValue(7)
+                                    ->helperText('Bukti pembayaran berstatus selesai/batal lebih lama dari hari ini akan dibersihkan otomatis tiap malam.'),
                                 Toggle::make('menu_required')->label('Wajib Pesan Menu Saat Reservasi Online'),
                                 Toggle::make('full_payment_enabled')->label('Aktifkan Opsi Bayar Lunas Langsung'),
                                 Toggle::make('sound_on_notification')->label('Bunyi Lonceng Saat Notifikasi Baru Masuk Admin'),
                                 FileUpload::make('floor_plan_image_path')
                                     ->label('Denah Area Duduk Sederhana (Opsional)')
                                     ->disk('public')
-                                    ->directory('floor_plans')
+                                    ->directory('floor-plans')
                                     ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                                     ->maxSize(5120)
+                                    ->helperText('Rekomendasi rasio landscape 16:9 atau 4:3, JPG/PNG/WebP maks. 5 MB.')
                                     ->columnSpanFull(),
                             ])
                             ->columns(3),
@@ -238,10 +275,12 @@ class ManageSettings extends Page implements HasForms
                                     ->directory('qris')
                                     ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                                     ->maxSize(3072)
+                                    ->helperText('Rekomendasi rasio persegi atau 3:4 tajam (min. 600 px), JPG/PNG/WebP maks. 3 MB.')
                                     ->columnSpanFull(),
 
                                 Textarea::make('payment_notes')
                                     ->label('Catatan Pembayaran di Halaman Reservasi')
+                                    ->helperText('Ditampilkan langsung kepada tamu pada langkah pembayaran & halaman status karcis.')
                                     ->rows(2)
                                     ->columnSpanFull(),
 
@@ -296,6 +335,14 @@ class ManageSettings extends Page implements HasForms
                             ->schema([
                                 TextInput::make('meta_title')->label('Meta Title Default')->columnSpanFull(),
                                 Textarea::make('meta_description')->label('Meta Description Default')->rows(3)->columnSpanFull(),
+                                FileUpload::make('og_image')
+                                    ->label('Gambar Pratinjau Bagikan Link (OG Image)')
+                                    ->disk('public')
+                                    ->directory('seo')
+                                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                                    ->maxSize(3072)
+                                    ->helperText('Disarankan rasio 1,91:1 (1200 x 630 px, PNG/WebP/JPG, maks. 3 MB) untuk pratinjau WhatsApp & media sosial.')
+                                    ->columnSpanFull(),
                             ]),
                     ]),
             ])
@@ -308,85 +355,41 @@ class ManageSettings extends Page implements HasForms
 
         $state = $this->form->getState();
 
-        $dpPct = max(50, (int) ($state['dp_percentage'] ?? 50));
-        $businessWaRaw = trim((string) ($state['business_wa'] ?? $state['phone_wa'] ?? '02248001571'));
-        $businessWaNormalized = PhoneNumber::normalizeBusiness($businessWaRaw);
-
-        $mapping = [
-            'brand.brand_name' => $state['brand_name'] ?? 'UMCO',
-            'brand.brand_short' => $state['brand_short'] ?? 'UMCO',
-            'brand.tagline' => $state['tagline'] ?? '',
-            'brand.story_snippet' => $state['story_snippet'] ?? '',
-            'brand.footer_wordmark' => $state['footer_wordmark'] ?? 'UMCO',
-            'brand.hero_headline' => $state['hero_headline'] ?? '',
-            'brand.hero_description' => $state['hero_description'] ?? '',
-            'brand.today_note' => $state['today_note'] ?? '',
-            'brand.hero_cutout_upload' => (string) ($state['hero_cutout_upload'] ?? ''),
-            'brand.hero_cutout_image' => ! empty($state['hero_cutout_upload'])
+        $overrides = [
+            'dp_percentage' => max(50, (int) ($state['dp_percentage'] ?? 50)),
+            'min_party' => max(2, (int) ($state['min_party'] ?? 2)),
+            'max_party_size_online' => max(2, (int) ($state['max_party_size_online'] ?? 12)),
+            'grace_minutes' => max(5, (int) ($state['grace_minutes'] ?? 15)),
+            'remind_before_minutes' => max(5, (int) ($state['remind_before_minutes'] ?? 15)),
+            'retention_days' => max(7, (int) ($state['retention_days'] ?? 90)),
+            'business_wa' => PhoneNumber::normalizeBusiness(trim((string) ($state['business_wa'] ?? $state['phone_wa'] ?? '02248001571'))),
+            'hero_cutout_image' => ! empty($state['hero_cutout_upload'])
                 ? '/storage/' . ltrim((string) $state['hero_cutout_upload'], '/')
                 : ($state['hero_cutout_image'] ?? '/images/hero-cutout.webp'),
-            'brand.footer_cutout_upload' => (string) ($state['footer_cutout_upload'] ?? ''),
-            'brand.footer_cutout_image' => ! empty($state['footer_cutout_upload'])
+            'footer_cutout_image' => ! empty($state['footer_cutout_upload'])
                 ? '/storage/' . ltrim((string) $state['footer_cutout_upload'], '/')
                 : ($state['footer_cutout_image'] ?? '/images/footer-cutout.webp'),
-            'motion.smooth_scroll' => ! empty($state['smooth_scroll']) ? '1' : '0',
-
-            'contact.phone_wa' => $state['phone_wa'] ?? '02248001571',
-            'contact.business_wa' => $businessWaNormalized,
-            'contact.instagram_handle' => $state['instagram_handle'] ?? '@um.co_house',
-            'contact.instagram_url' => $state['instagram_url'] ?? 'https://www.instagram.com/um.co_house',
-            'contact.instagram_access_token' => $state['instagram_access_token'] ?? '',
-            'contact.google_maps_url' => $state['google_maps_url'] ?? '',
-            'contact.coordinates' => $state['coordinates'] ?? '',
-            'contact.plus_code' => $state['plus_code'] ?? '',
-            'contact.address' => $state['address'] ?? '',
-            'contact.collab_template' => $state['collab_template'] ?? '',
-
-            'hours.opening_time' => $state['opening_time'] ?? '08:00',
-            'hours.closing_time' => $state['closing_time'] ?? '22:00',
-            'hours.operating_days' => $state['operating_days'] ?? 'Buka setiap hari, 08.00 - 22.00 WIB',
-            'rating.google_rating' => $state['google_rating'] ?? '4.9',
-            'rating.google_reviews_count' => $state['google_reviews_count'] ?? '86',
-            'rating.price_range' => $state['price_range'] ?? 'Rp 13.000 - Rp 25.500',
-
-            'reservation.min_party' => (string) max(2, (int) ($state['min_party'] ?? 2)),
-            'reservation.max_party_size_online' => (string) max(2, (int) ($state['max_party_size_online'] ?? 12)),
-            'reservation.menu_required' => ! empty($state['menu_required']) ? '1' : '0',
-            'reservation.slot_interval' => (string) ($state['slot_interval'] ?? '30'),
-            'reservation.last_slot_before_close' => (string) ($state['last_slot_before_close'] ?? '60'),
-            'reservation.capacity_per_slot' => (string) ($state['capacity_per_slot'] ?? '40'),
-            'reservation.min_advance_minutes' => (string) ($state['min_advance_minutes'] ?? '60'),
-            'reservation.max_advance_days' => (string) ($state['max_advance_days'] ?? '14'),
-            'reservation.dp_percentage' => (string) $dpPct,
-            'reservation.full_payment_enabled' => ! empty($state['full_payment_enabled']) ? '1' : '0',
-            'reservation.grace_minutes' => (string) max(5, (int) ($state['grace_minutes'] ?? 15)),
-            'reservation.remind_before_minutes' => (string) max(5, (int) ($state['remind_before_minutes'] ?? 15)),
-            'reservation.sound_on_notification' => ! empty($state['sound_on_notification']) ? '1' : '0',
-            'reservation.floor_plan_image_path' => (string) ($state['floor_plan_image_path'] ?? ''),
-            'reservation.retention_days' => (string) ($state['retention_days'] ?? '90'),
-
-            'payment.qris_image_path' => (string) ($state['qris_image_path'] ?? ''),
-            'payment.bank_accounts' => $state['bank_accounts'] ?? [],
-            'payment.payment_notes' => $state['payment_notes'] ?? '',
-
-            'whatsapp_templates.gateway_driver' => $state['gateway_driver'] ?? 'log',
-            'whatsapp_templates.gateway_token' => $state['gateway_token'] ?? '',
-            'whatsapp_templates.new_reservation' => $state['template_new_reservation'] ?? '',
-            'whatsapp_templates.confirmation' => $state['template_confirmation'] ?? '',
-            'whatsapp_templates.reminder' => $state['template_reminder'] ?? '',
-            'whatsapp_templates.follow_up_proof' => $state['template_follow_up_proof'] ?? '',
-            'whatsapp_templates.underpaid' => $state['template_underpaid'] ?? '',
-            'whatsapp_templates.cancellation' => $state['template_cancellation'] ?? '',
-
-            'seo.meta_title' => $state['meta_title'] ?? '',
-            'seo.meta_description' => $state['meta_description'] ?? '',
         ];
 
-        foreach ($mapping as $key => $val) {
-            Settings::set($key, $val);
+        foreach (self::FIELD_MAP as $field => $config) {
+            $value = array_key_exists($field, $overrides)
+                ? $overrides[$field]
+                : ($state[$field] ?? $config['default']);
+
+            if ($config['type'] === 'bool') {
+                $value = ! empty($value);
+            } elseif ($config['type'] === 'int') {
+                $value = (int) $value;
+            } elseif ($config['type'] === 'json') {
+                $value = is_array($value) ? $value : [];
+            } else {
+                $value = (string) ($value ?? '');
+            }
+
+            Settings::set($config['setting'], $value);
         }
 
-        \App\Services\InstagramFeedService::flushCache();
+        InstagramFeedService::flushCache();
 
         ActivityLog::record('setting_update', null, null, [
             'updated_by' => auth()->user()?->name ?? 'Owner',

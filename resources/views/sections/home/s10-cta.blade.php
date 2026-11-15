@@ -1,7 +1,9 @@
 @php
-    $eyebrow = $section?->data['eyebrow'] ?? 'Kampus 2 UMRI · Pekanbaru';
+    $eyebrow = $section?->data['eyebrow'] ?? (\App\Support\Settings::get('brand.tagline') ?: 'Kampus 2 UMRI · Pekanbaru');
     $heading = $section?->heading ?: 'Mampir dulu, kursimu kami siapkan.';
-    $subheading = $section?->subheading ?: 'Buka setiap hari pukul 08.00 - 22.00 WIB di Kampus 2 UMRI. Pesan meja lebih dulu atau hubungi kami untuk acara dan kolaborasi.';
+    $operatingDays = trim((string) \App\Support\Settings::get('hours.operating_days', '')) ?: 'Buka setiap hari pukul 08.00 - 22.00 WIB';
+    $storySnippet = trim((string) \App\Support\Settings::get('brand.story_snippet', ''));
+    $subheading = $section?->subheading ?: ($storySnippet ?: "{$operatingDays}. Pesan meja lebih dulu atau hubungi kami untuk acara dan kolaborasi.");
     $primaryLabel = $section?->cta_label ?: 'Pesan meja';
     $primaryUrl = $section?->cta_url ?: '/reservasi';
     $secondaryLabel = $section?->data['secondary_label'] ?? 'Hubungi kami';

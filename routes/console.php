@@ -10,3 +10,4 @@ Artisan::command('inspire', function () {
 
 Schedule::command('reservations:remind')->everyMinute();
 Schedule::command('instagram:sync')->everyFifteenMinutes();
+Schedule::command('reservations:prune-proofs')->dailyAt('02:30');

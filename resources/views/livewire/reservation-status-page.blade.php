@@ -132,6 +132,14 @@
                 </div>
 
                 <div class="lg:col-span-5 space-y-5">
+                    @php $paymentNotes = trim((string) \App\Support\Settings::get('payment.payment_notes', '')); @endphp
+                    @if ($reservation->payment_status !== 'verified' && $paymentNotes !== '')
+                        <div class="p-4 bg-[var(--kertas-terang)] border border-[var(--garis)] text-sm text-[var(--tinta-70)] leading-relaxed">
+                            <p class="font-semibold text-[var(--tinta)] mb-1">Catatan pembayaran</p>
+                            <p>{{ $paymentNotes }}</p>
+                        </div>
+                    @endif
+
                     @if ($reservation->payment_status === 'rejected')
                         <div class="p-5 bg-[var(--kertas-terang)] border border-[var(--stempel)] space-y-4">
                             <div>

@@ -171,13 +171,19 @@
                     </a>
                 </div>
 
+                @php
+                    $karcisOpen = str_replace(':', '.', substr((string) \App\Support\Settings::get('hours.opening_time', '08:00'), 0, 5));
+                    $karcisClose = str_replace(':', '.', substr((string) \App\Support\Settings::get('hours.closing_time', '22:00'), 0, 5));
+                    $karcisDays = trim((string) \App\Support\Settings::get('hours.operating_days', '')) ?: 'Buka setiap hari di Kampus 2 UMRI';
+                    $karcisDp = max(50, (int) \App\Support\Settings::get('reservation.dp_percentage', 50));
+                @endphp
                 <div class="pt-1 grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div class="rounded-2xl bg-[var(--kertas)] p-4 space-y-1">
-                        <p class="font-display font-bold text-lg text-[var(--mentega)] leading-none">08.00 - 22.00</p>
-                        <p class="text-xs text-[var(--tinta-70)] leading-snug">Buka setiap hari di Kampus 2 UMRI</p>
+                        <p class="font-display font-bold text-lg text-[var(--mentega)] leading-none">{{ $karcisOpen }} - {{ $karcisClose }}</p>
+                        <p class="text-xs text-[var(--tinta-70)] leading-snug">{{ $karcisDays }}</p>
                     </div>
                     <div class="rounded-2xl bg-[var(--kertas)] p-4 space-y-1">
-                        <p class="font-display font-bold text-lg text-[var(--mentega)] leading-none">DP 50% / Lunas</p>
+                        <p class="font-display font-bold text-lg text-[var(--mentega)] leading-none">DP {{ $karcisDp }}% / Lunas</p>
                         <p class="text-xs text-[var(--tinta-70)] leading-snug">Bayar cepat via QRIS tanpa antre</p>
                     </div>
                     <div class="rounded-2xl bg-[var(--kertas)] p-4 space-y-1">

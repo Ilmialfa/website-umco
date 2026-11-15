@@ -149,13 +149,15 @@ class ManageSettings extends Page implements HasForms
                                     ->label('Unggah Foto Hero Tanpa Background (PNG/WebP)')
                                     ->disk('public')
                                     ->directory('hero-cutouts')
-                                    ->image()
+                                    ->acceptedFileTypes(['image/png', 'image/webp'])
+                                    ->maxSize(5120)
                                     ->helperText('Disarankan gambar PNG/WebP transparan agar menyatu mulus dengan latar gradasi hijau hero.'),
                                 FileUpload::make('footer_cutout_upload')
                                     ->label('Unggah Foto Gelas Footer Tanpa Background (PNG/WebP)')
                                     ->disk('public')
                                     ->directory('footer-cutouts')
-                                    ->image()
+                                    ->acceptedFileTypes(['image/png', 'image/webp'])
+                                    ->maxSize(5120)
                                     ->helperText('Muncul di depan tulisan besar UMCO pada bagian footer.'),
                                 TextInput::make('hero_cutout_image')->label('Path Default Gambar Hero'),
                                 TextInput::make('footer_cutout_image')->label('Path Default Gambar Footer'),
@@ -221,7 +223,8 @@ class ManageSettings extends Page implements HasForms
                                     ->label('Denah Area Duduk Sederhana (Opsional)')
                                     ->disk('public')
                                     ->directory('floor_plans')
-                                    ->image()
+                                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                                    ->maxSize(5120)
                                     ->columnSpanFull(),
                             ])
                             ->columns(3),
@@ -233,7 +236,8 @@ class ManageSettings extends Page implements HasForms
                                     ->label('Gambar QRIS Statis Resmi UMCO')
                                     ->disk('public')
                                     ->directory('qris')
-                                    ->image()
+                                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                                    ->maxSize(3072)
                                     ->columnSpanFull(),
 
                                 Textarea::make('payment_notes')

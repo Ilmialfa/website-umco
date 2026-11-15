@@ -566,6 +566,7 @@ class ReservationPage extends Component
         if ($target >= 1 && $target <= $this->maxVisitedStep) {
             $this->step = $target;
             $this->resetErrorBag();
+            $this->dispatch('umco-step-changed');
         }
     }
 
@@ -587,6 +588,7 @@ class ReservationPage extends Component
         }
 
         $this->maxVisitedStep = max($this->maxVisitedStep, $this->step);
+        $this->dispatch('umco-step-changed');
     }
 
     public function prevStep(): void
@@ -594,6 +596,7 @@ class ReservationPage extends Component
         if ($this->step > 1 && $this->createdCode === null) {
             $this->step--;
             $this->resetErrorBag();
+            $this->dispatch('umco-step-changed');
         }
     }
 

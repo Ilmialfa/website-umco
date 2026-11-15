@@ -36,7 +36,7 @@
 @endphp
 
 <!DOCTYPE html>
-<html lang="id" class="h-full">
+<html lang="id">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -133,7 +133,7 @@
 <body
     data-page="{{ $page }}"
     data-smooth-scroll="{{ $smoothScroll }}"
-    class="min-h-full flex flex-col bg-[var(--kertas)] text-[var(--tinta)] font-sans antialiased overflow-x-hidden"
+    class="min-h-screen flex flex-col bg-[var(--kertas)] text-[var(--tinta)] font-sans antialiased overflow-x-clip"
 >
     @include('partials.icons-sprite')
 
@@ -181,9 +181,20 @@
                     <a
                         href="{{ url('/') }}"
                         wire:navigate
-                        class="justify-self-center font-display font-bold text-[24px] lg:text-[28px] tracking-[0.06em] leading-none"
+                        aria-label="UM.CO House — Beranda"
+                        class="justify-self-center inline-flex items-center gap-1.5 lg:gap-2 font-display font-bold text-[24px] lg:text-[28px] tracking-[0.06em] leading-none group"
                     >
-                        UM.CO
+                        <span>UM</span>
+                        <img
+                            src="{{ asset('/images/umco-logo.webp') }}"
+                            alt=""
+                            aria-hidden="true"
+                            width="24"
+                            height="36"
+                            decoding="async"
+                            class="h-8 lg:h-9 w-auto object-contain select-none transition-transform duration-300 group-hover:scale-105"
+                        >
+                        <span>CO</span>
                     </a>
 
                     <div class="justify-self-end flex items-center gap-5 lg:gap-6">
@@ -226,8 +237,23 @@
                     <span>Menu</span>
                 </button>
 
-                <a href="{{ url('/') }}" wire:navigate class="justify-self-center font-display font-bold text-[22px] tracking-[0.06em] leading-none">
-                    UM.CO
+                <a
+                    href="{{ url('/') }}"
+                    wire:navigate
+                    aria-label="UM.CO House — Beranda"
+                    class="justify-self-center inline-flex items-center gap-1 font-display font-bold text-[21px] tracking-[0.06em] leading-none"
+                >
+                    <span>UM</span>
+                    <img
+                        src="{{ asset('/images/umco-logo.webp') }}"
+                        alt=""
+                        aria-hidden="true"
+                        width="19"
+                        height="28"
+                        decoding="async"
+                        class="h-7 w-auto object-contain select-none"
+                    >
+                    <span>CO</span>
                 </a>
 
                 <div class="justify-self-end">
@@ -285,7 +311,7 @@
         0 cm
     </div>
 
-    <footer id="public-footer" class="relative umco-footer-gradient text-[var(--kertas)] pt-14 sm:pt-20 pb-0 overflow-hidden">
+    <footer id="public-footer" data-nav-bg="#19523A" class="relative umco-footer-gradient text-[var(--kertas)] pt-14 sm:pt-20 pb-0 overflow-hidden">
         <div class="umco-container">
             <div class="grid grid-cols-1 sm:grid-cols-12 gap-8 sm:gap-10 pb-10 sm:pb-12">
                 <div class="sm:col-span-5 space-y-3">
@@ -332,10 +358,10 @@
         </div>
 
         {{-- Wordmark raksasa di belakang gelas + meja cream menyatu penuh ke ujung layar (sepenuhnya responsif) --}}
-        <div class="relative w-full overflow-hidden select-none -mt-6 sm:-mt-10 lg:-mt-16">
+        <div class="relative w-full overflow-hidden select-none -mt-4 sm:-mt-8 lg:-mt-12">
             <div
                 data-footer-wordmark
-                class="absolute inset-x-0 top-[9vw] sm:top-[10vw] lg:top-[10.5vw] z-0 px-3 sm:px-6 font-display font-bold text-[34vw] sm:text-[31vw] lg:text-[28.5vw] leading-[0.88] tracking-[-0.025em] bg-gradient-to-b from-white via-[#F1F7F3] to-white/0 bg-clip-text text-transparent text-center whitespace-nowrap will-change-transform pointer-events-none"
+                class="absolute inset-x-0 top-[4.5vw] sm:top-[5vw] lg:top-[5.5vw] z-0 px-2 sm:px-4 font-display font-bold text-[38vw] sm:text-[36.5vw] lg:text-[35vw] leading-[0.84] tracking-[-0.03em] bg-gradient-to-b from-white via-[#F1F7F3] to-white/0 bg-clip-text text-transparent text-center whitespace-nowrap will-change-transform pointer-events-none"
             >
                 {{ $footerWordmark }}
             </div>

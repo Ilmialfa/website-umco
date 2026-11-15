@@ -68,6 +68,7 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser, Fila
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'must_change_password' => 'boolean',
         ];
     }
 

@@ -1,11 +1,11 @@
 <?php
 
-test('public self-registration endpoint is disabled for backoffice security', function () {
+test('public self-registration endpoints are disabled', function () {
     $this->get('/register')->assertNotFound();
     $this->post('/register', [
-        'name' => 'Attacker',
-        'email' => 'attacker@example.com',
-        'password' => 'SecretPass123!',
-        'password_confirmation' => 'SecretPass123!',
+        'name' => 'Intruder',
+        'email' => 'intruder@example.com',
+        'password' => 'Password#1234',
+        'password_confirmation' => 'Password#1234',
     ])->assertNotFound();
 });

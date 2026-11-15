@@ -37,8 +37,6 @@ Route::middleware('auth')
     ->get('/admin/wa/{reservation}/{template}', AdminWhatsAppRedirectController::class)
     ->name('admin.wa.redirect');
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::view('dashboard', 'dashboard')->name('dashboard');
-});
-
-require __DIR__ . '/settings.php';
+// Satukan seluruh jalur autentikasi staf & dasbor ke panel backoffice Filament.
+Route::redirect('/login', '/admin/login', 302)->name('login');
+Route::redirect('/dashboard', '/admin', 302)->name('dashboard');

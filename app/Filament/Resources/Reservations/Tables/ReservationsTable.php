@@ -29,6 +29,7 @@ class ReservationsTable
 
                 TextColumn::make('name')
                     ->label('Nama Tamu')
+                    ->description(fn (Reservation $record): string => PhoneNumber::format($record->phone_wa))
                     ->searchable()
                     ->sortable(),
 
@@ -36,27 +37,31 @@ class ReservationsTable
                     ->label('WhatsApp')
                     ->searchable()
                     ->formatStateUsing(fn ($state) => PhoneNumber::format($state))
-                    ->copyable(),
+                    ->copyable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('date')
-                    ->label('Tanggal')
+                    ->label('Jadwal')
                     ->date('d M Y')
+                    ->description(fn (Reservation $record): string => str_replace(':', '.', substr((string) $record->time, 0, 5)) . ' WIB')
                     ->sortable(),
 
                 TextColumn::make('time')
                     ->label('Jam')
                     ->formatStateUsing(fn ($state) => str_replace(':', '.', substr((string) $state, 0, 5)) . ' WIB')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('party_size')
-                    ->label('Orang')
+                    ->label('Pax')
                     ->numeric()
                     ->alignCenter()
                     ->sortable(),
 
                 TextColumn::make('seatingOption.label')
                     ->label('Tempat')
-                    ->placeholder('Bebas'),
+                    ->placeholder('Bebas')
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('source')
                     ->label('Asal')
@@ -67,7 +72,8 @@ class ReservationsTable
                         'phone' => 'Telepon',
                         default => 'Website',
                     })
-                    ->color('gray'),
+                    ->color('gray')
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('status')
                     ->label('Status')

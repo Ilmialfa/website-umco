@@ -14,19 +14,20 @@
 <section
     id="hero"
     data-nav-theme="dark"
+    data-nav-stops="0:#0D3526,0.44:#154B36,0.70:#2B6E51,0.86:#9BC4AD,1:#F6F4ED"
     data-module="hero"
     class="relative umco-hero-gradient text-white overflow-hidden pt-20 sm:pt-24 lg:pt-24 pb-8 sm:pb-12 lg:pb-14"
 >
     <div class="umco-container">
-        <div class="grid grid-cols-1 sm:grid-cols-12 items-center gap-8 lg:gap-10 min-h-[70svh] sm:min-h-[64svh] lg:min-h-[76svh]">
+        <div class="grid grid-cols-1 sm:grid-cols-12 items-center gap-6 sm:gap-6 lg:gap-8 min-h-[68svh] sm:min-h-[64svh] lg:min-h-[76svh]">
             {{-- Kiri: Eyebrow, Judul Condensed Tinggi, Deskripsi, Catatan Tangan, & Dual CTA --}}
-            <div class="sm:col-span-6 lg:col-span-6 py-4 sm:py-6 space-y-5 sm:space-y-6 relative z-10">
+            <div class="sm:col-span-5 lg:col-span-5 py-4 sm:py-6 space-y-5 sm:space-y-6 relative z-10">
                 <div data-reveal="rise" class="inline-flex items-center gap-2 text-xs sm:text-sm font-medium text-white/90">
                     <span class="w-2 h-2 rounded-full bg-[var(--aksen-soft)]"></span>
                     <span>{{ $eyebrow }}</span>
                 </div>
 
-                <h1 data-reveal="lines" class="font-display font-bold [font-size:clamp(3.4rem,6.2vw,6.25rem)] leading-[0.90] tracking-[-0.025em] text-white max-w-2xl">
+                <h1 data-reveal="lines" class="font-display font-bold [font-size:clamp(3.2rem,5.8vw,5.8rem)] leading-[0.90] tracking-[-0.025em] text-white max-w-xl">
                     {{ $heading }}
                 </h1>
 
@@ -59,21 +60,21 @@
                 </div>
             </div>
 
-            {{-- Kanan: Gambar Cutout Tanpa Latar + Kabut/Awan Lembut Penutup Potongan Bawah --}}
-            <div data-reveal="mask" class="relative sm:col-span-6 lg:col-span-6 flex justify-center sm:justify-end items-end self-end">
+            {{-- Kanan: Gambar Gedung UMCO Tanpa Latar + Kabut/Awan Lembut Penutup Potongan Bawah --}}
+            <div data-reveal="mask" class="relative sm:col-span-7 lg:col-span-7 flex justify-center sm:justify-end items-end self-end">
                 <img
                     data-hero-cutout
                     src="{{ asset($cutoutSrc) }}"
-                    alt="Suasana ramah UMCO Kampus 2 UMRI bersama segelas es kopi"
-                    width="660"
-                    height="920"
+                    alt="Gedung UMCO House di Kampus 2 UMRI Pekanbaru"
+                    width="1200"
+                    height="800"
                     fetchpriority="high"
                     decoding="async"
-                    class="relative z-10 w-[74vw] max-w-[300px] sm:w-full sm:max-w-[360px] lg:max-w-[490px] xl:max-w-[530px] h-auto object-contain object-bottom block select-none pointer-events-none [mask-image:linear-gradient(to_bottom,black_82%,transparent_100%)]"
+                    class="relative z-10 w-full max-w-[440px] sm:max-w-none lg:w-[106%] xl:w-[112%] lg:-mr-6 h-auto object-contain object-bottom block select-none pointer-events-none [mask-image:linear-gradient(to_bottom,black_80%,transparent_100%)]"
                 >
 
                 {{-- Awan / kabut halus melapisi bagian bawah foto agar perpotongan menyatu --}}
-                <div aria-hidden="true" class="pointer-events-none select-none absolute -bottom-12 inset-x-[-18%] z-20 h-28 sm:h-36 lg:h-44">
+                <div aria-hidden="true" class="pointer-events-none select-none absolute -bottom-12 inset-x-[-14%] z-20 h-28 sm:h-36 lg:h-44">
                     <div class="umco-hero-cloud-puff absolute left-[4%] bottom-4 w-[58%] h-24 sm:h-32 rounded-full"></div>
                     <div class="umco-hero-cloud-puff absolute right-[-4%] bottom-2 w-[62%] h-28 sm:h-36 rounded-full opacity-95"></div>
                     <div class="umco-hero-cloud-puff absolute left-[24%] -bottom-2 w-[56%] h-24 sm:h-32 rounded-full opacity-90"></div>

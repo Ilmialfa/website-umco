@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Banners\Tables;
 
+use App\Models\Banner;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -17,9 +18,20 @@ class BannersTable
         return $table
             ->defaultSort('sort', 'asc')
             ->columns([
-                ImageColumn::make('image_path')
+                ImageColumn::make('preview_banner')
                     ->label('Gambar')
-                    ->rounded(),
+                    ->rounded()
+                    ->getStateUsing(function (Banner $record): string {
+                        $path = (string) ($record->image_path ?? '');
+                        if ($path === '') {
+                            return asset('/images/menu-placeholder.svg');
+                        }
+
+                        return str_starts_with($path, 'http') || str_starts_with($path, '/')
+                            ? asset($path)
+                            : asset('storage/' . ltrim($path, '/'));
+                    })
+                    ->defaultImageUrl(asset('/images/menu-placeholder.svg')),
 
                 TextColumn::make('title')
                     ->label('Judul')

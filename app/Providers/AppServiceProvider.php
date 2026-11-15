@@ -92,6 +92,12 @@ class AppServiceProvider extends ServiceProvider
                 'ip' => $event->request->ip(),
             ]);
         });
+
+        User::updating(function (User $user): void {
+            if ($user->isDirty('password') && $user->must_change_password) {
+                $user->must_change_password = false;
+            }
+        });
     }
 
     /**

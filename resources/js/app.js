@@ -21,6 +21,8 @@ const modules = {
 };
 
 let io = null;
+let loopIo = null;
+let resizeObs = null;
 let cleanups = [];
 let lenisInstance = null;
 let rafCallback = null;
@@ -33,15 +35,15 @@ function initFooter() {
     const cutout = footer.querySelector('[data-footer-cutout]');
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduced) {
-        if (wordmark) gsap.set(wordmark, { scaleX: 1.02, letterSpacing: '0.04em', y: 0, opacity: 1 });
+        if (wordmark) gsap.set(wordmark, { scaleX: 1, letterSpacing: '-0.02em', y: 0, opacity: 1 });
         return;
     }
 
     if (wordmark) {
-        gsap.set(wordmark, { scaleX: 0.68, letterSpacing: '-0.03em', y: 40, opacity: 0.25, transformOrigin: '50% 80%' });
+        gsap.set(wordmark, { scaleX: 0.72, letterSpacing: '-0.04em', y: 36, opacity: 0.3, transformOrigin: '50% 80%' });
         gsap.to(wordmark, {
-            scaleX: 1.16,
-            letterSpacing: '0.07em',
+            scaleX: 1.0,
+            letterSpacing: '0.005em',
             y: 0,
             opacity: 1,
             ease: 'power2.out',
@@ -49,13 +51,13 @@ function initFooter() {
                 trigger: footer,
                 start: 'top 95%',
                 end: 'bottom bottom',
-                scrub: 1.6,
+                scrub: 1.4,
             },
         });
     }
 
     if (cutout) {
-        gsap.set(cutout, { y: 36, opacity: 0.75 });
+        gsap.set(cutout, { y: 28, opacity: 0.8 });
         gsap.to(cutout, {
             y: 0,
             opacity: 1,
@@ -78,15 +80,45 @@ async function initLenisIfEnabled() {
 
     const { default: Lenis } = await import('lenis');
     lenisInstance = new Lenis({
-        lerp: 0.075,
+        lerp: 0.085,
         smoothWheel: true,
-        wheelMultiplier: 0.92,
-        touchMultiplier: 1.4,
+        wheelMultiplier: 0.96,
+        touchMultiplier: 1.35,
+        autoResize: true,
     });
     lenisInstance.on('scroll', ScrollTrigger.update);
     rafCallback = (time) => lenisInstance?.raf(time * 1000);
     gsap.ticker.add(rafCallback);
     gsap.ticker.lagSmoothing(0);
+
+    // Sinkronkan batas gulir Lenis secara otomatis saat tinggi dokumen berubah (misal pindah step /reservasi)
+    if (typeof ResizeObserver !== 'undefined' && document.body) {
+        let resizeRaf = 0;
+        resizeObs = new ResizeObserver(() => {
+            if (resizeRaf) return;
+            resizeRaf = requestAnimationFrame(() => {
+                resizeRaf = 0;
+                lenisInstance?.resize();
+                ScrollTrigger.refresh();
+            });
+        });
+        resizeObs.observe(document.body);
+    }
+}
+
+function initOffscreenMotionPause() {
+    const animated = document.querySelectorAll('.umco-marquee-track, .umco-col-loop-up, .umco-col-loop-down, .umco-vapor-wisp');
+    if (!animated.length || typeof IntersectionObserver === 'undefined') return;
+
+    loopIo = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                entry.target.dataset.loopPaused = entry.isIntersecting ? '0' : '1';
+            });
+        },
+        { rootMargin: '120px 0px' }
+    );
+    animated.forEach((el) => loopIo.observe(el));
 }
 
 function initSectionModules() {
@@ -127,6 +159,7 @@ function bootPage() {
     initReveal();
     initFooter();
     initSectionModules();
+    initOffscreenMotionPause();
     initLenisIfEnabled();
 }
 
@@ -134,6 +167,16 @@ function teardownPage() {
     if (io) {
         io.disconnect();
         io = null;
+    }
+
+    if (loopIo) {
+        loopIo.disconnect();
+        loopIo = null;
+    }
+
+    if (resizeObs) {
+        resizeObs.disconnect();
+        resizeObs = null;
     }
 
     cleanups.forEach((fn) => {

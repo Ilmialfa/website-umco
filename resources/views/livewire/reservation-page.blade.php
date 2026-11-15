@@ -25,8 +25,12 @@
 @endphp
 
 <div
+    id="reservasi-wizard"
     data-module="reservasi-tools"
+    data-nav-bg="#F6F4ED"
     data-has-query-items="{{ $hasQueryItems ? '1' : '0' }}"
+    @umco-step-changed.window="window.scrollTo({ top: 0, behavior: 'smooth' })"
+    @keydown.escape.window="mobileSheetOpen = false"
     x-data="{
         mobileSheetOpen: @entangle('mobileSheetOpen'),
         tabletExpanded: @entangle('tabletKarcisExpanded'),
@@ -148,16 +152,13 @@
                 </div>
             </div>
 
-            {{-- GRID UTAMA: Kiri 7 kol area langkah bergeser, Kanan 5 kol Karcis sticky (Desktop >=1024px) --}}
+            {{-- GRID UTAMA: Kiri 7 kol langkah aktif (tanpa wrapper 500% agar scroll selalu alami), Kanan 5 kol Karcis sticky --}}
             <div class="mt-6 lg:mt-8 lg:grid lg:grid-cols-12 lg:gap-10 items-start">
-                <div class="lg:col-span-7 overflow-hidden">
-                    <div
-                        class="flex items-start transition-transform duration-[420ms] ease-[cubic-bezier(.22,1,.36,1)]"
-                        style="width: 500%; transform: translateX(-{{ ($step - 1) * 20 }}%);"
-                    >
+                <div class="lg:col-span-7 min-w-0">
+                    <div>
                         {{-- LANGKAH 1: KAPAN & BERAPA ORANG --}}
                         <section
-                            class="w-1/5 shrink-0 pr-1 space-y-6 {{ $step !== 1 ? 'invisible max-h-[360px] overflow-hidden' : '' }}"
+                            class="{{ $step !== 1 ? 'hidden' : 'space-y-6 umco-step-enter' }}"
                             aria-hidden="{{ $step !== 1 ? 'true' : 'false' }}"
                             @if ($step !== 1) inert @endif
                         >
@@ -167,7 +168,7 @@
                             </div>
 
                             {{-- Jumlah orang --}}
-                            <div class="p-4 sm:p-5 bg-[var(--kertas-terang)] border border-[var(--garis)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div class="p-4 sm:p-5 rounded-2xl bg-[var(--kertas-terang)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                 <div>
                                     <p class="font-semibold text-base">Jumlah orang</p>
                                     <p class="text-xs sm:text-sm text-[var(--tinta-70)] mt-0.5">
@@ -266,7 +267,7 @@
 
                         {{-- LANGKAH 2: MAU DUDUK DI MANA --}}
                         <section
-                            class="w-1/5 shrink-0 pr-1 space-y-6 {{ $step !== 2 ? 'invisible max-h-[360px] overflow-hidden' : '' }}"
+                            class="{{ $step !== 2 ? 'hidden' : 'space-y-6 umco-step-enter' }}"
                             aria-hidden="{{ $step !== 2 ? 'true' : 'false' }}"
                             @if ($step !== 2) inert @endif
                         >
@@ -299,7 +300,7 @@
                                     wire:model.live.debounce.300ms="seatingNote"
                                     rows="3"
                                     placeholder="Ada permintaan lain? Ulang tahun, butuh colokan banyak, dsb."
-                                    class="w-full px-4 py-3 text-base bg-[var(--kertas-terang)] border border-[var(--garis)] focus:border-[var(--tinta)] focus:outline-none"
+                                    class="w-full px-4 py-3 text-base rounded-2xl bg-[var(--kertas-terang)] border border-transparent focus:border-[var(--tinta)]/40 focus:outline-none transition-colors"
                                 ></textarea>
                                 <p class="mt-2 text-xs sm:text-sm text-[var(--tinta-70)]">
                                     Kami usahakan sesuai permintaan, tapi tergantung meja yang kosong.
@@ -307,7 +308,7 @@
                             </div>
 
                             @if ($this->floorPlanUrl)
-                                <div class="p-4 bg-[var(--kertas-terang)] border border-[var(--garis)] space-y-2">
+                                <div class="p-4 rounded-2xl bg-[var(--kertas-terang)] space-y-2">
                                     <p class="text-xs font-semibold text-[var(--tinta-70)]">Denah kedai (panduan area)</p>
                                     <img
                                         src="{{ $this->floorPlanUrl }}"
@@ -336,7 +337,7 @@
 
                         {{-- LANGKAH 3: PILIH MENU --}}
                         <section
-                            class="w-1/5 shrink-0 pr-1 space-y-5 {{ $step !== 3 ? 'invisible max-h-[360px] overflow-hidden' : '' }}"
+                            class="{{ $step !== 3 ? 'hidden' : 'space-y-5 umco-step-enter' }}"
                             aria-hidden="{{ $step !== 3 ? 'true' : 'false' }}"
                             @if ($step !== 3) inert @endif
                         >
@@ -348,7 +349,7 @@
                             </div>
 
                             {{-- Progress bar minimal belanja --}}
-                            <div class="p-4 bg-[var(--kertas-terang)] border border-[var(--garis)] space-y-2.5">
+                            <div class="p-4 rounded-2xl bg-[var(--kertas-terang)] space-y-2.5">
                                 <div class="flex flex-wrap items-baseline justify-between gap-2 text-sm">
                                     @if ($quoteData['meets_min_spend'])
                                         <span class="font-semibold text-[var(--tinta)]">
@@ -381,7 +382,7 @@
                                     type="search"
                                     wire:model.live.debounce.250ms="menuSearch"
                                     placeholder="Cari kopi, matcha, makanan..."
-                                    class="w-full px-4 py-2.5 text-base bg-[var(--kertas-terang)] border border-[var(--garis)] focus:border-[var(--tinta)] focus:outline-none"
+                                    class="w-full px-4 py-2.5 text-base rounded-full bg-[var(--kertas-terang)] border border-transparent focus:border-[var(--tinta)]/40 focus:outline-none transition-colors"
                                 >
                                 <div class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
                                     <button
@@ -405,7 +406,7 @@
 
                             {{-- Keranjang aktif saat ini --}}
                             @if (! empty($selectedItems))
-                                <div class="p-4 rounded-xl bg-[var(--kertas-terang)] border border-[var(--garis)] space-y-2.5">
+                                <div class="p-4 rounded-2xl bg-[var(--kertas-terang)] space-y-2.5">
                                     <p class="text-xs font-semibold text-[var(--tinta-70)]">Pesananmu sekarang</p>
                                     @foreach ($selectedItems as $key => $line)
                                         <div wire:key="cart-line-{{ $key }}" class="flex items-center justify-between gap-3 text-sm">
@@ -526,7 +527,7 @@
 
                         {{-- LANGKAH 4: DATA KAMU --}}
                         <section
-                            class="w-1/5 shrink-0 pr-1 space-y-5 {{ $step !== 4 ? 'invisible max-h-[360px] overflow-hidden' : '' }}"
+                            class="{{ $step !== 4 ? 'hidden' : 'space-y-5 umco-step-enter' }}"
                             aria-hidden="{{ $step !== 4 ? 'true' : 'false' }}"
                             @if ($step !== 4) inert @endif
                         >
@@ -542,7 +543,7 @@
                                     type="text"
                                     wire:model.live.debounce.250ms="name"
                                     placeholder="Contoh: Dinda Kirana"
-                                    class="w-full px-4 py-3 text-base bg-[var(--kertas-terang)] border border-[var(--garis)] focus:border-[var(--tinta)] focus:outline-none"
+                                    class="w-full px-4 py-3 text-base rounded-2xl bg-[var(--kertas-terang)] border border-transparent focus:border-[var(--tinta)]/40 focus:outline-none transition-colors"
                                 >
                                 @error('name')
                                     <p class="mt-1.5 text-sm text-[var(--stempel)] font-medium">{{ $message }}</p>
@@ -557,7 +558,7 @@
                                     inputmode="tel"
                                     wire:model.live.debounce.250ms="phoneInput"
                                     placeholder="082212345678"
-                                    class="w-full px-4 py-3 text-base bg-[var(--kertas-terang)] border border-[var(--garis)] focus:border-[var(--tinta)] focus:outline-none"
+                                    class="w-full px-4 py-3 text-base rounded-2xl bg-[var(--kertas-terang)] border border-transparent focus:border-[var(--tinta)]/40 focus:outline-none transition-colors"
                                 >
                                 @if ($this->normalizedPhonePreview)
                                     <p class="mt-1.5 text-xs sm:text-sm text-[var(--tinta-70)]">
@@ -576,7 +577,7 @@
                                     wire:model.live.debounce.300ms="note"
                                     rows="2"
                                     placeholder="Misal: datang bertahap, minta kopi dibuat pas kami datang."
-                                    class="w-full px-4 py-3 text-base bg-[var(--kertas-terang)] border border-[var(--garis)] focus:border-[var(--tinta)] focus:outline-none"
+                                    class="w-full px-4 py-3 text-base rounded-2xl bg-[var(--kertas-terang)] border border-transparent focus:border-[var(--tinta)]/40 focus:outline-none transition-colors"
                                 ></textarea>
                             </div>
 
@@ -598,7 +599,7 @@
 
                         {{-- LANGKAH 5: BAYAR --}}
                         <section
-                            class="w-1/5 shrink-0 pr-1 space-y-6 {{ $step !== 5 ? 'invisible max-h-[360px] overflow-hidden' : '' }}"
+                            class="{{ $step !== 5 ? 'hidden' : 'space-y-6 umco-step-enter' }}"
                             aria-hidden="{{ $step !== 5 ? 'true' : 'false' }}"
                             @if ($step !== 5) inert @endif
                         >
@@ -612,9 +613,9 @@
                                 <button
                                     type="button"
                                     wire:click="$set('paymentType', 'dp')"
-                                    class="p-4 text-left border transition-colors {{ $paymentType === 'dp'
-                                        ? 'bg-[var(--tinta)] text-[var(--kertas-terang)] border-[var(--tinta)]'
-                                        : 'bg-[var(--kertas-terang)] border-[var(--garis)] hover:border-[var(--tinta)]' }}"
+                                    class="p-4 rounded-2xl text-left transition-colors {{ $paymentType === 'dp'
+                                        ? 'bg-[var(--tinta)] text-[var(--kertas-terang)]'
+                                        : 'bg-[var(--kertas-terang)] hover:bg-white' }}"
                                 >
                                     <span class="block text-xs opacity-75">Minimal {{ $quoteData['dp_percentage'] }}%</span>
                                     <span class="mt-1 block font-display font-extrabold text-xl">
@@ -627,9 +628,9 @@
                                     <button
                                         type="button"
                                         wire:click="$set('paymentType', 'full')"
-                                        class="p-4 text-left border transition-colors {{ $paymentType === 'full'
-                                            ? 'bg-[var(--tinta)] text-[var(--kertas-terang)] border-[var(--tinta)]'
-                                            : 'bg-[var(--kertas-terang)] border-[var(--garis)] hover:border-[var(--tinta)]' }}"
+                                        class="p-4 rounded-2xl text-left transition-colors {{ $paymentType === 'full'
+                                            ? 'bg-[var(--tinta)] text-[var(--kertas-terang)]'
+                                            : 'bg-[var(--kertas-terang)] hover:bg-white' }}"
                                     >
                                         <span class="block text-xs opacity-75">Bayar penuh</span>
                                         <span class="mt-1 block font-display font-extrabold text-xl">
@@ -641,12 +642,12 @@
                             </div>
 
                             {{-- Nominal + QRIS statis --}}
-                            <div class="p-5 bg-[var(--kertas-terang)] border border-[var(--garis)] grid sm:grid-cols-12 gap-6 items-center">
+                            <div class="p-5 rounded-2xl bg-[var(--kertas-terang)] grid sm:grid-cols-12 gap-6 items-center">
                                 <div class="sm:col-span-5 flex flex-col items-center">
                                     <img
                                         src="{{ $this->qrisUrl }}"
                                         alt="QRIS statis pembayaran UMCO House"
-                                        class="w-48 h-auto border border-[var(--garis)] bg-[var(--kertas-terang)]"
+                                        class="w-48 h-auto rounded-xl bg-white p-2"
                                     >
                                     <a
                                         href="{{ $this->qrisUrl }}"
@@ -703,7 +704,7 @@
                                 <label for="proofInput" class="block text-sm font-semibold">
                                     Unggah bukti transfer (wajib)
                                 </label>
-                                <div class="p-5 bg-[var(--kertas-terang)] border border-dashed border-[var(--tinta)]/45 text-center space-y-3">
+                                <div class="p-5 rounded-2xl bg-[var(--kertas-terang)] border border-dashed border-[var(--tinta)]/35 text-center space-y-3">
                                     <input
                                         id="proofInput"
                                         type="file"
@@ -759,7 +760,7 @@
                                 @enderror
 
                                 @if ($showRulesDrawer)
-                                    <ol class="p-4 bg-[var(--kertas-terang)] border border-[var(--garis)] space-y-2 text-xs text-[var(--tinta-70)] list-decimal list-inside">
+                                    <ol class="p-4 rounded-2xl bg-[var(--kertas-terang)] space-y-2 text-xs text-[var(--tinta-70)] list-decimal list-inside">
                                         @foreach ($this->rulesList as $rule)
                                             <li><strong class="text-[var(--tinta)]">{{ $rule->title }}</strong> — {{ $rule->body }}</li>
                                         @endforeach
@@ -852,6 +853,7 @@
             <div
                 x-show="mobileSheetOpen"
                 x-transition.opacity
+                style="display: none;"
                 class="sm:hidden fixed inset-0 z-50 bg-[var(--tinta)]/60 flex items-end"
                 @click.self="mobileSheetOpen = false"
             >
@@ -920,7 +922,7 @@
                 </div>
 
                 <div class="lg:col-span-6 space-y-5">
-                    <div class="p-5 bg-[var(--kertas-terang)] border border-[var(--garis)] space-y-2">
+                    <div class="p-5 rounded-2xl bg-[var(--kertas-terang)] space-y-2">
                         <p class="text-xs text-[var(--tinta-70)]">Kode booking kamu</p>
                         <p class="font-display font-extrabold text-3xl tracking-tight">{{ $createdCode }}</p>
                         <p class="text-sm text-[var(--tinta-70)]">

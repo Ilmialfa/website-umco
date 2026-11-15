@@ -314,7 +314,7 @@ textarea {
 
 .umco-audit-btn:hover {
     background-color: var(--umco-aksen-tua);
-    color: #161615 !important;
+    color: #FFFFFF !important;
 }
 
 .umco-audit-empty {
@@ -676,4 +676,255 @@ textarea {
     .umco-login-pillars {
         display: none;
     }
+}
+
+/* Rapikan Tab Pengaturan agar tidak terpotong ke kanan */
+.fi-tabs {
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    overflow-x: visible !important;
+}
+
+/* Custom Backoffice Report & Crowd Pattern Styles (Mandiri di filament-theme.css) */
+.umco-bo-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.umco-report-filters {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.9rem;
+    align-items: end;
+}
+
+@media (min-width: 640px) {
+    .umco-report-filters {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .umco-report-filters {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+}
+
+.umco-bo-field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--umco-tinta-70);
+    margin-bottom: 6px;
+}
+
+.umco-bo-control {
+    width: 100%;
+    height: 40px;
+    padding: 0 12px;
+    border-radius: 10px;
+    border: none;
+    background-color: var(--umco-canvas);
+    color: var(--umco-tinta);
+    font-size: 13px;
+    font-family: var(--font-sans);
+    outline: none;
+}
+
+.umco-bo-control:focus {
+    background-color: var(--umco-surface);
+    outline: 2px solid var(--umco-aksen);
+}
+
+.umco-report-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.umco-report-print-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 9999px;
+    border: none;
+    background-color: var(--umco-surface-alt);
+    color: var(--umco-tinta);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.umco-report-print-btn:hover {
+    background-color: var(--umco-tinta);
+    color: #FFFFFF;
+}
+
+.umco-report-summary {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+@media (min-width: 1024px) {
+    .umco-report-summary {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+.umco-stat-card {
+    background-color: var(--umco-surface);
+    border-radius: 14px;
+    padding: 18px 20px;
+}
+
+.umco-stat-label {
+    margin: 0;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--umco-tinta-70);
+}
+
+.umco-stat-value {
+    margin: 6px 0 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--umco-tinta);
+    font-variant-numeric: tabular-nums;
+}
+
+.umco-stat-value--accent {
+    color: var(--umco-aksen);
+}
+
+.umco-bo-table-wrap {
+    overflow-x: auto;
+    border-radius: 14px;
+    background-color: var(--umco-surface);
+}
+
+.umco-bo-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 13px;
+}
+
+.umco-bo-table thead tr {
+    background-color: var(--umco-canvas);
+}
+
+.umco-bo-table th {
+    padding: 12px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--umco-tinta-70);
+    white-space: nowrap;
+}
+
+.umco-bo-table td {
+    padding: 13px 14px;
+    color: var(--umco-tinta);
+    border-top: 1px solid #F1EFE8;
+    vertical-align: middle;
+}
+
+.umco-bo-table tbody tr:hover {
+    background-color: #FAF9F6;
+}
+
+.umco-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 9999px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.umco-pill--neutral { background-color: var(--umco-surface-alt); color: var(--umco-tinta); }
+.umco-pill--info { background-color: #E3F0FA; color: #195682; }
+.umco-pill--success { background-color: #DCEBE1; color: #134731; }
+.umco-pill--warning { background-color: #F7ECDA; color: #8A530B; }
+.umco-pill--danger { background-color: #F6ECE9; color: #9E3B2B; }
+
+.umco-crowd-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background-color: var(--umco-surface);
+    padding: 16px 20px;
+    border-radius: 14px;
+}
+
+.umco-crowd-desc {
+    margin: 0;
+    font-size: 13px;
+    color: var(--umco-tinta-70);
+}
+
+.umco-crowd-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.umco-crowd-card {
+    background-color: var(--umco-surface);
+    border-radius: 14px;
+    padding: 18px;
+    overflow-x: auto;
+}
+
+.umco-crowd-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 4px;
+    font-size: 12px;
+}
+
+.umco-crowd-table th {
+    padding: 6px 4px;
+    text-align: center;
+    font-weight: 700;
+    color: var(--umco-tinta-70);
+}
+
+.umco-crowd-table th:first-child {
+    text-align: left;
+    padding-right: 12px;
+}
+
+.umco-crowd-day {
+    font-weight: 600;
+    color: var(--umco-tinta);
+    white-space: nowrap;
+    padding-right: 12px;
+}
+
+.umco-crowd-input {
+    width: 48px;
+    height: 32px;
+    text-align: center;
+    border-radius: 8px;
+    border: none;
+    background-color: var(--umco-canvas);
+    color: var(--umco-tinta);
+    font-size: 12px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.umco-crowd-input:focus {
+    background-color: #FFFFFF;
+    outline: 2px solid var(--umco-aksen);
 }

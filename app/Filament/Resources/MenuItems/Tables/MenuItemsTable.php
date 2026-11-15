@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\MenuItems\Tables;
 
+use App\Models\MenuItem;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -19,10 +20,11 @@ class MenuItemsTable
         return $table
             ->defaultSort('favorite_order', 'asc')
             ->columns([
-                ImageColumn::make('image_path')
+                ImageColumn::make('preview_image')
                     ->label('Foto')
                     ->circular()
-                    ->defaultImageUrl('/images/coffee-placeholder.jpg'),
+                    ->getStateUsing(fn (MenuItem $record): string => $record->imageUrlFor(480) ?? asset('/images/menu-placeholder.svg'))
+                    ->defaultImageUrl(asset('/images/menu-placeholder.svg')),
 
                 TextColumn::make('name')
                     ->label('Nama Menu')

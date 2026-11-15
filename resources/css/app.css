@@ -286,22 +286,21 @@
     transform: translateY(-100%);
 }
 
-/* Navbar lengket penuh atas tanpa garis tepi & tanpa bayangan */
+/* Navbar adaptif penuh atas mengikuti warna section belakang dengan transisi halus */
 #umco-navbar {
     transition: transform var(--dur-2) var(--ease-out);
 }
 #umco-navbar .nav-bar {
-    transition: background-color 280ms var(--ease-out), color 280ms var(--ease-out);
+    background-color: var(--nav-bg, var(--kertas));
+    transition: background-color 360ms var(--ease-out), color 280ms var(--ease-out);
     border-bottom: none;
     box-shadow: none;
 }
 #umco-navbar[data-theme="dark"] .nav-bar {
-    background: linear-gradient(to bottom, rgba(13, 53, 38, 0.85), rgba(13, 53, 38, 0));
     color: #FFFFFF;
 }
 #umco-navbar[data-theme="light"] .nav-bar,
 #umco-navbar[data-theme="solid"] .nav-bar {
-    background-color: var(--kertas);
     color: var(--tinta);
 }
 section[id] {
@@ -644,6 +643,37 @@ html.lenis body {
 }
 .umco-roll-out-up {
     animation: umco-roll-out-up 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.umco-marquee-track,
+.umco-col-loop-up,
+.umco-col-loop-down,
+.umco-vapor-wisp {
+    transition: opacity 180ms ease;
+}
+[data-loop-paused="1"].umco-marquee-track,
+[data-loop-paused="1"] .umco-marquee-track,
+[data-loop-paused="1"].umco-col-loop-up,
+[data-loop-paused="1"] .umco-col-loop-up,
+[data-loop-paused="1"].umco-col-loop-down,
+[data-loop-paused="1"] .umco-col-loop-down,
+[data-loop-paused="1"].umco-vapor-wisp,
+[data-loop-paused="1"] .umco-vapor-wisp {
+    animation-play-state: paused !important;
+}
+
+@keyframes umco-step-enter {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.umco-step-enter {
+    animation: umco-step-enter 260ms var(--ease-out) both;
 }
 
 @media (prefers-reduced-motion: reduce) {

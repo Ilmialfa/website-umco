@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\GalleryItems\Tables;
 
+use App\Models\GalleryItem;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -18,9 +19,20 @@ class GalleryItemsTable
         return $table
             ->defaultSort('sort', 'asc')
             ->columns([
-                ImageColumn::make('image_path')
+                ImageColumn::make('preview_media')
                     ->label('Media')
-                    ->rounded(),
+                    ->rounded()
+                    ->getStateUsing(function (GalleryItem $record): string {
+                        $path = (string) ($record->image_path ?? '');
+                        if ($path === '' || $record->type === 'video') {
+                            return asset('/images/menu-placeholder.svg');
+                        }
+
+                        return str_starts_with($path, 'http') || str_starts_with($path, '/')
+                            ? asset($path)
+                            : asset('storage/' . ltrim($path, '/'));
+                    })
+                    ->defaultImageUrl(asset('/images/menu-placeholder.svg')),
 
                 TextColumn::make('group')
                     ->label('Area')

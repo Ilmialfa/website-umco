@@ -2,15 +2,28 @@
 
 use App\Models\User;
 
-test('guests are redirected to the login page', function () {
-    $response = $this->get(route('dashboard'));
-    $response->assertRedirect(route('login'));
+test('legacy dashboard redirects unauthenticated and staff users to admin panel', function () {
+    $this->get('/dashboard')->assertRedirect('/admin');
+    $this->get('/admin')->assertRedirect('/admin/login');
+
+    $staff = User::factory()->create(['role' => 'admin']);
+    $this->actingAs($staff)
+        ->get('/dashboard')
+        ->assertRedirect('/admin');
 });
 
-test('authenticated users can visit the dashboard', function () {
-    $user = User::factory()->create();
-    $this->actingAs($user);
+test('staff roles can visit admin dashboard while guest role receives forbidden', function () {
+    foreach (['owner', 'admin', 'cashier'] as $role) {
+        $user = User::factory()->create(['role' => $role]);
 
-    $response = $this->get(route('dashboard'));
-    $response->assertOk();
+        $this->actingAs($user)
+            ->get('/admin')
+            ->assertOk();
+    }
+
+    $guest = User::factory()->create(['role' => 'guest']);
+
+    $this->actingAs($guest)
+        ->get('/admin')
+        ->assertForbidden();
 });

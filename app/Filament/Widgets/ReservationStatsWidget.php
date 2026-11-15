@@ -12,6 +12,8 @@ class ReservationStatsWidget extends BaseWidget
 {
     protected static ?int $sort = 1;
 
+    protected static bool $isLazy = false;
+
     protected function getStats(): array
     {
         $metrics = Cache::remember('filament.dashboard.stats', 15, function (): array {

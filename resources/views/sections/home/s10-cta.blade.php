@@ -20,6 +20,7 @@
 <section
     id="cta-footer"
     data-nav-theme="light"
+    data-nav-stops="0:#F6F4ED,0.44:#DFEDE4,0.78:#95C5AB,1:#226649"
     class="umco-cta-gradient text-[var(--tinta)] pt-20 pb-24 sm:pt-28 sm:pb-32 overflow-hidden"
 >
     <div class="umco-container">

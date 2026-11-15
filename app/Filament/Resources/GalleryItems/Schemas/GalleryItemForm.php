@@ -63,9 +63,11 @@ class GalleryItemForm
                                         ->label('Berkas Foto atau Video Loop')
                                         ->disk('public')
                                         ->directory('gallery')
+                                        ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'video/mp4'])
+                                        ->maxSize(12288)
                                         ->required()
                                         ->columnSpanFull()
-                                        ->helperText('Format JPG, PNG, WebP, atau video MP4 ringan.'),
+                                        ->helperText('Format JPG, PNG, WebP, atau video MP4 ringan (maks. 12 MB). SVG/skrip ditolak otomatis.'),
 
                                     TextInput::make('caption')
                                         ->label('Keterangan / Teks Foto (Caption)')

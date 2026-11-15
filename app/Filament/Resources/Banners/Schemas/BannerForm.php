@@ -56,9 +56,10 @@ class BannerForm
                                         ->label('Gambar Banner Promosi')
                                         ->disk('public')
                                         ->directory('banners')
-                                        ->image()
+                                        ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                                        ->maxSize(5120)
                                         ->columnSpanFull()
-                                        ->helperText('Format JPG / PNG / WebP resolusi tinggi.'),
+                                        ->helperText('Format JPG / PNG / WebP resolusi tinggi (maks. 5 MB).'),
                                 ]),
                         ])->columnSpan(['default' => 1, 'lg' => 2]),
 

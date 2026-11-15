@@ -61,9 +61,10 @@ class MenuItemForm
                                         ->label('Foto Menu Asli')
                                         ->disk('public')
                                         ->directory('menu')
-                                        ->image()
+                                        ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                                        ->maxSize(5120)
                                         ->columnSpanFull()
-                                        ->helperText('Format JPG, PNG, atau WebP. Jika dikosongkan, kartu menu otomatis menggunakan visual estetik UMCO.'),
+                                        ->helperText('Format JPG, PNG, atau WebP (maks. 5 MB). Jika dikosongkan, kartu menu otomatis menggunakan visual estetik UMCO.'),
                                 ]),
                         ])->columnSpan(['default' => 1, 'lg' => 2]),
 

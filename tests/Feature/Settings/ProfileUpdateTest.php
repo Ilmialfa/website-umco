@@ -1,75 +1,43 @@
 <?php
 
 use App\Models\User;
+use Filament\Auth\Pages\EditProfile;
+use Illuminate\Support\Facades\Hash;
 use Livewire\Livewire;
 
-test('profile page is displayed', function () {
-    $this->actingAs($user = User::factory()->create());
+test('legacy starter kit profile endpoint is disabled', function () {
+    $user = User::factory()->create(['role' => 'admin']);
 
-    $this->get(route('profile.edit'))->assertOk();
+    $this->actingAs($user)
+        ->get('/settings/profile')
+        ->assertNotFound();
 });
 
-test('profile information can be updated', function () {
-    $user = User::factory()->create();
+test('staff profile page renders inside admin panel and password update clears must_change_password flag', function () {
+    $staff = User::factory()->create([
+        'role' => 'admin',
+        'must_change_password' => true,
+        'password' => 'OldPassword#2026',
+    ]);
 
-    $this->actingAs($user);
+    $this->actingAs($staff)
+        ->get('/admin/profile')
+        ->assertOk();
 
-    $response = Livewire::test('pages::settings.profile')
-        ->set('name', 'Test User')
-        ->set('email', 'test@example.com')
-        ->call('updateProfileInformation');
+    Livewire::actingAs($staff)
+        ->test(EditProfile::class)
+        ->fillForm([
+            'name' => 'Barista Kepala UMCO',
+            'email' => $staff->email,
+            'currentPassword' => 'OldPassword#2026',
+            'password' => 'NewStrongPass#2026',
+            'passwordConfirmation' => 'NewStrongPass#2026',
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors();
 
-    $response->assertHasNoErrors();
-
-    $user->refresh();
-
-    expect($user->name)->toEqual('Test User');
-    expect($user->email)->toEqual('test@example.com');
-    expect($user->email_verified_at)->toBeNull();
-});
-
-test('email verification status is unchanged when email address is unchanged', function () {
-    $user = User::factory()->create();
-
-    $this->actingAs($user);
-
-    $response = Livewire::test('pages::settings.profile')
-        ->set('name', 'Test User')
-        ->set('email', $user->email)
-        ->call('updateProfileInformation');
-
-    $response->assertHasNoErrors();
-
-    expect($user->refresh()->email_verified_at)->not->toBeNull();
-});
-
-test('user can delete their account', function () {
-    $user = User::factory()->create();
-
-    $this->actingAs($user);
-
-    $response = Livewire::test('pages::settings.delete-user-modal')
-        ->set('password', 'password')
-        ->call('deleteUser');
-
-    $response
-        ->assertHasNoErrors()
-        ->assertRedirect('/');
-
-    expect($user->fresh())->toBeNull();
-    expect(auth()->check())->toBeFalse();
-});
-
-test('correct password must be provided to delete account', function () {
-    $user = User::factory()->create();
-
-    $this->actingAs($user);
-
-    $response = Livewire::test('pages::settings.delete-user-modal')
-        ->set('password', 'wrong-password')
-        ->call('deleteUser');
-
-    $response->assertHasErrors(['password']);
-
-    expect($user->fresh())->not->toBeNull();
+    $staff->refresh();
+    expect($staff->name)->toBe('Barista Kepala UMCO');
+    expect($staff->must_change_password)->toBeFalse();
+    expect(Hash::check('NewStrongPass#2026', $staff->password))->toBeTrue();
 });

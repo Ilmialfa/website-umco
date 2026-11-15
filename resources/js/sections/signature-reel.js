@@ -30,13 +30,22 @@ export function init(el) {
     };
 
     if (!reduced) {
+        let isVisible = true;
+        const visObs = new IntersectionObserver(
+            (entries) => {
+                isVisible = entries[0]?.isIntersecting ?? true;
+            },
+            { rootMargin: '140px 0px' }
+        );
+        visObs.observe(el);
+        cleanups.push(() => visObs.disconnect());
+
         const tick = (_time, deltaMs) => {
-            if (!pointerDown && halfWidth > 0) {
-                const factor = Math.min(1, (deltaMs / 1000) * 6.5);
-                currentSpeed += (targetSpeed - currentSpeed) * factor;
-                offsetX = wrapOffset(offsetX + (currentSpeed * deltaMs) / 1000);
-                strip.style.transform = `translate3d(${offsetX}px, 0, 0)`;
-            }
+            if (!isVisible || pointerDown || halfWidth <= 0) return;
+            const factor = Math.min(1, (deltaMs / 1000) * 6.5);
+            currentSpeed += (targetSpeed - currentSpeed) * factor;
+            offsetX = wrapOffset(offsetX + (currentSpeed * deltaMs) / 1000);
+            strip.style.transform = `translate3d(${offsetX}px, 0, 0)`;
         };
         gsap.ticker.add(tick);
         cleanups.push(() => gsap.ticker.remove(tick));

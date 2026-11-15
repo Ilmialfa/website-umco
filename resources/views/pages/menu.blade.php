@@ -147,9 +147,9 @@
             </div>
         </section>
 
-        {{-- Bar kontrol inline tanpa sticky agar tidak memotong foto saat digulir --}}
-        <section class="bg-[var(--batu)]/65 py-5 sm:py-6">
-            <div class="umco-container space-y-4">
+        {{-- Bar kontrol sticky menyatu sewarna dengan latar halaman (Pt 8) --}}
+        <section class="sticky top-14 sm:top-16 lg:top-[72px] z-30 bg-[var(--kertas)] py-4 sm:py-5">
+            <div class="umco-container space-y-3.5">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div class="relative flex-1 sm:max-w-sm">
                         <input
@@ -347,7 +347,7 @@
         <div
             x-show="notaQty() > 0"
             style="display: none;"
-            class="fixed bottom-4 left-4 right-4 lg:left-auto lg:right-6 lg:w-[390px] z-40"
+            class="fixed bottom-14 sm:bottom-6 left-4 right-4 lg:left-auto lg:right-6 lg:w-[390px] z-40"
         >
             <div class="rounded-2xl bg-[var(--tinta)] text-[var(--kertas)] px-5 py-3.5 flex items-center justify-between gap-3">
                 <button type="button" @click="notaOpen = true" class="text-left flex-1 cursor-pointer">

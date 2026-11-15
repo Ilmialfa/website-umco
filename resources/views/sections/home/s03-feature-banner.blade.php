@@ -51,6 +51,9 @@
         ];
     })->values()->all();
 
+    $sectionEyebrow = $section?->data['eyebrow'] ?? 'Sorotan UMCO';
+    $sectionHeading = $section?->heading ?: 'Ruang, promo, dan kabar terbaru';
+
     $ribbonItems = [
         'Wi-Fi kencang di seluruh meja',
         'Colokan listrik mudah dijangkau',
@@ -66,28 +69,66 @@
     x-data="{
         active: 0,
         slides: @js($bannerSlides),
+        glideClass: '',
+        touchX: null,
         prevIdx() { return (this.active - 1 + this.slides.length) % this.slides.length; },
         nextIdx() { return (this.active + 1) % this.slides.length; },
-        prev() { this.active = this.prevIdx(); },
-        next() { this.active = this.nextIdx(); }
+        triggerGlide(direction) {
+            this.glideClass = '';
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    this.glideClass = direction === 'prev' ? 'umco-banner-glide-prev' : 'umco-banner-glide-next';
+                });
+            });
+        },
+        prev() {
+            this.active = this.prevIdx();
+            this.triggerGlide('prev');
+        },
+        next() {
+            this.active = this.nextIdx();
+            this.triggerGlide('next');
+        },
+        go(idx) {
+            if (idx === this.active) return;
+            const direction = idx > this.active ? 'next' : 'prev';
+            this.active = idx;
+            this.triggerGlide(direction);
+        },
+        onTouchStart(e) {
+            this.touchX = e.touches[0]?.clientX ?? null;
+        },
+        onTouchEnd(e) {
+            if (this.touchX === null) return;
+            const diff = (e.changedTouches[0]?.clientX ?? this.touchX) - this.touchX;
+            this.touchX = null;
+            if (Math.abs(diff) > 42) {
+                diff < 0 ? this.next() : this.prev();
+            }
+        }
     }"
     class="bg-[var(--kertas)] text-[var(--tinta)] overflow-hidden"
 >
-    {{-- Showcase Banner 3-Kartu Lanskap: Teks Judul, Deskripsi & Tautan di Bawah Setiap Foto --}}
-    <div class="umco-section pt-8 sm:pt-12 pb-12 sm:pb-16">
+    {{-- Showcase Banner 3-Kartu Lanskap dengan Animasi Geser & Dukungan Swipe --}}
+    <div class="umco-section pt-10 sm:pt-14 pb-12 sm:pb-16">
         <div class="umco-container space-y-8 sm:space-y-10">
             <div class="max-w-2xl mx-auto text-center space-y-2">
                 <p data-reveal="fade" class="font-hand text-2xl sm:text-[28px] leading-none text-[var(--mentega)]">
-                    Sorotan UMCO
+                    {{ $sectionEyebrow }}
                 </p>
                 <h2 data-reveal="rise" class="type-display-l font-display font-bold text-[var(--tinta)]">
-                    Ruang, promo, dan kabar terbaru
+                    {{ $sectionHeading }}
                 </h2>
             </div>
 
-            <div data-reveal-media class="relative">
-                {{-- Desktop & Tablet: Panggung 3 Banner (Tengah fokus penuh, sisi kanan-kiri mendampingi) --}}
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-5 lg:gap-6 items-start">
+            <div
+                data-reveal-media
+                class="relative"
+                @touchstart.passive="onTouchStart($event)"
+                @touchend.passive="onTouchEnd($event)"
+            >
+                {{-- Desktop & Tablet: Panggung 3 Banner dengan Transisi Geser --}}
+                <div :class="glideClass" class="grid grid-cols-1 md:grid-cols-12 gap-5 lg:gap-6 items-start">
                     {{-- Slot Kiri --}}
                     <article
                         @click="prev()"
@@ -181,9 +222,9 @@
                         <template x-for="(_, i) in slides" :key="'b-dot-' + i">
                             <button
                                 type="button"
-                                @click="active = i"
+                                @click="go(i)"
                                 :aria-label="'Pilih banner ' + (i + 1)"
-                                class="h-2 rounded-full transition-all cursor-pointer"
+                                class="h-2 rounded-full transition-all duration-300 cursor-pointer"
                                 :class="active === i ? 'w-7 bg-[var(--tinta)]' : 'w-2 bg-[var(--tinta)]/25 hover:bg-[var(--tinta)]/50'"
                             ></button>
                         </template>

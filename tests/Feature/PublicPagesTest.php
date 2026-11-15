@@ -11,9 +11,11 @@ it('renders home page without legacy copy, emojis, or external fonts', function 
     $response->assertSee('UM.CO');
     $response->assertSee('Hubungi Kami');
     $response->assertSee('Reservasi');
-    foreach (['hero', 'marquee', 'banner-utama', 'signature-reel', 'menu-nota', 'karcis-teaser', 'galeri', 'galeri-diagonal', 'kata-mereka', 'cta-footer'] as $sectionId) {
+    foreach (['hero', 'banner-utama', 'marquee', 'signature-reel', 'karcis-teaser', 'galeri-diagonal', 'faq', 'kata-mereka', 'cta-footer'] as $sectionId) {
         $response->assertSee("id=\"{$sectionId}\"", false);
     }
+    $response->assertDontSee('id="menu-nota"', false);
+    $response->assertDontSee('id="galeri"', false);
     $response->assertDontSee('Wing Barat');
     $response->assertDontSee('Wing Timur');
     $response->assertDontSee('huruf H');
@@ -52,11 +54,22 @@ it('renders menu page with items and categories', function () {
 });
 
 it('renders cerita page and permanently redirects /about to /cerita', function () {
+    \App\Models\Facility::create([
+        'label' => 'Wi-Fi Kampus Cepat',
+        'icon' => 'wifi',
+        'sort' => 1,
+        'is_active' => true,
+    ]);
+
     $this->get('/about')->assertRedirect('/cerita')->assertStatus(301);
 
     $response = $this->get('/cerita');
     $response->assertStatus(200);
     $response->assertSee('Dari kampus, buat yang lagi butuh tempat.');
+    $response->assertSee('Sejarah Singkat UMCO');
+    $response->assertSee('Di Balik UMCO');
+    $response->assertSee('Ruang &amp; Fasilitas', false);
+    $response->assertSee('Kolaborasi &amp; Reservasi Rombongan', false);
     $response->assertSee('Tiga hal yang kami pegang');
     $response->assertDontSee('Wing Barat');
     $response->assertDontSee('Arsitektur');
@@ -151,4 +164,15 @@ it('imports nota items on ReservationPage without Livewire lifecycle hook collis
         ]);
 
     expect($component->instance()->selectedItems[$item->id . '||Es']['qty'])->toBe(2);
+});
+
+it('renders galeri page cleanly with filters and cta', function () {
+    $response = $this->get('/galeri');
+    $response->assertStatus(200);
+    $response->assertSee('Galeri');
+    $response->assertSee('Semua');
+    $response->assertSee('Pesan meja');
+    $response->assertSee('Lihat daftar menu');
+    $response->assertDontSee('Wing Barat');
+    expect($response->getContent())->not->toMatch('/[\x{1F300}-\x{1FAFF}]/u');
 });

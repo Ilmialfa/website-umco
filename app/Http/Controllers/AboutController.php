@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\BeanOrigin;
+use App\Models\Facility;
 use App\Models\GalleryItem;
 use App\Models\PageSection;
 use App\Models\StoryBlock;
 use App\Models\StreetStall;
-use Illuminate\Support\Facades\Cache;
 
 class AboutController extends Controller
 {
@@ -24,6 +24,7 @@ class AboutController extends Controller
             $storyBlocks = StoryBlock::orderBy('sort')->get();
         }
 
+        $facilities = Facility::where('is_active', true)->orderBy('sort')->get();
         $allGallery = GalleryItem::where('is_active', true)->orderBy('sort')->get();
         $extraGallery = $allGallery->count() > 6 ? $allGallery->slice(4)->take(6)->values() : $allGallery;
 
@@ -31,6 +32,7 @@ class AboutController extends Controller
             'sections' => $sections,
             'beanOrigins' => BeanOrigin::orderBy('altitude')->get(),
             'storyBlocks' => $storyBlocks,
+            'facilities' => $facilities,
             'streetStalls' => StreetStall::where('is_active', true)->orderBy('sort')->get(),
             'galleryItems' => $extraGallery,
         ]);

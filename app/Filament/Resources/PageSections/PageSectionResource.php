@@ -7,6 +7,7 @@ use App\Models\PageSection;
 use BackedEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -49,6 +50,7 @@ class PageSectionResource extends Resource
                     ->options([
                         'home' => 'Beranda (/)',
                         'menu' => 'Menu (/menu)',
+                        'galeri' => 'Galeri (/galeri)',
                         'cerita' => 'Cerita (/cerita)',
                     ])
                     ->disabledOn('edit')
@@ -100,6 +102,14 @@ class PageSectionResource extends Resource
                     ->default(true)
                     ->columnSpanFull(),
 
+                FileUpload::make('media.desktop')
+                    ->label('Gambar Utama Section (Opsional)')
+                    ->image()
+                    ->disk('public')
+                    ->directory('sections')
+                    ->helperText('Dipakai di halaman Cerita (hero, sejarah, foto owner, kolaborasi) maupun section lain yang mendukung foto.')
+                    ->columnSpanFull(),
+
                 KeyValue::make('data')
                     ->label('Data Khusus Section (key-value)')
                     ->columnSpanFull(),
@@ -146,6 +156,7 @@ class PageSectionResource extends Resource
                     ->options([
                         'home' => 'Beranda',
                         'menu' => 'Menu',
+                        'galeri' => 'Galeri',
                         'cerita' => 'Cerita',
                     ]),
             ])

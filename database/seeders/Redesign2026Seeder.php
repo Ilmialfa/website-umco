@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use App\Models\Banner;
 use App\Models\BeanOrigin;
 use App\Models\CrowdPattern;
+use App\Models\Facility;
+use App\Models\Faq;
 use App\Models\GalleryItem;
 use App\Models\MenuCategory;
 use App\Models\MenuItem;
@@ -33,6 +35,7 @@ class Redesign2026Seeder extends Seeder
         $this->seedSeatingOptions();
         $this->seedCrowdPatterns();
         $this->seedRules();
+        $this->seedFaqs();
         $this->seedBeanOrigins();
         $this->seedMenuFromFolder();
         $this->seedPageSections();
@@ -93,7 +96,7 @@ class Redesign2026Seeder extends Seeder
             ['group' => 'brand', 'key' => 'today_note', 'payload' => 'Gayo baru turun dari mesin sangrai Selasa lalu. Cocok diseduh V60.'],
 
             // Motion
-            ['group' => 'motion', 'key' => 'smooth_scroll', 'payload' => '0'],
+            ['group' => 'motion', 'key' => 'smooth_scroll', 'payload' => '1'],
 
             // Contact
             ['group' => 'contact', 'key' => 'address', 'payload' => 'Kampus 2 UMRI, Jl. Tuanku Tambusai No. 2, Delima, Binawidya, Pekanbaru 28291'],
@@ -695,7 +698,7 @@ class Redesign2026Seeder extends Seeder
     private function seedPageSections(): void
     {
         PageSection::where('page', 'home')
-            ->whereIn('key', ['led_board', 'story_line', 'brew', 'crowd', 'gallery', 'location'])
+            ->whereIn('key', ['led_board', 'story_line', 'brew', 'crowd', 'gallery', 'location', 'menu_nota', 'gallery_portrait'])
             ->delete();
 
         $homeSections = [
@@ -713,8 +716,19 @@ class Redesign2026Seeder extends Seeder
             ],
             [
                 'page' => 'home',
-                'key' => 'marquee',
+                'key' => 'promo_banner',
                 'sort' => 2,
+                'heading' => 'Ruang, promo, dan kabar terbaru',
+                'subheading' => 'Sorotan agenda kampus, ruang tenang untuk diskusi, dan penawaran hangat terbaru dari bar.',
+                'cta_label' => 'Lihat selengkapnya',
+                'cta_url' => '/cerita',
+                'media' => ['banner' => '/images/bistro-patio-table.jpg'],
+                'data' => ['eyebrow' => 'Sorotan UMCO'],
+            ],
+            [
+                'page' => 'home',
+                'key' => 'marquee',
+                'sort' => 3,
                 'heading' => 'Semua yang kamu butuh buat duduk tenang',
                 'subheading' => 'Dari kopi pagi sebelum kelas sampai meja panjang untuk diskusi malam di Kampus 2 UMRI.',
                 'data' => [
@@ -731,37 +745,18 @@ class Redesign2026Seeder extends Seeder
             ],
             [
                 'page' => 'home',
-                'key' => 'promo_banner',
-                'sort' => 3,
-                'heading' => 'Meja lapang, fokus kerja, kopi siap diantar',
-                'subheading' => 'Ruang nyaman di kawasan kampus buat nugas sendirian, kerja kelompok, atau diskusi komunitas.',
-                'cta_label' => 'Lihat selengkapnya',
-                'cta_url' => '/cerita',
-                'media' => ['banner' => '/images/bistro-patio-table.jpg'],
-                'data' => ['eyebrow' => 'Sorotan UMCO'],
-            ],
-            [
-                'page' => 'home',
                 'key' => 'signature_reel',
                 'sort' => 4,
                 'heading' => 'Racikan yang sering balik dipesan',
-                'subheading' => 'Lima menu favorit pengunjung di meja bar dan sudut diskusi UMCO.',
+                'subheading' => 'Geser kiri atau kanan untuk melihat menu andalan dari bar kami, lalu ketuk untuk detail dan pesan.',
+                'cta_label' => 'Jelajahi seluruh menu',
+                'cta_url' => '/menu',
                 'data' => ['eyebrow' => 'Menu Andalan'],
             ],
             [
                 'page' => 'home',
-                'key' => 'menu_nota',
-                'sort' => 5,
-                'heading' => 'Pilih duluan sebelum datang',
-                'subheading' => 'Klik menu di kiri, isiannya otomatis masuk ke nota di kanan. Langsung terbawa saat lanjut pesan meja.',
-                'cta_label' => 'Lihat semua 39 menu',
-                'cta_url' => '/menu',
-                'data' => ['eyebrow' => 'Nota Pilihan'],
-            ],
-            [
-                'page' => 'home',
                 'key' => 'karcis_teaser',
-                'sort' => 6,
+                'sort' => 5,
                 'heading' => 'Pesan meja, karcis terisi sendiri',
                 'subheading' => 'Atur hari dan jumlah orang di sini, cek ketentuannya, lalu lanjut pilih jam, tempat duduk, dan pembayaran.',
                 'cta_label' => 'Lanjut pilih jam, tempat, dan menu',
@@ -770,32 +765,36 @@ class Redesign2026Seeder extends Seeder
             ],
             [
                 'page' => 'home',
-                'key' => 'gallery_portrait',
-                'sort' => 7,
-                'heading' => 'Ruang untuk melambat sebentar',
-                'subheading' => 'Potret suasana kedai dan cangkir harian yang terus bergulir. Geser kiri atau kanan sesukamu.',
-                'data' => ['eyebrow' => 'Galeri Portrait'],
+                'key' => 'gallery_diagonal',
+                'sort' => 6,
+                'heading' => 'Momen dari berbagai sudut',
+                'subheading' => 'Cuplikan suasana kedai dan meja kerja sepanjang hari. Kunjungi halaman galeri untuk foto lengkapnya.',
+                'cta_label' => 'Buka halaman galeri',
+                'cta_url' => '/galeri',
+                'data' => ['eyebrow' => 'Galeri UMCO'],
             ],
             [
                 'page' => 'home',
-                'key' => 'gallery_diagonal',
-                'sort' => 8,
-                'heading' => 'Momen dari berbagai sudut',
-                'subheading' => 'Tampilan bebas semua rasio foto dalam alur diagonal yang bergerak mengikuti guliranmu.',
-                'data' => ['eyebrow' => 'Galeri Bebas Rasio'],
+                'key' => 'faq',
+                'sort' => 7,
+                'heading' => 'Pertanyaan yang sering ditanyakan',
+                'subheading' => 'Semua yang perlu kamu tahu soal pesan meja, minimal belanja, DP QRIS, sampai acara komunitas.',
+                'cta_label' => 'Tanya langsung via WhatsApp',
+                'cta_url' => '/reservasi',
+                'data' => ['eyebrow' => 'Tanya Jawab'],
             ],
             [
                 'page' => 'home',
                 'key' => 'testimonials',
-                'sort' => 9,
-                'heading' => 'Kenapa banyak yang balik lagi',
+                'sort' => 8,
+                'heading' => 'Kenapa banyak yang balik lagi.',
                 'subheading' => 'Suara nyata mahasiswa, pekerja lepas, dan komunitas yang sering singgah.',
                 'data' => ['eyebrow' => 'Kata Pengunjung'],
             ],
             [
                 'page' => 'home',
                 'key' => 'cta_footer',
-                'sort' => 10,
+                'sort' => 9,
                 'heading' => 'Mampir dulu, kursimu kami siapkan.',
                 'subheading' => 'Buka setiap hari pukul 08.00 - 22.00 WIB di Kampus 2 UMRI. Pesan meja lebih dulu atau hubungi kami untuk acara dan kolaborasi.',
                 'cta_label' => 'Pesan meja',
@@ -809,29 +808,88 @@ class Redesign2026Seeder extends Seeder
 
         $otherSections = [
             [
+                'page' => 'galeri',
+                'key' => 'hero',
+                'sort' => 1,
+                'heading' => 'Potret keseharian di UMCO',
+                'subheading' => 'Sudut meja kerja, racikan hangat pagi hari, dan momen kumpul di tepi Kampus 2 UMRI.',
+                'data' => ['eyebrow' => 'Galeri Foto'],
+            ],
+            [
                 'page' => 'cerita',
                 'key' => 'hero',
                 'sort' => 1,
                 'heading' => 'Dari kampus, buat yang lagi butuh tempat.',
                 'subheading' => 'Kampus 2 UMRI, Jalan Tuanku Tambusai Ujung.',
-                'body' => 'Kami membangun UMCO agar mahasiswa, dosen, dan tamu punya meja yang enak buat duduk lama maupun singgah sebentar.',
+                'body' => 'Kami membangun UMCO agar mahasiswa, dosen, pekerja lepas, dan tamu punya ruang yang tenang sekaligus hangat untuk duduk lama maupun singgah sebentar.',
                 'media' => ['desktop' => '/images/bistro-patio-table.jpg'],
             ],
             [
                 'page' => 'cerita',
-                'key' => 'altimeter',
+                'key' => 'history',
                 'sort' => 2,
+                'heading' => 'Berawal dari meja kecil yang selalu penuh oleh obrolan kuliah',
+                'subheading' => 'Sejarah Singkat UMCO',
+                'body' => 'UMCO lahir dari kebutuhan sederhana di sekitar Kampus 2 UMRI: mencari kedai kopi dengan harga masuk akal di kantong mahasiswa, seduhan yang konsisten setiap cangkir, dan colokan serta Wi-Fi yang tidak pernah rewel saat mengerjakan skripsi atau diskusi kelompok.',
+                'media' => ['desktop' => '/images/hero-banner-full.jpg'],
+                'data' => [
+                    'milestones' => [
+                        '2024' => 'Gagasan kedai kampus untuk ruang nugas dan diskusi mahasiswa UMRI mulai dirumuskan.',
+                        '2025' => 'Resmi menyeduh harian di Jalan Tuanku Tambusai Ujung dengan bar kopi manual dan menu hangat.',
+                        '2026' => 'Menghadirkan sistem reservasi meja online plus pesan menu lebih dulu agar antrean jam padat lebih rapi.',
+                    ],
+                ],
+            ],
+            [
+                'page' => 'cerita',
+                'key' => 'founder',
+                'sort' => 3,
+                'heading' => 'Dibangun bersama orang-orang yang juga melewati bangku kuliah',
+                'subheading' => 'Di Balik UMCO',
+                'body' => 'Kami ingin siapa pun yang masuk lewat pintu UMCO merasa tidak buru-buru disuruh pulang. Entah kamu datang sendiri membawa laptop selama empat jam atau rapat himpunan dengan lima teman, mejamu punya tempat yang jelas.',
+                'media' => ['desktop' => '/images/hero-iced-coffee-splash.jpg'],
+                'data' => [
+                    'owner_name' => 'Tim Pendiri UMCO House',
+                    'owner_role' => 'Founder & Pengelola Harian',
+                    'owner_quote' => 'Kopi yang baik harusnya menenangkan kepala, bukan bikin dompet ikut tegang.',
+                ],
+            ],
+            [
+                'page' => 'cerita',
+                'key' => 'values',
+                'sort' => 4,
+                'heading' => 'Tiga hal yang kami pegang',
+                'subheading' => 'Nilai Kerja Harian',
+                'media' => ['desktop' => '/images/drinks-trio-banner.jpg'],
+            ],
+            [
+                'page' => 'cerita',
+                'key' => 'facilities',
+                'sort' => 5,
+                'heading' => 'Dirancang nyaman buat kerja maupun ngobrol santai',
+                'subheading' => 'Ruang & Fasilitas',
+                'body' => 'Setiap bagian ruang kami atur supaya nyaman diduduki dari jam kuliah pagi hingga sore menuju malam.',
+            ],
+            [
+                'page' => 'cerita',
+                'key' => 'altimeter',
+                'sort' => 6,
                 'heading' => 'Dari mana bijinya datang',
-                'subheading' => 'Gulir pelan untuk melihat ketinggian kebun biji yang sering masuk ke grinder bar.',
+                'subheading' => 'Gulir pelan untuk melihat asal biji yang sering masuk ke grinder bar.',
             ],
             [
                 'page' => 'cerita',
                 'key' => 'collab',
-                'sort' => 3,
-                'heading' => 'Mau bikin acara atau kumpul komunitas?',
-                'body' => 'Diskusi buku, buka puasa bareng jurusan, sampai sesi ngobrol santai sering mampir ke sini. Kabari kami beberapa hari sebelumnya.',
-                'cta_label' => 'Tanya lewat WhatsApp',
+                'sort' => 7,
+                'heading' => 'Mau bikin acara, bedah buku, atau kumpul komunitas?',
+                'subheading' => 'Kolaborasi & Reservasi Rombongan',
+                'body' => 'Diskusi organisasi mahasiswa, komunitas kreatif, buka puasa bareng jurusan, sampai mini workshop sering mampir ke UMCO. Kabari kami beberapa hari sebelumnya untuk atur tata meja dan paket minuman.',
+                'cta_label' => 'Hubungi tim kolaborasi',
                 'cta_url' => '/reservasi',
+                'media' => ['desktop' => '/images/bistro-patio-table.jpg'],
+                'data' => [
+                    'secondary_label' => 'Pesan meja grup',
+                ],
             ],
             [
                 'page' => 'menu',
@@ -1102,6 +1160,71 @@ class Redesign2026Seeder extends Seeder
                     'is_active' => true,
                 ]
             );
+        }
+    }
+
+    private function seedFaqs(): void
+    {
+        $faqs = [
+            [
+                'question' => 'Bagaimana syarat pesan meja di UMCO secara online?',
+                'answer' => 'Reservasi online minimal untuk 2 orang dengan pilihan menu lebih dulu sesuai minimal belanja (mulai Rp 50.000 untuk 2 orang dan bertingkat untuk grup yang lebih besar). Setelah memilih menu, kamu cukup mengunggah bukti bayar DP minimal 50% atau lunas via QRIS.',
+                'category' => 'reservasi',
+                'sort' => 1,
+            ],
+            [
+                'question' => 'Apakah saya bisa memilih tempat duduk atau area tertentu?',
+                'answer' => 'Tentu. Saat mengisi formulir reservasi, kamu bisa memilih preferensi tempat duduk yang tersedia dan menuliskan catatan tambahan (misalnya dekat stopkontak atau area tenang). Tim bar akan menyiapkan meja sebelum jam kedatanganmu.',
+                'category' => 'reservasi',
+                'sort' => 2,
+            ],
+            [
+                'question' => 'Bagaimana cara bayar DP dan konfirmasinya?',
+                'answer' => 'Di langkah terakhir reservasi akan tampil QRIS statis resmi UMCO beserta nominal DP 50% atau pembayaran penuh. Setelah mentransfer dan mengunggah bukti bayar, sistem mengirim konfirmasi otomatis ke WhatsApp UMCO dan karcis berstempel kode unik langsung terbit.',
+                'category' => 'reservasi',
+                'sort' => 3,
+            ],
+            [
+                'question' => 'Berapa lama batas waktu keterlambatan sebelum karcis hangus?',
+                'answer' => 'Kami menahan meja reservasimu hingga 15 menit setelah jam kedatangan yang dipesan. Jika berhalangan atau terjebak macet, cukup balas lewat WhatsApp sebelum batas waktu agar kami bantu atur ulang jadwal.',
+                'category' => 'umum',
+                'sort' => 4,
+            ],
+            [
+                'question' => 'Apakah tersedia Wi-Fi dan colokan listrik di setiap sudut meja?',
+                'answer' => 'Ya, seluruh area dalam maupun teras dilengkapi Wi-Fi dan titik colokan yang mudah dijangkau supaya kamu bisa kuliah online, mengerjakan tugas akhir, atau berdiskusi dengan nyaman tanpa terburu-buru.',
+                'category' => 'menu',
+                'sort' => 5,
+            ],
+            [
+                'question' => 'Bisa booking untuk rapat organisasi mahasiswa atau acara komunitas?',
+                'answer' => 'Bisa sekali. Untuk rombongan di atas 12 orang, diskusi buku, atau acara komunitas kampus, tekan tombol Hubungi Kami agar tim kami bantu menyiapkan tata meja panjang serta opsi menu grup khusus.',
+                'category' => 'kolaborasi',
+                'sort' => 6,
+            ],
+        ];
+
+        foreach ($faqs as $f) {
+            Faq::updateOrCreate(
+                ['question' => $f['question']],
+                [
+                    'answer' => $f['answer'],
+                    'category' => $f['category'],
+                    'sort' => $f['sort'],
+                    'is_active' => true,
+                ]
+            );
+        }
+
+        if (Facility::count() === 0) {
+            foreach (['Wi-Fi kencang di seluruh meja', 'Colokan mudah dijangkau', 'Meja panjang diskusi', 'Area indoor & teras teduh', 'Musik latar tenang', 'Musholla & parkir kampus'] as $idx => $label) {
+                Facility::create([
+                    'label' => $label,
+                    'icon' => 'check',
+                    'sort' => $idx + 1,
+                    'is_active' => true,
+                ]);
+            }
         }
     }
 }

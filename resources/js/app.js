@@ -71,13 +71,18 @@ function initFooter() {
 }
 
 async function initLenisIfEnabled() {
-    const enabled = (document.body?.dataset.smoothScroll || document.documentElement.dataset.smoothScroll) === '1';
+    const enabled = (document.body?.dataset.smoothScroll || document.documentElement.dataset.smoothScroll) !== '0';
     const desktopFinePointer = window.matchMedia('(min-width: 1024px) and (pointer: fine)').matches;
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!enabled || !desktopFinePointer || reduced) return;
 
     const { default: Lenis } = await import('lenis');
-    lenisInstance = new Lenis({ lerp: 0.09 });
+    lenisInstance = new Lenis({
+        lerp: 0.075,
+        smoothWheel: true,
+        wheelMultiplier: 0.92,
+        touchMultiplier: 1.4,
+    });
     lenisInstance.on('scroll', ScrollTrigger.update);
     rafCallback = (time) => lenisInstance?.raf(time * 1000);
     gsap.ticker.add(rafCallback);

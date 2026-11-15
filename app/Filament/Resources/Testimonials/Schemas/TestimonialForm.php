@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Testimonials\Schemas;
 
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -44,6 +45,15 @@ class TestimonialForm
                                         ->required()
                                         ->columnSpanFull()
                                         ->placeholder('Tuliskan testimoni pelanggan mengenai kenyamanan, kopi, atau suasana kafe.'),
+
+                                    FileUpload::make('avatar_path')
+                                        ->label('Foto Profil Pengulas (Opsional)')
+                                        ->image()
+                                        ->disk('public')
+                                        ->directory('testimonials')
+                                        ->avatar()
+                                        ->helperText('Jika dikosongkan, inisial nama pengulas akan ditampilkan rapi.')
+                                        ->columnSpanFull(),
                                 ]),
                         ])->columnSpan(['default' => 1, 'lg' => 2]),
 

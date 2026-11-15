@@ -22,11 +22,11 @@
     $openTime = \App\Support\Settings::get('hours.opening_time', '08.00');
     $closeTime = \App\Support\Settings::get('hours.closing_time', '21.00');
     $address = \App\Support\Settings::get('contact.address', 'Kampus 2 UMRI, Jl. Tuanku Tambusai Ujung, Delima, Pekanbaru');
-    $smoothScroll = \App\Support\Settings::get('motion.smooth_scroll', false) ? '1' : '0';
+    $smoothScroll = \App\Support\Settings::get('motion.smooth_scroll', true) ? '1' : '0';
 
     $navItems = [
         ['label' => 'Menu', 'href' => url('/menu'), 'active' => request()->is('menu*')],
-        ['label' => 'Galeri', 'href' => url('/#galeri'), 'active' => false],
+        ['label' => 'Galeri', 'href' => url('/galeri'), 'active' => request()->is('galeri*')],
         ['label' => 'Cerita', 'href' => url('/cerita'), 'active' => request()->is('cerita*')],
     ];
     $collabTemplate = \App\Support\Settings::get('contact.collab_template', 'Halo UMCO, saya ingin menghubungi terkait acara atau kolaborasi.');
@@ -309,7 +309,7 @@
                         <ul class="space-y-2 text-white/80">
                             <li><a href="{{ url('/') }}" wire:navigate class="hover:text-white transition-colors">Beranda</a></li>
                             <li><a href="{{ url('/menu') }}" wire:navigate class="hover:text-white transition-colors">Menu</a></li>
-                            <li><a href="{{ url('/#galeri') }}" class="hover:text-white transition-colors">Galeri</a></li>
+                            <li><a href="{{ url('/galeri') }}" wire:navigate class="hover:text-white transition-colors">Galeri</a></li>
                             <li><a href="{{ url('/cerita') }}" wire:navigate class="hover:text-white transition-colors">Cerita kami</a></li>
                             <li><a href="{{ url('/reservasi') }}" wire:navigate class="hover:text-white transition-colors">Pesan meja</a></li>
                         </ul>

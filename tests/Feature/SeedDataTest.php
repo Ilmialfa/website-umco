@@ -17,7 +17,8 @@ it('seeds all 39 menu items from folder and tiered reservation rules', function 
     expect(SeatingOption::count())->toBe(5);
     expect(BeanOrigin::count())->toBe(4);
     expect(CrowdPattern::count())->toBe(112); // 7 hari x 16 jam (07-22)
-    expect(PageSection::where('page', 'home')->count())->toBe(10);
+    expect(PageSection::where('page', 'home')->count())->toBe(9);
+    expect(\App\Models\Faq::count())->toBeGreaterThanOrEqual(6);
     expect(\App\Models\Banner::count())->toBeGreaterThanOrEqual(2);
     expect(\App\Models\GalleryItem::where('orientation', 'portrait')->count())->toBeGreaterThanOrEqual(5);
     expect(\App\Models\Testimonial::count())->toBeGreaterThanOrEqual(6);

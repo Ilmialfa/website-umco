@@ -47,6 +47,12 @@
             <p data-reveal="fade" class="type-body text-[var(--tinta-70)] max-w-lg mx-auto">
                 {{ $subheading }}
             </p>
+            <div data-reveal="fade" class="pt-1">
+                <a href="{{ url($section?->cta_url ?: '/galeri') }}" wire:navigate class="btn-umco bg-[var(--kertas-terang)] text-[var(--tinta)] hover:bg-[var(--mentega)] hover:text-white">
+                    <span>{{ $section?->cta_label ?: 'Buka halaman galeri' }}</span>
+                    <svg class="w-4 h-4 shrink-0"><use href="#icon-arrow-right"/></svg>
+                </a>
+            </div>
         </div>
     </div>
 

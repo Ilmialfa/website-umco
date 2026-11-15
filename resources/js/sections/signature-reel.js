@@ -1,65 +1,132 @@
+import gsap from 'gsap';
+
+/**
+ * Sorotan Menu andalan berpola strip portrait bergulir mulus (kiri-kanan),
+ * mendukung klik ke /menu/{slug}, seret horizontal, serta tombol panah.
+ */
 export function init(el) {
-    const track = el.querySelector('[data-reel-track]');
-    const cards = Array.from(el.querySelectorAll('[data-reel-card]'));
-    const bar = el.querySelector('[data-reel-progress]');
-    const prevBtn = el.querySelector('[data-reel-prev]');
-    const nextBtn = el.querySelector('[data-reel-next]');
-    if (!track || !cards.length) return () => {};
+    const viewport = el.querySelector('[data-infinite-viewport]');
+    const strip = el.querySelector('[data-infinite-strip]');
+    const btnPrev = el.querySelector('[data-infinite-prev]');
+    const btnNext = el.querySelector('[data-infinite-next]');
+    if (!viewport || !strip) return () => {};
 
-    let isDragging = false;
-    let startX = 0;
-    let scrollStart = 0;
+    const cleanups = [];
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    const syncProgress = () => {
-        const maxScroll = Math.max(1, track.scrollWidth - track.clientWidth);
-        const ratio = Math.min(1, Math.max(0, track.scrollLeft / maxScroll));
-        if (bar) {
-            bar.style.transform = `scaleX(${Math.max(0.18, ratio)})`;
-        }
-        if (prevBtn) prevBtn.disabled = track.scrollLeft <= 8;
-        if (nextBtn) nextBtn.disabled = track.scrollLeft >= maxScroll - 8;
+    let halfWidth = strip.scrollWidth / 2;
+    let offsetX = 0;
+    let paused = false;
+    let speedPxPerSec = 36;
+    let dragStartX = 0;
+    let dragStartOffset = 0;
+    let pointerDown = false;
+    let wasDragged = false;
+
+    const wrapOffset = (val) => {
+        if (halfWidth <= 0) return 0;
+        let v = val % halfWidth;
+        if (v > 0) v -= halfWidth;
+        return v;
     };
 
-    const stepBy = (dir) => {
-        const cardW = cards[0]?.getBoundingClientRect().width || 340;
-        track.scrollBy({ left: dir * (cardW + 24), behavior: 'smooth' });
-    };
+    if (!reduced) {
+        const tick = (_time, deltaMs) => {
+            if (!paused && !pointerDown && halfWidth > 0) {
+                offsetX = wrapOffset(offsetX - (speedPxPerSec * deltaMs) / 1000);
+                strip.style.transform = `translate3d(${offsetX}px, 0, 0)`;
+            }
+        };
+        gsap.ticker.add(tick);
+        cleanups.push(() => gsap.ticker.remove(tick));
+    }
 
-    const onPrev = () => stepBy(-1);
-    const onNext = () => stepBy(1);
+    const onResize = () => {
+        halfWidth = strip.scrollWidth / 2;
+        offsetX = wrapOffset(offsetX);
+    };
+    window.addEventListener('resize', onResize, { passive: true });
+    cleanups.push(() => window.removeEventListener('resize', onResize));
+
+    const onEnter = () => { paused = true; };
+    const onLeave = () => { paused = false; };
+    viewport.addEventListener('mouseenter', onEnter);
+    viewport.addEventListener('mouseleave', onLeave);
+    cleanups.push(() => {
+        viewport.removeEventListener('mouseenter', onEnter);
+        viewport.removeEventListener('mouseleave', onLeave);
+    });
 
     const onPointerDown = (e) => {
-        if (e.button !== 0 || e.target.closest('a')) return;
-        isDragging = true;
-        startX = e.pageX - track.offsetLeft;
-        scrollStart = track.scrollLeft;
-        track.classList.add('cursor-grabbing');
+        pointerDown = true;
+        wasDragged = false;
+        dragStartX = e.clientX;
+        dragStartOffset = offsetX;
+        strip.dataset.dragging = '0';
     };
     const onPointerMove = (e) => {
-        if (!isDragging) return;
-        e.preventDefault();
-        const x = e.pageX - track.offsetLeft;
-        track.scrollLeft = scrollStart - (x - startX) * 1.15;
+        if (!pointerDown) return;
+        const delta = e.clientX - dragStartX;
+        if (Math.abs(delta) > 6) {
+            wasDragged = true;
+            strip.dataset.dragging = '1';
+        }
+        offsetX = wrapOffset(dragStartOffset + delta);
+        strip.style.transform = `translate3d(${offsetX}px, 0, 0)`;
     };
     const onPointerUp = () => {
-        isDragging = false;
-        track.classList.remove('cursor-grabbing');
+        if (!pointerDown) return;
+        pointerDown = false;
+        setTimeout(() => { strip.dataset.dragging = '0'; }, 80);
     };
 
-    track.addEventListener('scroll', syncProgress, { passive: true });
-    prevBtn?.addEventListener('click', onPrev);
-    nextBtn?.addEventListener('click', onNext);
-    track.addEventListener('mousedown', onPointerDown);
-    window.addEventListener('mousemove', onPointerMove);
-    window.addEventListener('mouseup', onPointerUp);
-    syncProgress();
+    // Guard anchor navigation if user actually dragged
+    const links = strip.querySelectorAll('a[data-menu-card-link]');
+    links.forEach((a) => {
+        const guard = (e) => {
+            if (wasDragged || strip.dataset.dragging === '1') {
+                e.preventDefault();
+            }
+        };
+        a.addEventListener('click', guard);
+        cleanups.push(() => a.removeEventListener('click', guard));
+    });
 
-    return () => {
-        track.removeEventListener('scroll', syncProgress);
-        prevBtn?.removeEventListener('click', onPrev);
-        nextBtn?.removeEventListener('click', onNext);
-        track.removeEventListener('mousedown', onPointerDown);
-        window.removeEventListener('mousemove', onPointerMove);
-        window.removeEventListener('mouseup', onPointerUp);
+    viewport.addEventListener('pointerdown', onPointerDown);
+    window.addEventListener('pointermove', onPointerMove, { passive: true });
+    window.addEventListener('pointerup', onPointerUp);
+    window.addEventListener('pointercancel', onPointerUp);
+    cleanups.push(() => {
+        viewport.removeEventListener('pointerdown', onPointerDown);
+        window.removeEventListener('pointermove', onPointerMove);
+        window.removeEventListener('pointerup', onPointerUp);
+        window.removeEventListener('pointercancel', onPointerUp);
+    });
+
+    const stepBy = (dir) => {
+        const stepSize = Math.min(360, viewport.clientWidth * 0.72);
+        const proxy = { x: offsetX };
+        paused = true;
+        gsap.to(proxy, {
+            x: offsetX + dir * stepSize,
+            duration: 0.65,
+            ease: 'power3.out',
+            onUpdate: () => {
+                offsetX = wrapOffset(proxy.x);
+                strip.style.transform = `translate3d(${offsetX}px, 0, 0)`;
+            },
+            onComplete: () => { paused = false; },
+        });
     };
+
+    const onPrev = () => stepBy(1);
+    const onNext = () => stepBy(-1);
+    btnPrev?.addEventListener('click', onPrev);
+    btnNext?.addEventListener('click', onNext);
+    cleanups.push(() => {
+        btnPrev?.removeEventListener('click', onPrev);
+        btnNext?.removeEventListener('click', onNext);
+    });
+
+    return () => cleanups.forEach((fn) => fn());
 }

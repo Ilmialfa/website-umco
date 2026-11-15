@@ -1,13 +1,12 @@
 @php
     $partialMap = [
         'hero' => 'sections.home.s01-hero',
-        'marquee' => 'sections.home.s02-collage-marquee',
         'promo_banner' => 'sections.home.s03-feature-banner',
+        'marquee' => 'sections.home.s02-collage-marquee',
         'signature_reel' => 'sections.home.s04-signature-cards',
-        'menu_nota' => 'sections.home.s04-menu-nota',
         'karcis_teaser' => 'sections.home.s09-karcis-teaser',
-        'gallery_portrait' => 'sections.home.s07-portrait-gallery',
         'gallery_diagonal' => 'sections.home.s08-diagonal-gallery',
+        'faq' => 'sections.home.s12-faq',
         'testimonials' => 'sections.home.s11-testimonials',
         'cta_footer' => 'sections.home.s10-cta',
     ];

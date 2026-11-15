@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Banner;
 use App\Models\ClosedDate;
 use App\Models\CrowdPattern;
+use App\Models\Faq;
 use App\Models\GalleryItem;
 use App\Models\MenuCategory;
 use App\Models\MenuItem;
@@ -85,7 +86,8 @@ class HomeController extends Controller
             'spendTiers' => $spendTiers,
             'closedDates' => $closedDates,
             'rules' => Rule::where('is_active', true)->orderBy('sort')->get(),
-            'testimonials' => Testimonial::where('is_featured', true)->orderBy('sort')->get(),
+            'faqs' => Faq::active()->get(),
+            'testimonials' => Testimonial::where('is_featured', true)->orderBy('sort')->limit(9)->get(),
             'portraitGallery' => $portraitGallery,
             'diagonalGallery' => $diagonalGallery,
             'galleryItems' => $portraitGallery->merge($diagonalGallery)->unique('id')->values(),

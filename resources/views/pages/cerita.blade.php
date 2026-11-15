@@ -1,5 +1,9 @@
 @php
     $hero = $sections['hero'] ?? null;
+    $history = $sections['history'] ?? null;
+    $founder = $sections['founder'] ?? null;
+    $values = $sections['values'] ?? null;
+    $facilitiesSec = $sections['facilities'] ?? null;
     $collab = $sections['collab'] ?? null;
 
     $rawWa = \App\Support\Settings::get('contact.phone_wa', '02248001571');
@@ -11,20 +15,46 @@
     }
     $collabTemplate = \App\Support\Settings::get('contact.collab_template', 'Halo UMCO, saya ingin kolaborasi atau bikin acara di UMCO.');
     $collabUrl = 'https://wa.me/' . $waDigits . '?text=' . rawurlencode($collabTemplate);
-    $heroImg = $hero?->media['desktop'] ?? '/images/bistro-patio-table.jpg';
+
+    $resolveImg = function (?string $p, string $fallback): string {
+        $src = $p ?: $fallback;
+        if (str_starts_with($src, 'http') || str_starts_with($src, '/')) {
+            return asset($src);
+        }
+        return asset('storage/' . ltrim($src, '/'));
+    };
+
+    $heroImg = $resolveImg($hero?->media['desktop'] ?? null, '/images/bistro-patio-table.jpg');
+    $historyImg = $resolveImg($history?->media['desktop'] ?? null, '/images/hero-banner-full.jpg');
+    $founderImg = $resolveImg($founder?->media['desktop'] ?? null, '/images/hero-iced-coffee-splash.jpg');
+    $valuesImg = $resolveImg($values?->media['desktop'] ?? null, '/images/drinks-trio-banner.webp');
+    $collabImg = $resolveImg($collab?->media['desktop'] ?? null, '/images/bistro-patio-table.jpg');
+
+    $milestones = $history?->data['milestones'] ?? [
+        '2024' => 'Gagasan kedai kampus untuk ruang nugas dan diskusi mahasiswa UMRI mulai dirumuskan.',
+        '2025' => 'Resmi menyeduh harian di Jalan Tuanku Tambusai Ujung dengan bar kopi manual dan menu hangat.',
+        '2026' => 'Menghadirkan sistem reservasi meja online plus pesan menu lebih dulu agar antrean jam padat lebih rapi.',
+    ];
+    if (! is_array($milestones)) {
+        $milestones = [];
+    }
+
+    $ownerName = $founder?->data['owner_name'] ?? 'Tim Pendiri UMCO House';
+    $ownerRole = $founder?->data['owner_role'] ?? 'Founder & Pengelola Harian';
+    $ownerQuote = $founder?->data['owner_quote'] ?? 'Kopi yang baik harusnya menenangkan kepala, bukan bikin dompet ikut tegang.';
 @endphp
 
 <x-layouts.public
     page="cerita"
     initial-nav-theme="light"
     title="Cerita Kami — UMCO"
-    description="Dari Kampus 2 UMRI Pekanbaru: cerita ruang seduh, tiga prinsip kami, teman jajan sore, dan info kolaborasi."
+    description="Dari Kampus 2 UMRI Pekanbaru: sejarah singkat UMCO, profil pengelola, tiga nilai kerja, fasilitas ruang, teman jajan, dan peluang kolaborasi komunitas."
 >
     {{-- 1. Pembuka --}}
     <section data-nav-theme="light" class="bg-[var(--kertas)] text-[var(--tinta)] pt-28 sm:pt-36 pb-14 sm:pb-20">
         <div class="umco-container space-y-10">
             <div class="max-w-3xl space-y-4">
-                <p class="font-hand text-2xl sm:text-3xl text-[var(--mentega-tua)]">
+                <p data-reveal="fade" class="font-hand text-2xl sm:text-3xl text-[var(--mentega)]">
                     {{ $hero?->subheading ?: 'Kampus 2 UMRI, Jalan Tuanku Tambusai Ujung.' }}
                 </p>
                 <h1 data-reveal="rise" class="type-h1 font-display font-semibold">
@@ -35,9 +65,9 @@
                 </p>
             </div>
 
-            <div class="rounded-2xl overflow-hidden max-h-[62svh] bg-[var(--batu)]">
+            <div data-reveal-media class="rounded-2xl overflow-hidden max-h-[62svh] bg-[var(--batu)]">
                 <img
-                    src="{{ asset($heroImg) }}"
+                    src="{{ $heroImg }}"
                     alt="Suasana kedai kopi UMCO di Kampus 2 UMRI"
                     loading="eager"
                     decoding="async"
@@ -47,17 +77,101 @@
         </div>
     </section>
 
-    {{-- 2. Tiga hal yang kami pegang + Foto pendamping --}}
+    {{-- 2. Sejarah Singkat & Tonggak Perjalanan (Editable Section: cerita/history) --}}
+    <section data-nav-theme="light" class="umco-section bg-[var(--batu)]/60 text-[var(--tinta)]">
+        <div class="umco-container space-y-12">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+                <div class="lg:col-span-6 space-y-4">
+                    <p data-reveal="fade" class="font-hand text-2xl sm:text-[1.75rem] text-[var(--mentega)]">
+                        {{ $history?->subheading ?: 'Sejarah Singkat UMCO' }}
+                    </p>
+                    <h2 data-reveal="rise" class="type-display-l font-display font-bold">
+                        {{ $history?->heading ?: 'Berawal dari meja kecil yang selalu penuh oleh obrolan kuliah' }}
+                    </h2>
+                    <p data-reveal="fade" class="type-body text-[var(--tinta-70)] leading-relaxed">
+                        {{ $history?->body ?: 'UMCO lahir dari kebutuhan sederhana di sekitar Kampus 2 UMRI: mencari kedai kopi dengan harga masuk akal di kantong mahasiswa, seduhan yang konsisten setiap cangkir, serta colokan dan Wi-Fi yang selalu siap menemani tugas akhir maupun diskusi kelompok.' }}
+                    </p>
+                </div>
+
+                <div data-reveal-media class="lg:col-span-6 rounded-2xl overflow-hidden aspect-[16/11] bg-[var(--kertas-terang)]">
+                    <img
+                        src="{{ $historyImg }}"
+                        alt="Sejarah ruang seduh UMCO Kampus 2 UMRI"
+                        loading="lazy"
+                        decoding="async"
+                        class="w-full h-full object-cover"
+                    >
+                </div>
+            </div>
+
+            @if (! empty($milestones))
+                <div data-reveal-stagger class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    @foreach ($milestones as $year => $desc)
+                        <div class="rounded-2xl bg-[var(--kertas-terang)] p-6 space-y-2">
+                            <p class="font-display font-bold text-3xl text-[var(--mentega)] tabular-nums">{{ $year }}</p>
+                            <p class="text-sm sm:text-[15px] text-[var(--tinta-70)] leading-relaxed">{{ $desc }}</p>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+        </div>
+    </section>
+
+    {{-- 3. Profil Owner & Pengelola (Editable Section: cerita/founder) --}}
+    <section data-nav-theme="light" class="umco-section bg-[var(--kertas)] text-[var(--tinta)]">
+        <div class="umco-container">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+                <div data-reveal-media class="lg:col-span-5">
+                    <div class="rounded-2xl overflow-hidden aspect-[4/5] bg-[var(--batu)]">
+                        <img
+                            src="{{ $founderImg }}"
+                            alt="{{ $ownerName }}"
+                            loading="lazy"
+                            decoding="async"
+                            class="w-full h-full object-cover"
+                        >
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7 space-y-5">
+                    <p data-reveal="fade" class="font-hand text-2xl sm:text-[1.75rem] text-[var(--mentega)]">
+                        {{ $founder?->subheading ?: 'Di Balik UMCO' }}
+                    </p>
+                    <h2 data-reveal="rise" class="type-display-l font-display font-bold">
+                        {{ $founder?->heading ?: 'Dibangun bersama orang-orang yang juga melewati bangku kuliah' }}
+                    </h2>
+                    <p data-reveal="fade" class="type-body text-[var(--tinta-70)] leading-relaxed">
+                        {{ $founder?->body ?: 'Kami ingin siapa pun yang masuk lewat pintu UMCO merasa tidak buru-buru disuruh pulang. Entah kamu datang sendiri membawa laptop selama empat jam atau rapat himpunan dengan lima teman, mejamu punya tempat yang jelas.' }}
+                    </p>
+
+                    <blockquote class="rounded-2xl bg-[var(--kertas-terang)] p-6 sm:p-7 space-y-3">
+                        <p class="font-hand text-2xl sm:text-[1.85rem] leading-snug text-[var(--mentega-tua)]">
+                            “{{ $ownerQuote }}”
+                        </p>
+                        <footer class="text-sm">
+                            <span class="font-display font-bold text-base text-[var(--tinta)]">{{ $ownerName }}</span>
+                            <span class="text-[var(--tinta-70)]"> · {{ $ownerRole }}</span>
+                        </footer>
+                    </blockquote>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- 4. Tiga hal yang kami pegang + Foto pendamping (Editable via StoryBlocks & Section values) --}}
     <section data-nav-theme="light" class="umco-section bg-[var(--batu)] text-[var(--tinta)]">
         <div class="umco-container">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
-                <div class="lg:col-span-5 lg:sticky lg:top-28 space-y-6">
+                <div class="lg:col-span-5 lg:sticky lg:top-28 space-y-5">
+                    <p class="font-hand text-2xl text-[var(--mentega)]">
+                        {{ $values?->subheading ?: 'Nilai Kerja Harian' }}
+                    </p>
                     <h2 data-reveal="rise" class="type-h2 font-display font-semibold">
-                        Tiga hal yang kami pegang
+                        {{ $values?->heading ?: 'Tiga hal yang kami pegang' }}
                     </h2>
-                    <div class="rounded-2xl overflow-hidden aspect-[4/3] bg-[var(--kertas)]">
+                    <div data-reveal-media class="rounded-2xl overflow-hidden aspect-[4/3] bg-[var(--kertas)]">
                         <img
-                            src="{{ asset('/images/drinks-trio-banner.webp') }}"
+                            src="{{ $valuesImg }}"
                             alt="Tiga sajian minuman unggulan UMCO"
                             loading="lazy"
                             decoding="async"
@@ -66,14 +180,14 @@
                     </div>
                 </div>
 
-                <div class="lg:col-span-7 divide-y divide-[var(--garis)]" data-reveal-stagger>
+                <div class="lg:col-span-7 space-y-4" data-reveal-stagger>
                     @foreach ($storyBlocks as $block)
-                        <article class="py-7 sm:py-8 space-y-2.5">
+                        <article class="rounded-2xl bg-[var(--kertas-terang)] p-6 sm:p-7 space-y-2.5">
                             <div class="flex items-center gap-2.5">
-                                <span class="w-2 h-2 rounded-full bg-[var(--mentega)] shrink-0"></span>
+                                <span class="w-2.5 h-2.5 rounded-full bg-[var(--mentega)] shrink-0"></span>
                                 <h3 class="type-h3 font-display font-semibold">{{ $block->title }}</h3>
                             </div>
-                            <p class="type-body text-[var(--tinta-70)] leading-relaxed pl-4.5">{{ $block->body }}</p>
+                            <p class="type-body text-[var(--tinta-70)] leading-relaxed">{{ $block->body }}</p>
                         </article>
                     @endforeach
                 </div>
@@ -81,24 +195,53 @@
         </div>
     </section>
 
-    {{-- 3. Teman jajan --}}
+    {{-- 5. Ruang & Fasilitas (Editable via Filament Facilities Resource & Section facilities) --}}
+    @if (($facilities ?? collect())->isNotEmpty())
+        <section data-nav-theme="light" class="umco-section bg-[var(--kertas)] text-[var(--tinta)]">
+            <div class="umco-container space-y-8">
+                <div class="max-w-2xl space-y-2.5">
+                    <p data-reveal="fade" class="font-hand text-2xl text-[var(--mentega)]">
+                        {{ $facilitiesSec?->subheading ?: 'Ruang & Fasilitas' }}
+                    </p>
+                    <h2 data-reveal="rise" class="type-h2 font-display font-semibold">
+                        {{ $facilitiesSec?->heading ?: 'Dirancang nyaman buat kerja maupun ngobrol santai' }}
+                    </h2>
+                    @if ($facilitiesSec?->body)
+                        <p class="type-body text-[var(--tinta-70)]">{{ $facilitiesSec->body }}</p>
+                    @endif
+                </div>
+
+                <div data-reveal-stagger class="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-5">
+                    @foreach ($facilities as $fac)
+                        <div class="rounded-2xl bg-[var(--kertas-terang)] px-5 py-4 flex items-center gap-3">
+                            <span class="w-2.5 h-2.5 rounded-full bg-[var(--mentega)] shrink-0" aria-hidden="true"></span>
+                            <span class="text-sm sm:text-base font-medium">{{ $fac->label }}</span>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+    @endif
+
+    {{-- 6. Teman jajan --}}
     @if ($streetStalls->isNotEmpty())
         <section data-nav-theme="light" class="umco-section bg-[var(--kertas-terang)] text-[var(--tinta)]">
             <div class="umco-container space-y-8">
                 <div class="max-w-xl space-y-2">
+                    <p class="font-hand text-2xl text-[var(--mentega)]">Sekitar Halaman Kedai</p>
                     <h2 data-reveal="rise" class="type-h2 font-display font-semibold">Teman jajan</h2>
                     <p class="type-body text-[var(--tinta-70)]">
                         Stan makanan di sekitar halaman UMCO yang bisa dipesan langsung di tempat.
                     </p>
                 </div>
 
-                <div class="rounded-2xl border border-[var(--garis)] bg-[var(--kertas)] overflow-x-auto">
+                <div class="rounded-2xl bg-[var(--kertas)] overflow-x-auto">
                     <table class="w-full text-left border-collapse text-sm sm:text-base">
                         <thead>
-                            <tr class="border-b border-[var(--garis)]">
-                                <th class="py-3.5 px-5 font-semibold">Nama stan</th>
-                                <th class="py-3.5 px-5 font-semibold">Menu jagoan</th>
-                                <th class="py-3.5 px-5 font-semibold text-right whitespace-nowrap">Jam buka</th>
+                            <tr>
+                                <th class="py-4 px-5 font-semibold">Nama stan</th>
+                                <th class="py-4 px-5 font-semibold">Menu jagoan</th>
+                                <th class="py-4 px-5 font-semibold text-right whitespace-nowrap">Jam buka</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-[var(--garis)]">
@@ -121,46 +264,80 @@
         </section>
     @endif
 
-    {{-- 4. Galeri tambahan + ajakan kolaborasi --}}
+    {{-- 7. Cuplikan Galeri + Kolaborasi, Acara & Komunitas (Editable Section: cerita/collab) --}}
     <section data-nav-theme="light" class="umco-section bg-[var(--kertas)] text-[var(--tinta)]">
-        <div class="umco-container space-y-12">
+        <div class="umco-container space-y-14">
             @if ($galleryItems->isNotEmpty())
-                <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-                    @foreach ($galleryItems->take(6) as $g)
-                        @php
-                            $src = str_starts_with($g->image_path, 'http') || str_starts_with($g->image_path, '/')
-                                ? $g->image_path
-                                : asset('storage/' . ltrim($g->image_path, '/'));
-                        @endphp
-                        <figure class="space-y-2">
-                            <div class="aspect-[4/3] rounded-2xl overflow-hidden bg-[var(--batu)]">
-                                <img src="{{ $src }}" alt="{{ $g->caption ?: 'Potret UMCO' }}" loading="lazy" class="w-full h-full object-cover">
-                            </div>
-                            @if ($g->caption)
-                                <figcaption class="text-xs sm:text-sm text-[var(--tinta-70)]">{{ $g->caption }}</figcaption>
-                            @endif
-                        </figure>
-                    @endforeach
+                <div class="space-y-6">
+                    <div class="flex flex-wrap items-end justify-between gap-4">
+                        <div class="space-y-1.5">
+                            <p class="font-hand text-2xl text-[var(--mentega)]">Potret Ruang</p>
+                            <h2 class="type-h2 font-display font-semibold">Suasana dari waktu ke waktu</h2>
+                        </div>
+                        <a href="{{ url('/galeri') }}" wire:navigate class="text-sm font-semibold underline underline-offset-4 hover:text-[var(--mentega)]">
+                            Buka seluruh galeri &rarr;
+                        </a>
+                    </div>
+
+                    <div data-reveal-stagger class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5">
+                        @foreach ($galleryItems->take(6) as $g)
+                            @php
+                                $src = str_starts_with($g->image_path, 'http') || str_starts_with($g->image_path, '/')
+                                    ? $g->image_path
+                                    : asset('storage/' . ltrim($g->image_path, '/'));
+                            @endphp
+                            <figure class="space-y-2">
+                                <div class="aspect-[4/3] rounded-2xl overflow-hidden bg-[var(--batu)]">
+                                    <img src="{{ $src }}" alt="{{ $g->caption ?: 'Potret UMCO' }}" loading="lazy" class="w-full h-full object-cover">
+                                </div>
+                                @if ($g->caption)
+                                    <figcaption class="text-xs sm:text-sm text-[var(--tinta-70)]">{{ $g->caption }}</figcaption>
+                                @endif
+                            </figure>
+                        @endforeach
+                    </div>
                 </div>
             @endif
 
-            <div class="rounded-2xl bg-[var(--kertas-terang)] border-t-[3px] border-t-[var(--mentega)] p-7 sm:p-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                <div class="space-y-2 max-w-2xl">
-                    <h2 class="type-h2 font-display font-semibold">
-                        {{ $collab?->heading ?: 'Mau bikin acara atau kumpul komunitas?' }}
-                    </h2>
-                    <p class="type-body text-[var(--tinta-70)]">
-                        {{ $collab?->body ?: 'Diskusi buku, buka puasa bareng jurusan, sampai sesi ngobrol santai sering mampir ke sini.' }}
+            <div class="rounded-2xl bg-[var(--kertas-terang)] p-7 sm:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <div class="lg:col-span-7 space-y-3">
+                    <p class="font-hand text-2xl text-[var(--mentega)]">
+                        {{ $collab?->subheading ?: 'Kolaborasi & Reservasi Rombongan' }}
                     </p>
+                    <h2 class="type-h2 font-display font-semibold">
+                        {{ $collab?->heading ?: 'Mau bikin acara, bedah buku, atau kumpul komunitas?' }}
+                    </h2>
+                    <p class="type-body text-[var(--tinta-70)] leading-relaxed">
+                        {{ $collab?->body ?: 'Diskusi organisasi mahasiswa, komunitas kreatif, buka puasa bareng jurusan, sampai mini workshop sering mampir ke UMCO. Kabari kami beberapa hari sebelumnya untuk atur tata meja dan paket minuman.' }}
+                    </p>
+                    <div class="pt-2 flex flex-wrap gap-3">
+                        <a
+                            href="{{ $collabUrl }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="btn-umco btn-umco-primary"
+                        >
+                            <span>{{ $collab?->cta_label ?: 'Hubungi tim kolaborasi' }}</span>
+                            <svg class="w-4 h-4 shrink-0"><use href="#icon-arrow-right"/></svg>
+                        </a>
+                        <a
+                            href="{{ url($collab?->cta_url ?: '/reservasi') }}"
+                            wire:navigate
+                            class="btn-umco bg-[var(--batu)] text-[var(--tinta)] hover:bg-[var(--tinta)] hover:text-[var(--kertas)]"
+                        >
+                            <span>{{ $collab?->data['secondary_label'] ?? 'Pesan meja grup' }}</span>
+                        </a>
+                    </div>
                 </div>
 
-                <div class="flex flex-wrap gap-3 shrink-0">
-                    <a href="{{ $collabUrl }}" target="_blank" rel="noopener noreferrer" class="btn-umco btn-umco-secondary">
-                        {{ $collab?->cta_label ?: 'Tanya lewat WhatsApp' }}
-                    </a>
-                    <a href="{{ url('/reservasi') }}" wire:navigate class="btn-umco btn-umco-primary">
-                        Pesan meja langsung
-                    </a>
+                <div data-reveal-media class="lg:col-span-5 rounded-2xl overflow-hidden aspect-[4/3] bg-[var(--batu)]">
+                    <img
+                        src="{{ $collabImg }}"
+                        alt="Kolaborasi acara komunitas di UMCO"
+                        loading="lazy"
+                        decoding="async"
+                        class="w-full h-full object-cover"
+                    >
                 </div>
             </div>
         </div>

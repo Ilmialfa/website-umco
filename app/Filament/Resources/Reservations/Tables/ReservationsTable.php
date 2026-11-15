@@ -39,12 +39,12 @@ class ReservationsTable
                 TextColumn::make('date')
                     ->label('Jadwal')
                     ->date('d M Y')
-                    ->description(fn (Reservation $record): string => str_replace(':', '.', substr((string) $record->time, 0, 5)) . ' WIB')
+                    ->description(fn (Reservation $record): string => str_replace(':', '.', substr((string) $record->time, 0, 5)).' WIB')
                     ->sortable(),
 
                 TextColumn::make('party_size')
                     ->label('Pax')
-                    ->formatStateUsing(fn (Reservation $record): string => $record->party_size . ' org')
+                    ->formatStateUsing(fn (Reservation $record): string => $record->party_size.' org')
                     ->alignCenter()
                     ->sortable(),
 
@@ -82,7 +82,7 @@ class ReservationsTable
 
                 TextColumn::make('time')
                     ->label('Jam')
-                    ->formatStateUsing(fn ($state) => str_replace(':', '.', substr((string) $state, 0, 5)) . ' WIB')
+                    ->formatStateUsing(fn ($state) => str_replace(':', '.', substr((string) $state, 0, 5)).' WIB')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 

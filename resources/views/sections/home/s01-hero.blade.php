@@ -1,6 +1,7 @@
 @php
     $cutoutSetting = \App\Support\Settings::get('brand.hero_cutout_image', '');
     $cutoutSrc = $cutoutSetting ?: ($section?->media['cutout'] ?? '/images/hero-cutout.webp');
+    $isDefaultHeroCutout = $cutoutSrc === '/images/hero-cutout.webp';
     if ($cutoutSrc && ! str_starts_with($cutoutSrc, 'http') && ! str_starts_with($cutoutSrc, '/')) {
         $cutoutSrc = '/storage/' . ltrim($cutoutSrc, '/');
     }
@@ -69,6 +70,10 @@
                 <img
                     data-hero-cutout
                     src="{{ asset($cutoutSrc) }}"
+                    @if ($isDefaultHeroCutout)
+                        srcset="{{ asset('/images/hero-cutout-640.webp') }} 640w, {{ asset('/images/hero-cutout-960.webp') }} 960w, {{ asset('/images/hero-cutout.webp') }} 1200w"
+                        sizes="(max-width: 640px) 92vw, 50vw"
+                    @endif
                     alt="Gedung UMCO House di Kampus 2 UMRI Pekanbaru"
                     width="1200"
                     height="800"

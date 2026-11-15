@@ -38,7 +38,7 @@ class RemindUpcomingReservations extends Command
             ->get();
 
         foreach ($candidates as $reservation) {
-            $arrivalStr = $reservation->date->format('Y-m-d') . ' ' . substr((string) $reservation->time, 0, 5);
+            $arrivalStr = $reservation->date->format('Y-m-d').' '.substr((string) $reservation->time, 0, 5);
             try {
                 $arrivalAt = Carbon::createFromFormat('Y-m-d H:i', $arrivalStr);
             } catch (\Throwable) {
@@ -63,7 +63,7 @@ class RemindUpcomingReservations extends Command
 
                 $notif = FilamentNotification::make()
                     ->title("{$minsLeft} menit lagi: {$reservation->name}, {$reservation->party_size} orang, jam {$timeFmt}. Follow up?")
-                    ->body("Kode {$reservation->code} · +" . $reservation->phone_wa)
+                    ->body("Kode {$reservation->code} · +".$reservation->phone_wa)
                     ->warning()
                     ->actions([
                         Action::make('chat_wa')
@@ -97,7 +97,7 @@ class RemindUpcomingReservations extends Command
 
                 FilamentNotification::make()
                     ->title($label)
-                    ->body("Kode {$reservation->code} · Jam pesan " . str_replace(':', '.', substr((string) $reservation->time, 0, 5)))
+                    ->body("Kode {$reservation->code} · Jam pesan ".str_replace(':', '.', substr((string) $reservation->time, 0, 5)))
                     ->danger()
                     ->actions([
                         Action::make('chat_wa')

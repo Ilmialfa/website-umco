@@ -18,6 +18,9 @@ class SeatingOption extends Model
         'is_active' => 'boolean',
     ];
 
+    /**
+     * @return HasMany<Reservation, $this>
+     */
     public function reservations(): HasMany
     {
         return $this->hasMany(Reservation::class, 'seating_option_id');

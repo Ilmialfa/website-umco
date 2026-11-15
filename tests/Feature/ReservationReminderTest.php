@@ -4,7 +4,6 @@ use App\Models\Reservation;
 use App\Models\User;
 use App\Support\Settings;
 use Carbon\Carbon;
-use Filament\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Artisan;
 
 test('reservations:remind dispatches 15-minute upcoming reminder once and flags late bookings', function () {

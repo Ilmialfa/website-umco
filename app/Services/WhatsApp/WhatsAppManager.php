@@ -13,13 +13,13 @@ class WhatsAppManager
         $token = trim((string) Settings::get('whatsapp_templates.gateway_token', ''));
 
         if ($token === '') {
-            return new LogWhatsAppGateway();
+            return new LogWhatsAppGateway;
         }
 
         return match ($driver) {
             'fonnte' => new FonnteWhatsAppGateway($token),
             'wablas' => new WablasWhatsAppGateway($token),
-            default => new LogWhatsAppGateway(),
+            default => new LogWhatsAppGateway,
         };
     }
 }

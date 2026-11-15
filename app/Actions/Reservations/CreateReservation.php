@@ -108,7 +108,7 @@ class CreateReservation
             ]);
         }
 
-        $slotDateTime = Carbon::createFromFormat('Y-m-d H:i', $dateObj->format('Y-m-d') . ' ' . $timeRaw);
+        $slotDateTime = Carbon::createFromFormat('Y-m-d H:i', $dateObj->format('Y-m-d').' '.$timeRaw);
         $minAdvanceMinutes = max(0, (int) Settings::get('reservation.min_advance_minutes', 60));
 
         if (! $isAdminSource && $slotDateTime->lt($now->copy()->addMinutes($minAdvanceMinutes))) {
@@ -121,8 +121,8 @@ class CreateReservation
         $closeStr = (string) Settings::get('hours.closing_time', '22:00');
         $lastBeforeClose = max(0, (int) Settings::get('reservation.last_slot_before_close', 60));
 
-        $openTime = Carbon::createFromFormat('Y-m-d H:i', $dateObj->format('Y-m-d') . ' ' . substr($openStr, 0, 5));
-        $lastSlot = Carbon::createFromFormat('Y-m-d H:i', $dateObj->format('Y-m-d') . ' ' . substr($closeStr, 0, 5))
+        $openTime = Carbon::createFromFormat('Y-m-d H:i', $dateObj->format('Y-m-d').' '.substr($openStr, 0, 5));
+        $lastSlot = Carbon::createFromFormat('Y-m-d H:i', $dateObj->format('Y-m-d').' '.substr($closeStr, 0, 5))
             ->subMinutes($lastBeforeClose);
 
         if ($slotDateTime->lt($openTime) || $slotDateTime->gt($lastSlot)) {
@@ -212,7 +212,7 @@ class CreateReservation
                 ]);
             }
             if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp'], true)) {
-                $realPath = method_exists($proofFile, 'getRealPath') ? $proofFile->getRealPath() : null;
+                $realPath = $proofFile->getRealPath();
                 if (! $realPath || ! is_array(@getimagesize($realPath))) {
                     throw ValidationException::withMessages([
                         'payment_proof' => 'File bukti transfer tidak dikenali sebagai gambar yang sah.',
@@ -220,7 +220,7 @@ class CreateReservation
                 }
             }
 
-            $filename = Str::uuid()->toString() . '.' . $ext;
+            $filename = Str::uuid()->toString().'.'.$ext;
             $proofPath = $proofFile->storeAs('payment_proofs', $filename, 'public');
         }
 

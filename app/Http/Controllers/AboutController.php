@@ -7,10 +7,11 @@ use App\Models\GalleryItem;
 use App\Models\PageSection;
 use App\Models\StoryBlock;
 use App\Models\StreetStall;
+use Illuminate\Contracts\View\View;
 
 class AboutController extends Controller
 {
-    public function __invoke()
+    public function __invoke(): View
     {
         $sections = PageSection::where('page', 'cerita')
             ->orderBy('sort')

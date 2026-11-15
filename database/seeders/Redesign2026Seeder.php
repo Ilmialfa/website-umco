@@ -624,7 +624,7 @@ class Redesign2026Seeder extends Seeder
         foreach ($items as $row) {
             $slug = Str::slug($row['name']);
             $seededSlugs[] = $slug;
-            $sourceFile = base_path('docs/Menu Umco - belum lengkap/' . $row['file']);
+            $sourceFile = base_path('docs/Menu Umco - belum lengkap/'.$row['file']);
 
             $imagePath = null;
             $imageVariants = null;
@@ -909,8 +909,8 @@ class Redesign2026Seeder extends Seeder
                 [
                     'is_active' => true,
                     'sort' => $sec['sort'],
-                    'heading' => $sec['heading'] ?? null,
-                    'subheading' => $sec['subheading'] ?? null,
+                    'heading' => $sec['heading'],
+                    'subheading' => $sec['subheading'],
                     'body' => $sec['body'] ?? null,
                     'cta_label' => $sec['cta_label'] ?? null,
                     'cta_url' => $sec['cta_url'] ?? null,
@@ -1109,7 +1109,7 @@ class Redesign2026Seeder extends Seeder
         ];
 
         // Bersihkan testimonial lama yang masih menyinggung narasi bangunan/AC lama
-        Testimonial::query()->where('body', 'like', '%huruf ' . 'H%')->orWhere('body', 'like', '%AC-nya%')->delete();
+        Testimonial::query()->where('body', 'like', '%huruf '.'H%')->orWhere('body', 'like', '%AC-nya%')->delete();
 
         foreach ($testimonials as $t) {
             Testimonial::updateOrCreate(

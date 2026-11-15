@@ -14,25 +14,30 @@ class NewReservationNotification extends Notification
 {
     use Queueable;
 
-    public function __construct(public readonly Reservation $reservation)
-    {
-    }
+    public function __construct(public readonly Reservation $reservation) {}
 
+    /**
+     * @return list<string>
+     */
     public function via(object $notifiable): array
     {
         return ['database'];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toDatabase(object $notifiable): array
     {
-        $dayLabel = Carbon::parse($this->reservation->date)
-            ->locale('id')
-            ->isoFormat('ddd');
+        $dateObj = Carbon::parse($this->reservation->date);
+        $dateObj->locale('id');
+        $dayLabel = $dateObj->isoFormat('ddd');
         $time = substr((string) $this->reservation->time, 0, 5);
         $title = "Reservasi baru {$this->reservation->code} · {$this->reservation->party_size} orang · {$dayLabel} {$time}";
 
-        $seating = $this->reservation->seatingOption?->label ?? 'Area bebas';
-        $body = "{$this->reservation->name} ({$seating}) · Rp " . number_format($this->reservation->subtotal, 0, ',', '.');
+        $seatingOption = $this->reservation->seatingOption;
+        $seating = $seatingOption !== null ? $seatingOption->label : 'Area bebas';
+        $body = "{$this->reservation->name} ({$seating}) · Rp ".number_format($this->reservation->subtotal, 0, ',', '.');
 
         $url = url("/admin/reservations/{$this->reservation->id}");
         try {

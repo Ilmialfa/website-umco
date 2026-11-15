@@ -74,14 +74,14 @@ class AppServiceProvider extends ServiceProvider
             ActivityLog::record('auth.login', User::class, $event->user->id, [
                 'email' => $event->user->email,
                 'role' => $event->user->role,
-                'ip' => request()?->ip(),
+                'ip' => request()->ip(),
             ]);
         });
 
         Event::listen(Failed::class, function (Failed $event): void {
             ActivityLog::record('auth.login_failed', User::class, $event->user?->getAuthIdentifier(), [
                 'email' => (string) ($event->credentials['email'] ?? '-'),
-                'ip' => request()?->ip(),
+                'ip' => request()->ip(),
             ]);
         });
 

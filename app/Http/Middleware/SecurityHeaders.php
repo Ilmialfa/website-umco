@@ -25,10 +25,10 @@ class SecurityHeaders
             $hotUrl = trim((string) @file_get_contents(public_path('hot')));
             $parts = parse_url($hotUrl);
             if (! empty($parts['scheme']) && ! empty($parts['host'])) {
-                $port = isset($parts['port']) ? ':' . $parts['port'] : '';
-                $viteOrigin = ' ' . $parts['scheme'] . '://' . $parts['host'] . $port;
+                $port = isset($parts['port']) ? ':'.$parts['port'] : '';
+                $viteOrigin = ' '.$parts['scheme'].'://'.$parts['host'].$port;
                 $wsScheme = $parts['scheme'] === 'https' ? 'wss' : 'ws';
-                $viteWs = ' ' . $wsScheme . '://' . $parts['host'] . $port;
+                $viteWs = ' '.$wsScheme.'://'.$parts['host'].$port;
             }
         }
 

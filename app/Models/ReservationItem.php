@@ -2,14 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ReservationItem extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'reservation_id',
         'menu_item_id',
@@ -27,11 +24,17 @@ class ReservationItem extends Model
         'qty' => 'integer',
     ];
 
+    /**
+     * @return BelongsTo<Reservation, $this>
+     */
     public function reservation(): BelongsTo
     {
         return $this->belongsTo(Reservation::class, 'reservation_id');
     }
 
+    /**
+     * @return BelongsTo<MenuItem, $this>
+     */
     public function menuItem(): BelongsTo
     {
         return $this->belongsTo(MenuItem::class, 'menu_item_id');
@@ -44,11 +47,11 @@ class ReservationItem extends Model
 
     public function getFormattedPriceAttribute(): string
     {
-        return 'Rp ' . number_format($this->price_snapshot, 0, ',', '.');
+        return 'Rp '.number_format($this->price_snapshot, 0, ',', '.');
     }
 
     public function getFormattedSubtotalAttribute(): string
     {
-        return 'Rp ' . number_format($this->subtotal, 0, ',', '.');
+        return 'Rp '.number_format($this->subtotal, 0, ',', '.');
     }
 }

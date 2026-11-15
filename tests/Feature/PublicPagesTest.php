@@ -1,8 +1,11 @@
 <?php
 
+use App\Livewire\ReservationPage;
+use App\Models\Facility;
 use App\Models\MenuCategory;
 use App\Models\MenuItem;
 use App\Models\Reservation;
+use Livewire\Livewire;
 
 it('renders home page without legacy copy, emojis, or external fonts', function () {
     $response = $this->get('/');
@@ -54,7 +57,7 @@ it('renders menu page with items and categories', function () {
 });
 
 it('renders cerita page and permanently redirects /about to /cerita', function () {
-    \App\Models\Facility::create([
+    Facility::create([
         'label' => 'Wi-Fi Kampus Cepat',
         'icon' => 'wifi',
         'sort' => 1,
@@ -158,12 +161,12 @@ it('imports nota items on ReservationPage without Livewire lifecycle hook collis
         'is_available' => true,
     ]);
 
-    $component = \Livewire\Livewire::test(\App\Livewire\ReservationPage::class)
+    $component = Livewire::test(ReservationPage::class)
         ->call('importNotaItems', [
             ['slug' => 'americano-test', 'qty' => 2, 'variant_label' => null, 'temperature' => 'Es'],
         ]);
 
-    expect($component->instance()->selectedItems[$item->id . '||Es']['qty'])->toBe(2);
+    expect($component->instance()->selectedItems[$item->id.'||Es']['qty'])->toBe(2);
 });
 
 it('renders galeri page cleanly with filters and cta', function () {

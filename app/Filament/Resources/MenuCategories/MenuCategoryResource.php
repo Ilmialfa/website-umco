@@ -9,11 +9,11 @@ use App\Filament\Resources\MenuCategories\Schemas\MenuCategoryForm;
 use App\Filament\Resources\MenuCategories\Tables\MenuCategoriesTable;
 use App\Models\MenuCategory;
 use BackedEnum;
-use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class MenuCategoryResource extends Resource
 {

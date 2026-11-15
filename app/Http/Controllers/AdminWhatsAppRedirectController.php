@@ -17,11 +17,12 @@ class AdminWhatsAppRedirectController extends Controller
         $user = $request->user();
         abort_unless($user && in_array($user->role, ['owner', 'admin', 'cashier'], true), 403);
 
-        $dateObj = Carbon::parse($reservation->date)->locale('id');
+        $dateObj = Carbon::parse($reservation->date);
+        $dateObj->locale('id');
         $timeShort = substr((string) $reservation->time, 0, 5);
         $graceMinutes = max(5, (int) Settings::get('reservation.grace_minutes', 15));
 
-        $hangusTime = Carbon::createFromFormat('Y-m-d H:i', $reservation->date->format('Y-m-d') . ' ' . $timeShort)
+        $hangusTime = Carbon::createFromFormat('Y-m-d H:i', $reservation->date->format('Y-m-d').' '.$timeShort)
             ->addMinutes($graceMinutes)
             ->format('H.i');
 
@@ -60,10 +61,10 @@ class AdminWhatsAppRedirectController extends Controller
             '{tanggal}' => $dateObj->isoFormat('D MMM YYYY'),
             '{jam}' => str_replace(':', '.', $timeShort),
             '{jam_hangus}' => $hangusTime,
-            '{total}' => 'Rp ' . number_format($reservation->subtotal, 0, ',', '.'),
-            '{dp}' => 'Rp ' . number_format($reservation->dp_amount, 0, ',', '.'),
-            '{nominal_masuk}' => 'Rp ' . number_format($amountPaid, 0, ',', '.'),
-            '{kekurangan}' => 'Rp ' . number_format($shortfall, 0, ',', '.'),
+            '{total}' => 'Rp '.number_format($reservation->subtotal, 0, ',', '.'),
+            '{dp}' => 'Rp '.number_format($reservation->dp_amount, 0, ',', '.'),
+            '{nominal_masuk}' => 'Rp '.number_format($amountPaid, 0, ',', '.'),
+            '{kekurangan}' => 'Rp '.number_format($shortfall, 0, ',', '.'),
             '{alasan}' => $reservation->cancelled_reason ?: 'penyesuaian jadwal kedai',
             '{link_status}' => route('reservation.status', ['code' => $reservation->code]),
             '{catatan}' => $reservation->note ?? '-',

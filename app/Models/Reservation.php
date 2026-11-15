@@ -3,15 +3,12 @@
 namespace App\Models;
 
 use App\Support\PhoneNumber;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Reservation extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'code',
         'name',
@@ -59,22 +56,28 @@ class Reservation extends Model
 
     protected static function booted(): void
     {
-        static::creating(function ($reservation) {
+        static::creating(function (self $reservation): void {
             if (empty($reservation->code)) {
                 $reservation->code = self::generateUniqueCode();
             }
 
-            if (!empty($reservation->phone_input) && empty($reservation->phone_wa)) {
+            if (! empty($reservation->phone_input) && empty($reservation->phone_wa)) {
                 $reservation->phone_wa = PhoneNumber::normalize($reservation->phone_input);
             }
         });
     }
 
+    /**
+     * @return HasMany<ReservationItem, $this>
+     */
     public function items(): HasMany
     {
         return $this->hasMany(ReservationItem::class, 'reservation_id');
     }
 
+    /**
+     * @return BelongsTo<SeatingOption, $this>
+     */
     public function seatingOption(): BelongsTo
     {
         return $this->belongsTo(SeatingOption::class, 'seating_option_id');
@@ -101,12 +104,12 @@ class Reservation extends Model
 
     public function getFormattedSubtotalAttribute(): string
     {
-        return 'Rp ' . number_format($this->subtotal, 0, ',', '.');
+        return 'Rp '.number_format($this->subtotal, 0, ',', '.');
     }
 
     public function getFormattedDpAttribute(): string
     {
-        return 'Rp ' . number_format($this->dp_amount, 0, ',', '.');
+        return 'Rp '.number_format($this->dp_amount, 0, ',', '.');
     }
 
     public function getStatusLabelAttribute(): string

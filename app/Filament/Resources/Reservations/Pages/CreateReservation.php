@@ -108,7 +108,7 @@ class CreateReservation extends CreateRecord
                                     ->where('is_available', true)
                                     ->orderBy('name')
                                     ->get()
-                                    ->mapWithKeys(fn ($m) => [$m->id => "{$m->name} (" . IndonesianFormat::rupiah($m->price) . ")"])
+                                    ->mapWithKeys(fn ($m) => [$m->id => "{$m->name} (".IndonesianFormat::rupiah($m->price).')'])
                                     ->all())
                                 ->searchable()
                                 ->live()
@@ -145,12 +145,12 @@ class CreateReservation extends CreateRecord
                             $quote = QuoteReservation::calculate($party, $items, (string) ($get('payment_type') ?? 'dp'));
                             $status = $quote['meets_min_spend']
                                 ? 'Memenuhi minimal belanja'
-                                : 'Kurang ' . IndonesianFormat::rupiah($quote['shortfall']);
+                                : 'Kurang '.IndonesianFormat::rupiah($quote['shortfall']);
 
-                            return 'Subtotal: ' . IndonesianFormat::rupiah($quote['subtotal'])
-                                . ' | Minimal ' . $party . ' orang: ' . IndonesianFormat::rupiah($quote['min_spend'])
-                                . " ({$status})"
-                                . ' | DP ' . $quote['dp_percentage'] . '%: ' . IndonesianFormat::rupiah($quote['dp_amount']);
+                            return 'Subtotal: '.IndonesianFormat::rupiah($quote['subtotal'])
+                                .' | Minimal '.$party.' orang: '.IndonesianFormat::rupiah($quote['min_spend'])
+                                ." ({$status})"
+                                .' | DP '.$quote['dp_percentage'].'%: '.IndonesianFormat::rupiah($quote['dp_amount']);
                         }),
                 ]),
 
@@ -169,7 +169,7 @@ class CreateReservation extends CreateRecord
                                 return 'Otomatis dinormalisasi ke 628xxx.';
                             }
                             try {
-                                return 'Nomor WA: +' . PhoneNumber::normalize($state);
+                                return 'Nomor WA: +'.PhoneNumber::normalize($state);
                             } catch (\InvalidArgumentException) {
                                 return 'Format nomor belum valid (contoh 0822xxxx).';
                             }
@@ -240,13 +240,13 @@ class CreateReservation extends CreateRecord
         $lastBeforeClose = max(0, (int) Settings::get('reservation.last_slot_before_close', 60));
 
         $today = Carbon::now()->format('Y-m-d');
-        $cursor = Carbon::createFromFormat('Y-m-d H:i', $today . ' ' . $openStr);
-        $last = Carbon::createFromFormat('Y-m-d H:i', $today . ' ' . $closeStr)->subMinutes($lastBeforeClose);
+        $cursor = Carbon::createFromFormat('Y-m-d H:i', $today.' '.$openStr);
+        $last = Carbon::createFromFormat('Y-m-d H:i', $today.' '.$closeStr)->subMinutes($lastBeforeClose);
 
         $opts = [];
         while ($cursor->lte($last)) {
             $val = $cursor->format('H:i');
-            $opts[$val] = str_replace(':', '.', $val) . ' WIB';
+            $opts[$val] = str_replace(':', '.', $val).' WIB';
             $cursor->addMinutes($interval);
         }
 

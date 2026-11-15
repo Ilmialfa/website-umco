@@ -2,15 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 
 class MenuItem extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'category_id',
         'name',
@@ -56,6 +53,9 @@ class MenuItem extends Model
         });
     }
 
+    /**
+     * @return BelongsTo<MenuCategory, $this>
+     */
     public function category(): BelongsTo
     {
         return $this->belongsTo(MenuCategory::class, 'category_id');
@@ -63,7 +63,7 @@ class MenuItem extends Model
 
     public function getFormattedPriceAttribute(): string
     {
-        return 'Rp ' . number_format($this->price, 0, ',', '.');
+        return 'Rp '.number_format($this->price, 0, ',', '.');
     }
 
     /**
@@ -73,17 +73,17 @@ class MenuItem extends Model
     {
         $variants = $this->image_variants ?? [];
         if (isset($variants[$format][(string) $width])) {
-            return asset('storage/' . ltrim($variants[$format][(string) $width], '/'));
+            return asset('storage/'.ltrim($variants[$format][(string) $width], '/'));
         }
         if (isset($variants['webp'][(string) $width])) {
-            return asset('storage/' . ltrim($variants['webp'][(string) $width], '/'));
+            return asset('storage/'.ltrim($variants['webp'][(string) $width], '/'));
         }
         if (! empty($this->image_path)) {
             if (str_starts_with($this->image_path, 'http') || str_starts_with($this->image_path, '/')) {
                 return $this->image_path;
             }
 
-            return asset('storage/' . ltrim($this->image_path, '/'));
+            return asset('storage/'.ltrim($this->image_path, '/'));
         }
 
         return null;
@@ -95,7 +95,7 @@ class MenuItem extends Model
         $parts = [];
         foreach ([480, 800, 1200] as $w) {
             if (isset($variants[(string) $w])) {
-                $parts[] = asset('storage/' . ltrim($variants[(string) $w], '/')) . " {$w}w";
+                $parts[] = asset('storage/'.ltrim($variants[(string) $w], '/'))." {$w}w";
             }
         }
 

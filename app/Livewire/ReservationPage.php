@@ -15,6 +15,7 @@ use App\Models\SpendTier;
 use App\Support\PhoneNumber;
 use App\Support\Settings;
 use Carbon\Carbon;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\RateLimiter;
@@ -24,8 +25,26 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
 
+/**
+ * @property-read int $minParty
+ * @property-read int $maxPartyOnline
+ * @property-read bool $fullPaymentEnabled
+ * @property-read bool $menuRequired
+ * @property-read list<array{date: string, day_short: string, date_short: string, full_label: string, closed: bool, reason: ?string}> $dateOptions
+ * @property-read list<array{time: string, label: string, remaining: int, too_soon: bool, full: bool, available: bool}> $timeSlots
+ * @property-read Collection<int, SeatingOption> $seatingOptions
+ * @property-read Collection<int, MenuCategory> $categories
+ * @property-read Collection<int, MenuItem> $menus
+ * @property-read array<string, mixed> $quote
+ * @property-read string|null $normalizedPhonePreview
+ * @property-read Collection<int, Rule> $rulesList
+ * @property-read string $qrisUrl
+ * @property-read array<int, array<string, mixed>> $bankAccounts
+ * @property-read string|null $floorPlanUrl
+ */
 #[Layout('components.layouts.public')]
 #[Title('Pesan Meja — UMCO House')]
 class ReservationPage extends Component
@@ -33,21 +52,27 @@ class ReservationPage extends Component
     use WithFileUploads;
 
     public int $step = 1;
+
     public int $maxVisitedStep = 1;
 
     // Step 1: Kapan & orang
     public string $date = '';
+
     public string $time = '';
+
     public int $partySize = 2;
 
     // Step 2: Mau duduk di mana
     public ?int $seatingOptionId = null;
+
     public string $seatingNote = '';
 
     // Step 3: Pilih menu
     /** @var array<string, array{menu_item_id: int, name: string, variant_label: ?string, temperature: ?string, unit_price: int, qty: int}> */
     public array $selectedItems = [];
+
     public int $activeCategoryId = 0;
+
     public string $menuSearch = '';
 
     /** @var array<int, string> */
@@ -58,13 +83,19 @@ class ReservationPage extends Component
 
     // Step 4: Data kamu
     public string $name = '';
+
     public string $phoneInput = '';
+
     public string $note = '';
 
     // Step 5: Bayar
     public string $paymentType = 'dp';
+
+    /** @var TemporaryUploadedFile|null */
     public $paymentProof = null;
+
     public bool $acceptedRules = false;
+
     public bool $showRulesDrawer = false;
 
     // Step 6: Selesai
@@ -78,7 +109,9 @@ class ReservationPage extends Component
     public ?int $createdReservationId = null;
 
     public bool $hasQueryItems = false;
+
     public bool $mobileSheetOpen = false;
+
     public bool $tabletKarcisExpanded = false;
 
     public function mount(Request $request): void
@@ -86,7 +119,7 @@ class ReservationPage extends Component
         $minParty = $this->minParty;
         $maxParty = $this->maxPartyOnline;
 
-        $reqParty = (int) $request->query('party', $minParty);
+        $reqParty = (int) $request->query('party', (string) $minParty);
         $this->partySize = max($minParty, min($maxParty, $reqParty));
 
         $reqSeating = (int) $request->query('seating', 0);
@@ -162,6 +195,9 @@ class ReservationPage extends Component
         }
     }
 
+    /**
+     * @param  array<int, array<string, mixed>>  $notaItems
+     */
     public function importNotaItems(array $notaItems): void
     {
         if ($this->selectedItems !== [] || $this->createdCode !== null) {
@@ -263,6 +299,9 @@ class ReservationPage extends Component
         return (bool) Settings::get('reservation.menu_required', true);
     }
 
+    /**
+     * @return list<array{date: string, day_short: string, date_short: string, full_label: string, closed: bool, reason: ?string}>
+     */
     #[Computed]
     public function dateOptions(): array
     {
@@ -277,7 +316,8 @@ class ReservationPage extends Component
 
         $list = [];
         for ($i = 0; $i <= $maxDays; $i++) {
-            $d = $now->copy()->addDays($i)->locale('id');
+            $d = $now->copy()->addDays($i);
+            $d->locale('id');
             $key = $d->format('Y-m-d');
             $closed = $closedDates->get($key);
 
@@ -294,6 +334,9 @@ class ReservationPage extends Component
         return $list;
     }
 
+    /**
+     * @return list<array{time: string, label: string, remaining: int, too_soon: bool, full: bool, available: bool}>
+     */
     #[Computed]
     public function timeSlots(): array
     {
@@ -312,8 +355,8 @@ class ReservationPage extends Component
         $cutoff = $now->copy()->addMinutes($minAdvance);
 
         try {
-            $cursor = Carbon::createFromFormat('Y-m-d H:i', $this->date . ' ' . $openStr);
-            $last = Carbon::createFromFormat('Y-m-d H:i', $this->date . ' ' . $closeStr)
+            $cursor = Carbon::createFromFormat('Y-m-d H:i', $this->date.' '.$openStr);
+            $last = Carbon::createFromFormat('Y-m-d H:i', $this->date.' '.$closeStr)
                 ->subMinutes($lastBeforeClose);
         } catch (\Throwable) {
             return [];
@@ -349,6 +392,9 @@ class ReservationPage extends Component
         return $slots;
     }
 
+    /**
+     * @return Collection<int, SeatingOption>
+     */
     #[Computed]
     public function seatingOptions(): Collection
     {
@@ -359,6 +405,9 @@ class ReservationPage extends Component
             ->get();
     }
 
+    /**
+     * @return Collection<int, MenuCategory>
+     */
     #[Computed]
     public function categories(): Collection
     {
@@ -369,6 +418,9 @@ class ReservationPage extends Component
             ->get();
     }
 
+    /**
+     * @return Collection<int, MenuItem>
+     */
     #[Computed]
     public function menus(): Collection
     {
@@ -392,6 +444,9 @@ class ReservationPage extends Component
         return $query->orderByDesc('is_favorite')->orderBy('sort')->orderBy('id')->get();
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     #[Computed]
     public function quote(): array
     {
@@ -412,9 +467,13 @@ class ReservationPage extends Component
         }
 
         $local = substr($clean, 2);
-        return '+62 ' . substr($local, 0, 3) . '-' . substr($local, 3, 4) . '-' . substr($local, 7);
+
+        return '+62 '.substr($local, 0, 3).'-'.substr($local, 3, 4).'-'.substr($local, 7);
     }
 
+    /**
+     * @return Collection<int, Rule>
+     */
     #[Computed]
     public function rulesList(): Collection
     {
@@ -432,15 +491,19 @@ class ReservationPage extends Component
             return $path;
         }
 
-        return asset('storage/' . ltrim($path, '/'));
+        return asset('storage/'.ltrim($path, '/'));
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     #[Computed]
     public function bankAccounts(): array
     {
         $raw = Settings::get('payment.bank_accounts', []);
         if (is_string($raw)) {
             $decoded = json_decode($raw, true);
+
             return is_array($decoded) ? $decoded : [];
         }
 
@@ -458,7 +521,7 @@ class ReservationPage extends Component
             return $path;
         }
 
-        return asset('storage/' . ltrim($path, '/'));
+        return asset('storage/'.ltrim($path, '/'));
     }
 
     public function selectDate(string $date): void
@@ -604,10 +667,11 @@ class ReservationPage extends Component
     {
         $this->resetErrorBag();
 
-        $throttleKey = 'umco:res-submit:' . request()->ip();
+        $throttleKey = 'umco:res-submit:'.request()->ip();
         if (RateLimiter::tooManyAttempts($throttleKey, 10)) {
             $seconds = RateLimiter::availableIn($throttleKey);
             $this->addError('acceptedRules', "Terlalu banyak kiriman dalam waktu singkat. Coba lagi {$seconds} detik lagi ya.");
+
             return;
         }
         RateLimiter::hit($throttleKey, 60);
@@ -618,6 +682,7 @@ class ReservationPage extends Component
 
         if (! $this->acceptedRules) {
             $this->addError('acceptedRules', 'Centang dulu tanda sudah baca aturan kedai.');
+
             return;
         }
 
@@ -645,6 +710,7 @@ class ReservationPage extends Component
                 };
                 $this->addError($mappedField, $messages[0] ?? 'Periksa isian ini.');
             }
+
             return;
         }
 
@@ -687,8 +753,8 @@ class ReservationPage extends Component
                 throw ValidationException::withMessages(['items' => 'Pilih minimal satu menu dulu ya.']);
             }
             if (! $quote['meets_min_spend']) {
-                $minFmt = 'Rp ' . number_format($quote['min_spend'], 0, ',', '.');
-                $kurangFmt = 'Rp ' . number_format($quote['shortfall'], 0, ',', '.');
+                $minFmt = 'Rp '.number_format($quote['min_spend'], 0, ',', '.');
+                $kurangFmt = 'Rp '.number_format($quote['shortfall'], 0, ',', '.');
                 throw ValidationException::withMessages([
                     'items' => "Minimal belanja {$this->partySize} orang adalah {$minFmt} (kurang {$kurangFmt}).",
                 ]);
@@ -723,10 +789,10 @@ class ReservationPage extends Component
 
     private function lineKey(int $menuId, ?string $variant, ?string $temp): string
     {
-        return $menuId . '|' . ($variant ?? '') . '|' . ($temp ?? '');
+        return $menuId.'|'.($variant ?? '').'|'.($temp ?? '');
     }
 
-    public function render()
+    public function render(): View
     {
         $minSpend = SpendTier::minSpendFor($this->partySize);
 

@@ -2,14 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ActivityLog extends Model
 {
-    use HasFactory;
-
     public $timestamps = false;
 
     protected $fillable = [
@@ -27,6 +24,9 @@ class ActivityLog extends Model
         'created_at' => 'datetime',
     ];
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -34,6 +34,8 @@ class ActivityLog extends Model
 
     /**
      * Record a system activity log.
+     *
+     * @param  array<string, mixed>  $details
      */
     public static function record(string $action, ?string $subjectType = null, ?int $subjectId = null, array $details = []): self
     {

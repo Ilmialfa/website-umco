@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Notifications\NewReservationNotification;
 use App\Support\PhoneNumber;
 use App\Support\Settings;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
@@ -17,8 +18,12 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
 
+/**
+ * @property-read Reservation $reservation
+ */
 #[Layout('components.layouts.public')]
 #[Title('Status Karcis — UMCO House')]
 class ReservationStatusPage extends Component
@@ -33,7 +38,9 @@ class ReservationStatusPage extends Component
     #[Locked]
     public bool $verified = false;
 
+    /** @var TemporaryUploadedFile|null */
     public $newProof = null;
+
     public bool $reuploadSuccess = false;
 
     public function mount(string $code): void
@@ -58,16 +65,18 @@ class ReservationStatusPage extends Component
     public function verifyDigits(): void
     {
         $this->resetErrorBag();
-        $throttleKey = 'umco:status-verify:' . $this->code . ':' . request()->ip();
+        $throttleKey = 'umco:status-verify:'.$this->code.':'.request()->ip();
         if (RateLimiter::tooManyAttempts($throttleKey, 6)) {
             $seconds = RateLimiter::availableIn($throttleKey);
             $this->addError('digitsInput', "Terlalu banyak percobaan. Tunggu {$seconds} detik ya.");
+
             return;
         }
 
         $input = preg_replace('/\D+/', '', $this->digitsInput);
         if (strlen($input) !== 4) {
             $this->addError('digitsInput', 'Masukkan tepat 4 digit terakhir nomor WhatsApp kamu.');
+
             return;
         }
 
@@ -77,6 +86,7 @@ class ReservationStatusPage extends Component
         if ($input !== $last4) {
             RateLimiter::hit($throttleKey, 60);
             $this->addError('digitsInput', '4 digit terakhir belum cocok dengan nomor saat reservasi.');
+
             return;
         }
 
@@ -97,10 +107,11 @@ class ReservationStatusPage extends Component
             abort(403);
         }
 
-        $throttleKey = 'umco:proof-reupload:' . $this->code . ':' . request()->ip();
+        $throttleKey = 'umco:proof-reupload:'.$this->code.':'.request()->ip();
         if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
             $seconds = RateLimiter::availableIn($throttleKey);
             $this->addError('newProof', "Terlalu sering mengunggah. Tunggu {$seconds} detik ya.");
+
             return;
         }
 
@@ -117,16 +128,17 @@ class ReservationStatusPage extends Component
             'newProof.max' => 'Ukuran maksimal 5 MB.',
         ]);
 
-        $ext = strtolower($this->newProof->getClientOriginalExtension() ?: $this->newProof->extension() ?: 'jpg');
+        $ext = strtolower($this->newProof?->getClientOriginalExtension() ?: $this->newProof?->extension() ?: 'jpg');
         if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp'], true)) {
-            $realPath = method_exists($this->newProof, 'getRealPath') ? $this->newProof->getRealPath() : null;
+            $realPath = $this->newProof?->getRealPath();
             if (! $realPath || ! is_array(@getimagesize($realPath))) {
                 $this->addError('newProof', 'File tidak terbaca sebagai gambar yang sah.');
+
                 return;
             }
         }
         RateLimiter::hit($throttleKey, 60);
-        $path = $this->newProof->storeAs('payment_proofs', Str::uuid()->toString() . '.' . $ext, 'public');
+        $path = $this->newProof?->storeAs('payment_proofs', Str::uuid()->toString().'.'.$ext, 'public');
 
         $reservation->update([
             'payment_proof_path' => $path,
@@ -150,6 +162,9 @@ class ReservationStatusPage extends Component
         unset($this->reservation);
     }
 
+    /**
+     * @return array{label: string, hex: string, class: string}
+     */
     #[Computed]
     public function stampInfo(): array
     {
@@ -181,10 +196,10 @@ class ReservationStatusPage extends Component
         $target = PhoneNumber::normalizeBusiness((string) Settings::get('contact.business_wa', '02248001571'));
         $msg = "Halo UMCO, ini karcis reservasi saya {$this->code}.";
 
-        return 'https://wa.me/' . $target . '?text=' . rawurlencode($msg);
+        return 'https://wa.me/'.$target.'?text='.rawurlencode($msg);
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.reservation-status-page');
     }

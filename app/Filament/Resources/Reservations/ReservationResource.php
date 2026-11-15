@@ -11,13 +11,13 @@ use App\Filament\Resources\Reservations\Schemas\ReservationInfolist;
 use App\Filament\Resources\Reservations\Tables\ReservationsTable;
 use App\Models\Reservation;
 use BackedEnum;
-use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
+use UnitEnum;
 
 class ReservationResource extends Resource
 {
@@ -40,7 +40,7 @@ class ReservationResource extends Resource
         return in_array(auth()->user()?->role, ['owner', 'admin', 'cashier'], true);
     }
 
-    public static function canDelete(\Illuminate\Database\Eloquent\Model $record): bool
+    public static function canDelete(Model $record): bool
     {
         return auth()->user()?->isOwner() ?? false;
     }

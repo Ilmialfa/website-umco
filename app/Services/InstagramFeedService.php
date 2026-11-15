@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Http;
 class InstagramFeedService
 {
     public const CACHE_KEY = 'umco.instagram_feed.v1';
+
     public const STALE_CACHE_KEY = 'umco.instagram_feed.last_live.v1';
 
     public static function flushCache(): void
@@ -58,6 +59,8 @@ class InstagramFeedService
      * 2) Instagram Graph API (jika token diisi oleh Owner di Pengaturan)
      * 3) Public profile web endpoint (@um.co_house)
      * 4) Cache live sebelumnya (hingga 7 hari) atau galeri kurasi @um.co_house
+     *
+     * @return array<string, mixed>
      */
     public function getFeed(int $limit = 8, bool $forceRefresh = false): array
     {
@@ -113,6 +116,9 @@ class InstagramFeedService
         return $curated;
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     private function fetchViaGraphApi(string $token, string $handle, string $profileUrl, int $limit): ?array
     {
         try {
@@ -144,14 +150,15 @@ class InstagramFeedService
                 }
 
                 $ts = ! empty($row['timestamp']) ? Carbon::parse($row['timestamp']) : null;
+                $ts?->locale('id');
                 $posts[] = [
                     'id' => (string) ($row['id'] ?? uniqid('ig-')),
                     'image' => $img,
-                    'caption' => trim((string) ($row['caption'] ?? 'Aktivitas terbaru dari meja bar @' . $handle)),
+                    'caption' => trim((string) ($row['caption'] ?? 'Aktivitas terbaru dari meja bar @'.$handle)),
                     'permalink' => (string) ($row['permalink'] ?? $profileUrl),
                     'likes' => isset($row['like_count']) ? (int) $row['like_count'] : null,
                     'comments' => isset($row['comments_count']) ? (int) $row['comments_count'] : null,
-                    'timestamp_human' => $ts ? $ts->locale('id')->diffForHumans() : 'Baru saja',
+                    'timestamp_human' => $ts?->diffForHumans() ?? 'Baru saja',
                     'is_video' => ($row['media_type'] ?? '') === 'VIDEO',
                 ];
             }
@@ -172,6 +179,9 @@ class InstagramFeedService
         }
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     private function fetchViaPublicProfile(string $handle, string $profileUrl, int $limit): ?array
     {
         try {
@@ -180,7 +190,7 @@ class InstagramFeedService
                     'x-ig-app-id' => '936619743392459',
                     'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
                     'Accept' => '*/*',
-                    'Referer' => 'https://www.instagram.com/' . $handle . '/',
+                    'Referer' => 'https://www.instagram.com/'.$handle.'/',
                 ])
                 ->get('https://www.instagram.com/api/v1/users/web_profile_info/', [
                     'username' => $handle,
@@ -205,17 +215,18 @@ class InstagramFeedService
                     continue;
                 }
 
-                $caption = $node['edge_media_to_caption']['edges'][0]['node']['text'] ?? ('Momen harian di @' . $handle);
+                $caption = $node['edge_media_to_caption']['edges'][0]['node']['text'] ?? ('Momen harian di @'.$handle);
                 $takenAt = ! empty($node['taken_at_timestamp']) ? Carbon::createFromTimestamp((int) $node['taken_at_timestamp']) : null;
+                $takenAt?->locale('id');
 
                 $posts[] = [
                     'id' => (string) ($node['id'] ?? $shortcode),
                     'image' => $img,
                     'caption' => trim((string) $caption),
-                    'permalink' => 'https://www.instagram.com/p/' . $shortcode . '/',
+                    'permalink' => 'https://www.instagram.com/p/'.$shortcode.'/',
                     'likes' => $node['edge_liked_by']['count'] ?? $node['edge_media_preview_like']['count'] ?? null,
                     'comments' => $node['edge_media_to_comment']['count'] ?? null,
-                    'timestamp_human' => $takenAt ? $takenAt->locale('id')->diffForHumans() : 'Baru saja',
+                    'timestamp_human' => $takenAt?->diffForHumans() ?? 'Baru saja',
                     'is_video' => (bool) ($node['is_video'] ?? false),
                 ];
             }
@@ -237,6 +248,9 @@ class InstagramFeedService
         }
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function buildCuratedFallback(string $handle, string $profileUrl, int $limit): array
     {
         $gallery = GalleryItem::active()
@@ -246,11 +260,11 @@ class InstagramFeedService
         $posts = $gallery->map(function ($item) use ($profileUrl) {
             $img = $item->image_path ?: '/images/bistro-patio-table.webp';
             if (! str_starts_with($img, 'http') && ! str_starts_with($img, '/')) {
-                $img = '/storage/' . ltrim($img, '/');
+                $img = '/storage/'.ltrim($img, '/');
             }
 
             return [
-                'id' => 'curated-' . $item->id,
+                'id' => 'curated-'.$item->id,
                 'image' => asset($img),
                 'caption' => $item->caption ?: 'Suasana harian dan sajian bar UMCO House Kampus 2 UMRI.',
                 'permalink' => $profileUrl,
@@ -271,7 +285,7 @@ class InstagramFeedService
             ];
             foreach ($defaults as $idx => [$src, $cap]) {
                 $posts[] = [
-                    'id' => 'default-' . $idx,
+                    'id' => 'default-'.$idx,
                     'image' => asset($src),
                     'caption' => $cap,
                     'permalink' => $profileUrl,

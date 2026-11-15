@@ -23,42 +23,42 @@ class ReservationActions
 
         return [
             Action::make('wa_confirmation')
-                ->label($prefix . 'Konfirmasi')
+                ->label($prefix.'Konfirmasi')
                 ->icon('heroicon-o-check-badge')
                 ->color('success')
                 ->openUrlInNewTab()
                 ->url(fn (Reservation $record): string => route('admin.wa.redirect', ['reservation' => $record->id, 'template' => 'confirmation'])),
 
             Action::make('wa_reminder')
-                ->label($prefix . 'Ingatkan')
+                ->label($prefix.'Ingatkan')
                 ->icon('heroicon-o-bell-alert')
                 ->color('warning')
                 ->openUrlInNewTab()
                 ->url(fn (Reservation $record): string => route('admin.wa.redirect', ['reservation' => $record->id, 'template' => 'reminder'])),
 
             Action::make('wa_follow_up_proof')
-                ->label($prefix . 'Follow up bukti bayar')
+                ->label($prefix.'Follow up bukti bayar')
                 ->icon('heroicon-o-document-magnifying-glass')
                 ->color('info')
                 ->openUrlInNewTab()
                 ->url(fn (Reservation $record): string => route('admin.wa.redirect', ['reservation' => $record->id, 'template' => 'follow_up_proof'])),
 
             Action::make('wa_underpaid')
-                ->label($prefix . 'Kurang bayar')
+                ->label($prefix.'Kurang bayar')
                 ->icon('heroicon-o-banknotes')
                 ->color('warning')
                 ->openUrlInNewTab()
                 ->url(fn (Reservation $record): string => route('admin.wa.redirect', ['reservation' => $record->id, 'template' => 'underpaid'])),
 
             Action::make('wa_cancellation')
-                ->label($prefix . 'Batal')
+                ->label($prefix.'Batal')
                 ->icon('heroicon-o-x-circle')
                 ->color('danger')
                 ->openUrlInNewTab()
                 ->url(fn (Reservation $record): string => route('admin.wa.redirect', ['reservation' => $record->id, 'template' => 'cancellation'])),
 
             Action::make('wa_free')
-                ->label($prefix . 'Chat bebas')
+                ->label($prefix.'Chat bebas')
                 ->icon('heroicon-o-chat-bubble-left-ellipsis')
                 ->color('gray')
                 ->openUrlInNewTab()
@@ -123,7 +123,7 @@ class ReservationActions
 
                     Notification::make()
                         ->title('Pembayaran diverifikasi')
-                        ->body("Nominal tercatat " . IndonesianFormat::rupiah($paid))
+                        ->body('Nominal tercatat '.IndonesianFormat::rupiah($paid))
                         ->success()
                         ->send();
                 }),

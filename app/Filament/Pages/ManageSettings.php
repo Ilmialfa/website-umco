@@ -23,6 +23,9 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use UnitEnum;
 
+/**
+ * @property Schema $form
+ */
 class ManageSettings extends Page implements HasForms
 {
     use InteractsWithForms;
@@ -39,6 +42,7 @@ class ManageSettings extends Page implements HasForms
 
     protected string $view = 'filament.pages.manage-settings';
 
+    /** @var array<string, mixed>|null */
     public ?array $data = [];
 
     /**
@@ -364,10 +368,10 @@ class ManageSettings extends Page implements HasForms
             'retention_days' => max(7, (int) ($state['retention_days'] ?? 90)),
             'business_wa' => PhoneNumber::normalizeBusiness(trim((string) ($state['business_wa'] ?? $state['phone_wa'] ?? '02248001571'))),
             'hero_cutout_image' => ! empty($state['hero_cutout_upload'])
-                ? '/storage/' . ltrim((string) $state['hero_cutout_upload'], '/')
+                ? '/storage/'.ltrim((string) $state['hero_cutout_upload'], '/')
                 : ($state['hero_cutout_image'] ?? '/images/hero-cutout.webp'),
             'footer_cutout_image' => ! empty($state['footer_cutout_upload'])
-                ? '/storage/' . ltrim((string) $state['footer_cutout_upload'], '/')
+                ? '/storage/'.ltrim((string) $state['footer_cutout_upload'], '/')
                 : ($state['footer_cutout_image'] ?? '/images/footer-cutout.webp'),
         ];
 
@@ -391,8 +395,10 @@ class ManageSettings extends Page implements HasForms
 
         InstagramFeedService::flushCache();
 
+        $currentUser = auth()->user();
+
         ActivityLog::record('setting_update', null, null, [
-            'updated_by' => auth()->user()?->name ?? 'Owner',
+            'updated_by' => $currentUser->name,
         ]);
 
         Notification::make()

@@ -6,11 +6,11 @@ use App\Models\MenuCategory;
 use App\Models\MenuItem;
 use App\Models\PageSection;
 use App\Support\IndonesianFormat;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Contracts\View\View;
 
 class MenuController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $hero = PageSection::where('page', 'menu')
             ->where('key', 'hero')
@@ -35,7 +35,7 @@ class MenuController extends Controller
         ]);
     }
 
-    public function show(MenuItem $menuItem)
+    public function show(MenuItem $menuItem): View
     {
         abort_unless($menuItem->is_active, 404);
         $menuItem->load('category');
@@ -44,7 +44,7 @@ class MenuController extends Controller
             ->where('id', '!=', $menuItem->id)
             ->where(function ($q) use ($menuItem) {
                 $q->where('category_id', $menuItem->category_id)
-                  ->orWhere('is_favorite', true);
+                    ->orWhere('is_favorite', true);
             })
             ->with('category')
             ->orderByRaw('CASE WHEN category_id = ? THEN 0 ELSE 1 END', [$menuItem->category_id])
@@ -59,9 +59,13 @@ class MenuController extends Controller
         ]);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function transformItem(MenuItem $item): array
     {
-        $catSlug = $item->category?->slug ?? '';
+        $category = $item->category;
+        $catSlug = $category !== null ? $category->slug : '';
         $tone = match ($catSlug) {
             'kopi-hitam', 'kopi-susu' => 'bg-[#E9EFEA]',
             'susu' => 'bg-[#EFE8DF]',
@@ -75,7 +79,7 @@ class MenuController extends Controller
             'id' => $item->id,
             'category_id' => $item->category_id,
             'category_slug' => $catSlug,
-            'category_name' => $item->category?->name ?? '',
+            'category_name' => $category !== null ? $category->name : '',
             'name' => $item->name,
             'slug' => $item->slug,
             'detail_url' => route('menu.show', $item->slug),

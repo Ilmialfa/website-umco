@@ -2,15 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 class MenuCategory extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'name',
         'slug',
@@ -25,18 +22,24 @@ class MenuCategory extends Model
 
     protected static function booted(): void
     {
-        static::saving(function ($category) {
+        static::saving(function (self $category) {
             if (empty($category->slug)) {
                 $category->slug = Str::slug($category->name);
             }
         });
     }
 
+    /**
+     * @return HasMany<MenuItem, $this>
+     */
     public function items(): HasMany
     {
         return $this->hasMany(MenuItem::class, 'category_id')->orderBy('sort');
     }
 
+    /**
+     * @return HasMany<MenuItem, $this>
+     */
     public function activeItems(): HasMany
     {
         return $this->hasMany(MenuItem::class, 'category_id')

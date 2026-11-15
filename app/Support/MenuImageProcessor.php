@@ -11,7 +11,7 @@ class MenuImageProcessor
     /**
      * Konversi foto sumber ke WebP (dan AVIF bila GD mendukung) ukuran 480, 800, 1200 di disk public.
      *
-     * @return array{image_path: string, image_variants: array<string, array<string, string>>}
+     * @return array{image_path: string, image_variants: array<string, array<int|string, string>>}
      */
     public static function process(string $sourcePath, string $slug, bool $force = false): array
     {

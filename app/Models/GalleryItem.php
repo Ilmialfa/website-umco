@@ -2,13 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class GalleryItem extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'group',
         'type',
@@ -24,7 +22,11 @@ class GalleryItem extends Model
         'sort' => 'integer',
     ];
 
-    public function scopeActive($query)
+    /**
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true)->orderBy('sort');
     }

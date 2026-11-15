@@ -18,7 +18,7 @@ class UpcomingReservationsWidget extends BaseWidget
 
     protected static bool $isLazy = false;
 
-    protected int | string | array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 'full';
 
     public function table(Table $table): Table
     {
@@ -54,12 +54,12 @@ class UpcomingReservationsWidget extends BaseWidget
                 TextColumn::make('date')
                     ->label('Jadwal')
                     ->date('d M Y')
-                    ->description(fn (Reservation $record) => str_replace(':', '.', substr((string) $record->time, 0, 5)) . ' WIB')
+                    ->description(fn (Reservation $record) => str_replace(':', '.', substr((string) $record->time, 0, 5)).' WIB')
                     ->sortable(),
 
                 TextColumn::make('party_size')
                     ->label('Pax / Tipe')
-                    ->formatStateUsing(fn (Reservation $record) => $record->party_size . ' org · ' . ($record->mode === 'table_menu' ? 'Meja + Menu' : 'Meja')),
+                    ->formatStateUsing(fn (Reservation $record) => $record->party_size.' org · '.($record->mode === 'table_menu' ? 'Meja + Menu' : 'Meja')),
 
                 TextColumn::make('status')
                     ->label('Status')

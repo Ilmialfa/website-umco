@@ -23,6 +23,7 @@ class ReservationStatsWidget extends BaseWidget
             $monthEnd = now()->endOfMonth()->toDateString();
 
             $resRow = Reservation::query()
+                ->toBase()
                 ->selectRaw(
                     "SUM(CASE WHEN date = ? THEN 1 ELSE 0 END) as today_count,
                      SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending_count,
@@ -41,15 +42,15 @@ class ReservationStatsWidget extends BaseWidget
             $chart7Days = [];
             for ($i = 6; $i >= 0; $i--) {
                 $d = now()->subDays($i)->toDateString();
-                $chart7Days[] = (int) ($dailyCounts[$d] ?? 0);
+                $chart7Days[] = (float) ($dailyCounts[$d] ?? 0);
             }
 
             $activeMenuCount = MenuItem::where('is_active', true)->where('is_available', true)->count();
 
             return [
-                'today_count' => (int) ($resRow?->today_count ?? 0),
-                'pending_count' => (int) ($resRow?->pending_count ?? 0),
-                'month_dp' => (int) ($resRow?->month_dp ?? 0),
+                'today_count' => $resRow !== null ? (int) ($resRow->today_count ?? 0) : 0,
+                'pending_count' => $resRow !== null ? (int) ($resRow->pending_count ?? 0) : 0,
+                'month_dp' => $resRow !== null ? (int) ($resRow->month_dp ?? 0) : 0,
                 'active_menu' => (int) $activeMenuCount,
                 'chart_7d' => $chart7Days,
             ];
@@ -73,7 +74,7 @@ class ReservationStatsWidget extends BaseWidget
                 ->descriptionIcon('heroicon-m-clock')
                 ->color($pendingCount > 0 ? 'warning' : 'success'),
 
-            Stat::make('Total DP Masuk (Bulan Ini)', 'Rp ' . number_format($totalDpThisMonth, 0, ',', '.'))
+            Stat::make('Total DP Masuk (Bulan Ini)', 'Rp '.number_format($totalDpThisMonth, 0, ',', '.'))
                 ->description('Dari pembayaran DP/Lunas terverifikasi')
                 ->descriptionIcon('heroicon-m-banknotes')
                 ->color('success'),

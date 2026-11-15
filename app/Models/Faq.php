@@ -2,13 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class Faq extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'question',
         'answer',
@@ -22,7 +20,11 @@ class Faq extends Model
         'is_active' => 'boolean',
     ];
 
-    public function scopeActive($query)
+    /**
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true)->orderBy('sort');
     }

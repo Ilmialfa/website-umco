@@ -22,6 +22,8 @@ const modules = {
 let io = null;
 let loopIo = null;
 let resizeObs = null;
+let resizeTimer = null;
+let resizeRaf = 0;
 let cleanups = [];
 let lenisInstance = null;
 let rafCallback = null;
@@ -92,14 +94,18 @@ async function initLenisIfEnabled() {
 
     // Sinkronkan batas gulir Lenis secara otomatis saat tinggi dokumen berubah (misal pindah step /reservasi)
     if (typeof ResizeObserver !== 'undefined' && document.body) {
-        let resizeRaf = 0;
         resizeObs = new ResizeObserver(() => {
-            if (resizeRaf) return;
+            if (resizeRaf) cancelAnimationFrame(resizeRaf);
             resizeRaf = requestAnimationFrame(() => {
                 resizeRaf = 0;
                 lenisInstance?.resize();
-                ScrollTrigger.refresh();
             });
+
+            if (resizeTimer) clearTimeout(resizeTimer);
+            resizeTimer = window.setTimeout(() => {
+                resizeTimer = null;
+                ScrollTrigger.refresh();
+            }, 180);
         });
         resizeObs.observe(document.body);
     }
@@ -171,6 +177,16 @@ function teardownPage() {
     if (loopIo) {
         loopIo.disconnect();
         loopIo = null;
+    }
+
+    if (resizeRaf) {
+        cancelAnimationFrame(resizeRaf);
+        resizeRaf = 0;
+    }
+
+    if (resizeTimer) {
+        clearTimeout(resizeTimer);
+        resizeTimer = null;
     }
 
     if (resizeObs) {

@@ -16,9 +16,7 @@ class NotifyUmcoWhatsApp implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(public readonly int $reservationId)
-    {
-    }
+    public function __construct(public readonly int $reservationId) {}
 
     public function handle(): void
     {
@@ -33,6 +31,7 @@ class NotifyUmcoWhatsApp implements ShouldQueue
 
         if ($targetWa === '') {
             Log::warning('NotifyUmcoWhatsApp: nomor WA bisnis belum diatur.');
+
             return;
         }
 
@@ -57,7 +56,8 @@ class NotifyUmcoWhatsApp implements ShouldQueue
             "Reservasi baru {kode}\nNama: {nama} ({wa})\nWaktu: {hari}, {tanggal} jam {jam}\nOrang: {jumlah}\nTempat: {tempat}\nPesanan: {pesanan}\nTotal: {total} | Bayar: {jenis_bayar} {nominal_bayar}\nCek bukti: {link_admin}"
         );
 
-        $date = Carbon::parse($reservation->date)->locale('id');
+        $date = Carbon::parse($reservation->date);
+        $date->locale('id');
         $itemsSummary = $reservation->items
             ->map(function ($item): string {
                 $variant = $item->variant_label ? " ({$item->variant_label})" : '';
@@ -71,7 +71,8 @@ class NotifyUmcoWhatsApp implements ShouldQueue
             $itemsSummary = '-';
         }
 
-        $seating = $reservation->seatingOption?->label ?? 'Bebas di mana saja';
+        $seatingOption = $reservation->seatingOption;
+        $seating = $seatingOption !== null ? $seatingOption->label : 'Bebas di mana saja';
         if (! empty($reservation->seating_note)) {
             $seating .= " ({$reservation->seating_note})";
         }
@@ -86,22 +87,22 @@ class NotifyUmcoWhatsApp implements ShouldQueue
         $payTypeLabel = match ($reservation->payment_type) {
             'full' => 'Lunas',
             'cash' => 'Tunai di kasir',
-            default => 'DP ' . max(50, (int) Settings::get('reservation.dp_percentage', 50)) . '%',
+            default => 'DP '.max(50, (int) Settings::get('reservation.dp_percentage', 50)).'%',
         };
 
         $replacements = [
             '{kode}' => $reservation->code,
             '{nama}' => $reservation->name,
-            '{wa}' => '+' . ltrim((string) $reservation->phone_wa, '+'),
+            '{wa}' => '+'.ltrim((string) $reservation->phone_wa, '+'),
             '{hari}' => $date->isoFormat('dddd'),
             '{tanggal}' => $date->isoFormat('D MMM YYYY'),
             '{jam}' => substr((string) $reservation->time, 0, 5),
-            '{jumlah}' => (string) $reservation->party_size . ' orang',
+            '{jumlah}' => (string) $reservation->party_size.' orang',
             '{tempat}' => $seating,
             '{pesanan}' => $itemsSummary,
-            '{total}' => 'Rp ' . number_format($reservation->subtotal, 0, ',', '.'),
+            '{total}' => 'Rp '.number_format($reservation->subtotal, 0, ',', '.'),
             '{jenis_bayar}' => $payTypeLabel,
-            '{nominal_bayar}' => 'Rp ' . number_format($reservation->amount_due, 0, ',', '.'),
+            '{nominal_bayar}' => 'Rp '.number_format($reservation->amount_due, 0, ',', '.'),
             '{link_admin}' => $adminUrl,
         ];
 
@@ -114,6 +115,6 @@ class NotifyUmcoWhatsApp implements ShouldQueue
             (string) Settings::get('contact.business_wa', '02248001571')
         );
 
-        return 'https://wa.me/' . $targetWa . '?text=' . rawurlencode(self::buildMessage($reservation));
+        return 'https://wa.me/'.$targetWa.'?text='.rawurlencode(self::buildMessage($reservation));
     }
 }

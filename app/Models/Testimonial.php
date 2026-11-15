@@ -2,13 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class Testimonial extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'name',
         'role',
@@ -28,7 +26,11 @@ class Testimonial extends Model
         'sort' => 'integer',
     ];
 
-    public function scopeFeatured($query)
+    /**
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeFeatured(Builder $query): Builder
     {
         return $query->where('is_featured', true)->orderBy('sort');
     }

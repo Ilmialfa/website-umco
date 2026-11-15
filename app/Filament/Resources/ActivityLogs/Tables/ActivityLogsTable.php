@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\ActivityLogs\Tables;
 
-use App\Models\ActivityLog;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;

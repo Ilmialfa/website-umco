@@ -33,7 +33,7 @@ class ReservationInfolist
                             ->date('l, d F Y'),
                         TextEntry::make('time')
                             ->label('Jam Kedatangan')
-                            ->formatStateUsing(fn ($state) => str_replace(':', '.', substr((string) $state, 0, 5)) . ' WIB'),
+                            ->formatStateUsing(fn ($state) => str_replace(':', '.', substr((string) $state, 0, 5)).' WIB'),
                         TextEntry::make('party_size')
                             ->label('Jumlah Orang')
                             ->formatStateUsing(fn ($state) => "{$state} Orang"),

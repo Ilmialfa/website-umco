@@ -30,7 +30,7 @@ class GalleryItemsTable
 
                         return str_starts_with($path, 'http') || str_starts_with($path, '/')
                             ? asset($path)
-                            : asset('storage/' . ltrim($path, '/'));
+                            : asset('storage/'.ltrim($path, '/'));
                     })
                     ->defaultImageUrl(asset('/images/menu-placeholder.svg')),
 

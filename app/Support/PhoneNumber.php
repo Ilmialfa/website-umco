@@ -34,20 +34,20 @@ class PhoneNumber
         // 2. Handle prefixes
         if (str_starts_with($digits, '6208')) {
             // e.g. +62 0822... -> 620822... => 62822...
-            $digits = '62' . substr($digits, 3);
+            $digits = '62'.substr($digits, 3);
         } elseif (str_starts_with($digits, '628')) {
             // Already standard format
             $digits = $digits;
         } elseif (str_starts_with($digits, '08')) {
             // Local 08... format -> replace 0 with 62
-            $digits = '62' . substr($digits, 1);
+            $digits = '62'.substr($digits, 1);
         } elseif (str_starts_with($digits, '8')) {
             // Missing leading zero -> prepend 62
-            $digits = '62' . $digits;
+            $digits = '62'.$digits;
         }
 
         // 3. Validation
-        if (!self::isValidNormalized($digits)) {
+        if (! self::isValidNormalized($digits)) {
             throw new InvalidArgumentException('Nomor WhatsApp belum benar, contoh: 0812 3456 7890');
         }
 
@@ -61,6 +61,7 @@ class PhoneNumber
     {
         try {
             self::normalize($phone);
+
             return true;
         } catch (InvalidArgumentException) {
             return false;
@@ -90,11 +91,11 @@ class PhoneNumber
         }
 
         if (str_starts_with($digits, '620')) {
-            $digits = '62' . substr($digits, 3);
+            $digits = '62'.substr($digits, 3);
         } elseif (str_starts_with($digits, '0')) {
-            $digits = '62' . substr($digits, 1);
+            $digits = '62'.substr($digits, 1);
         } elseif (! str_starts_with($digits, '62')) {
-            $digits = '62' . $digits;
+            $digits = '62'.$digits;
         }
 
         if (! str_starts_with($digits, '62') || strlen($digits) < 9 || strlen($digits) > 15) {
@@ -125,6 +126,7 @@ class PhoneNumber
             $prefix = substr($rest, 0, 3); // 822
             $middle = substr($rest, 3, 4); // 4800
             $end = substr($rest, 7);      // 1571
+
             return "+62 {$prefix}-{$middle}-{$end}";
         }
 
@@ -143,8 +145,8 @@ class PhoneNumber
         }
 
         $url = "https://wa.me/{$normalized}";
-        if (!empty($message)) {
-            $url .= '?text=' . rawurlencode($message);
+        if (! empty($message)) {
+            $url .= '?text='.rawurlencode($message);
         }
 
         return $url;

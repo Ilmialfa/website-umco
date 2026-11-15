@@ -17,12 +17,12 @@ class AdminLogin extends BaseLogin
         return false;
     }
 
-    public function getTitle(): string | Htmlable
+    public function getTitle(): string|Htmlable
     {
         return 'Masuk Dapur Admin — UMCO House';
     }
 
-    public function getHeading(): string | Htmlable | null
+    public function getHeading(): string|Htmlable|null
     {
         if (filled($this->userUndertakingMultiFactorAuthentication)) {
             return 'Verifikasi Keamanan';

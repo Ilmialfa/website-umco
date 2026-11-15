@@ -8,9 +8,7 @@ use Illuminate\Support\Facades\Log;
 
 class FonnteWhatsAppGateway implements WhatsAppGateway
 {
-    public function __construct(private readonly string $token)
-    {
-    }
+    public function __construct(private readonly string $token) {}
 
     public function send(string $to, string $message): bool
     {
@@ -24,12 +22,14 @@ class FonnteWhatsAppGateway implements WhatsAppGateway
 
             if (! $response->successful()) {
                 Log::warning('Fonnte WhatsApp send failed', ['status' => $response->status(), 'body' => $response->body()]);
+
                 return false;
             }
 
             return true;
         } catch (\Throwable $e) {
             Log::warning('Fonnte WhatsApp exception', ['error' => $e->getMessage()]);
+
             return false;
         }
     }

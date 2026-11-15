@@ -3,6 +3,9 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\AdminLogin;
+use App\Filament\Widgets\PlaceholderAuditWidget;
+use App\Filament\Widgets\ReservationStatsWidget;
+use App\Filament\Widgets\UpcomingReservationsWidget;
 use App\Http\Middleware\EnforcePasswordChange;
 use App\Http\Middleware\SecurityHeaders;
 use App\Support\Settings;
@@ -39,9 +42,9 @@ class AdminPanelProvider extends PanelProvider
             ->brandName('UMCO')
             ->brandLogo(fn (): HtmlString => new HtmlString(
                 '<span class="inline-flex items-center gap-2.5">'
-                . '<img src="/images/umco-logo.webp" alt="Logo UMCO" class="h-7 w-7 shrink-0 rounded-full object-cover" />'
-                . '<span class="umco-brand-label font-semibold tracking-tight text-slate-900">UMCO Backoffice</span>'
-                . '</span>'
+                .'<img src="/images/umco-logo.webp" alt="Logo UMCO" class="h-7 w-7 shrink-0 rounded-full object-cover" />'
+                .'<span class="umco-brand-label font-semibold tracking-tight text-slate-900">UMCO Backoffice</span>'
+                .'</span>'
             ))
             ->brandLogoHeight('1.75rem')
             ->favicon('/favicon.svg')
@@ -96,9 +99,9 @@ class AdminPanelProvider extends PanelProvider
                 Dashboard::class,
             ])
             ->widgets([
-                \App\Filament\Widgets\ReservationStatsWidget::class,
-                \App\Filament\Widgets\PlaceholderAuditWidget::class,
-                \App\Filament\Widgets\UpcomingReservationsWidget::class,
+                ReservationStatsWidget::class,
+                PlaceholderAuditWidget::class,
+                UpcomingReservationsWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

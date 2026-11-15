@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\GalleryItem;
 use App\Models\PageSection;
+use Illuminate\Contracts\View\View;
 
 class GalleryController extends Controller
 {
-    public function __invoke()
+    public function __invoke(): View
     {
         $sections = PageSection::where('page', 'galeri')
             ->where('is_active', true)

@@ -11,10 +11,11 @@ use App\Models\PageSection;
 use App\Models\SpendTier;
 use App\Models\Testimonial;
 use App\Services\InstagramFeedService;
+use Illuminate\Contracts\View\View;
 
 class HomeController extends Controller
 {
-    public function __invoke()
+    public function __invoke(): View
     {
         $sections = PageSection::where('page', 'home')
             ->where('is_active', true)

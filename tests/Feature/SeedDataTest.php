@@ -1,11 +1,16 @@
 <?php
 
+use App\Models\Banner;
 use App\Models\BeanOrigin;
+use App\Models\Faq;
+use App\Models\GalleryItem;
 use App\Models\MenuItem;
 use App\Models\PageSection;
 use App\Models\Rule;
 use App\Models\SeatingOption;
 use App\Models\SpendTier;
+use App\Models\StoryBlock;
+use App\Models\Testimonial;
 use Database\Seeders\Redesign2026Seeder;
 
 it('seeds all 39 menu items from folder and tiered reservation rules', function () {
@@ -16,10 +21,10 @@ it('seeds all 39 menu items from folder and tiered reservation rules', function 
     expect(SeatingOption::count())->toBe(5);
     expect(BeanOrigin::count())->toBe(4);
     expect(PageSection::where('page', 'home')->count())->toBe(10);
-    expect(\App\Models\Faq::count())->toBeGreaterThanOrEqual(6);
-    expect(\App\Models\Banner::count())->toBeGreaterThanOrEqual(2);
-    expect(\App\Models\GalleryItem::where('orientation', 'portrait')->count())->toBeGreaterThanOrEqual(5);
-    expect(\App\Models\Testimonial::count())->toBeGreaterThanOrEqual(6);
+    expect(Faq::count())->toBeGreaterThanOrEqual(6);
+    expect(Banner::count())->toBeGreaterThanOrEqual(2);
+    expect(GalleryItem::where('orientation', 'portrait')->count())->toBeGreaterThanOrEqual(5);
+    expect(Testimonial::count())->toBeGreaterThanOrEqual(6);
 
     expect(SpendTier::minSpendFor(2))->toBe(50000);
     expect(SpendTier::minSpendFor(3))->toBe(100000);
@@ -35,7 +40,7 @@ it('seeds all 39 menu items from folder and tiered reservation rules', function 
     expect($americano->price)->toBe(24000);
 
     // Pastikan tidak ada sisa konsep lama di database
-    expect(\App\Models\StoryBlock::where('body', 'like', '%huruf H%')->count())->toBe(0);
-    expect(\App\Models\Testimonial::where('body', 'like', '%huruf H%')->count())->toBe(0);
-    expect(\App\Models\GalleryItem::whereIn('group', ['indoor', 'outdoor'])->count())->toBe(0);
+    expect(StoryBlock::where('body', 'like', '%huruf H%')->count())->toBe(0);
+    expect(Testimonial::where('body', 'like', '%huruf H%')->count())->toBe(0);
+    expect(GalleryItem::whereIn('group', ['indoor', 'outdoor'])->count())->toBe(0);
 });

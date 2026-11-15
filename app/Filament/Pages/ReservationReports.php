@@ -6,7 +6,8 @@ use App\Models\Reservation;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Support\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use UnitEnum;
 
@@ -30,8 +31,11 @@ class ReservationReports extends Page
     protected string $view = 'filament.pages.reservation-reports';
 
     public string $startDate = '';
+
     public string $endDate = '';
+
     public string $statusFilter = 'all';
+
     public string $modeFilter = 'all';
 
     public function mount(): void
@@ -42,7 +46,10 @@ class ReservationReports extends Page
         $this->endDate = now()->endOfMonth()->toDateString();
     }
 
-    public function getReportQuery()
+    /**
+     * @return Builder<Reservation>
+     */
+    public function getReportQuery(): Builder
     {
         return Reservation::query()
             ->whereDate('date', '>=', $this->startDate)
@@ -53,15 +60,18 @@ class ReservationReports extends Page
             ->orderBy('time', 'desc');
     }
 
+    /**
+     * @return array{total_reservations: int, total_pax: int, total_subtotal: int, total_dp: int, records: Collection<int, Reservation>}
+     */
     public function getReportDataProperty(): array
     {
         $reservations = $this->getReportQuery()->get();
 
         return [
             'total_reservations' => $reservations->count(),
-            'total_pax' => $reservations->sum('party_size'),
-            'total_subtotal' => $reservations->sum('subtotal'),
-            'total_dp' => $reservations->whereIn('payment_status', ['verified', 'proof_uploaded'])->sum('dp_amount'),
+            'total_pax' => (int) $reservations->sum('party_size'),
+            'total_subtotal' => (int) $reservations->sum('subtotal'),
+            'total_dp' => (int) $reservations->whereIn('payment_status', ['verified', 'proof_uploaded'])->sum('dp_amount'),
             'records' => $reservations,
         ];
     }
@@ -70,7 +80,7 @@ class ReservationReports extends Page
     {
         $str = (string) ($value ?? '');
         if ($str !== '' && preg_match('/^[=+\-@\t\r]/', $str)) {
-            return "'" . $str;
+            return "'".$str;
         }
 
         return $str;
@@ -81,12 +91,15 @@ class ReservationReports extends Page
         abort_unless(auth()->user()?->isAdmin() ?? false, 403);
 
         $records = $this->getReportQuery()->get();
-        $filename = 'rekap_reservasi_umco_' . $this->startDate . '_sampai_' . $this->endDate . '.csv';
+        $filename = 'rekap_reservasi_umco_'.$this->startDate.'_sampai_'.$this->endDate.'.csv';
 
-        return response()->streamDownload(function () use ($records) {
+        return response()->streamDownload(function () use ($records): void {
             $handle = fopen('php://output', 'w');
+            if ($handle === false) {
+                return;
+            }
             // Add UTF-8 BOM
-            fputs($handle, "\xEF\xBB\xBF");
+            fwrite($handle, "\xEF\xBB\xBF");
 
             fputcsv($handle, [
                 'Kode Booking',
@@ -109,7 +122,7 @@ class ReservationReports extends Page
                     $this->safeCsvCell($r->name),
                     $this->safeCsvCell($r->phone_wa),
                     $r->date->format('Y-m-d'),
-                    $r->time . ' WIB',
+                    $r->time.' WIB',
                     $r->party_size,
                     $r->mode === 'table_menu' ? 'Meja + Menu' : 'Meja Saja',
                     $this->safeCsvCell($r->status_label),

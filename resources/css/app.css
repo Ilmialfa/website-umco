@@ -324,6 +324,14 @@ section[id] {
     background-color: var(--tinta);
     color: var(--kertas);
 }
+#umco-navbar[data-menu-open="1"] .nav-bar {
+    background-color: var(--kertas) !important;
+    color: var(--tinta) !important;
+}
+#umco-navbar[data-menu-open="1"] .nav-reservasi-pill {
+    background-color: var(--batu) !important;
+    color: var(--tinta) !important;
+}
 
 /* Link navbar underline tumbuh dari kiri */
 .nav-link-line {

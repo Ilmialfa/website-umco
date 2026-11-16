@@ -3,10 +3,12 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { initReveal, cleanupReveal } from './motion/reveal.js';
 import { initNav } from './motion/nav.js';
 import { terbilang, formatRupiah, formatRibu, loadNota, saveNota } from './lib/formatters.js';
+import { flyToNota } from './lib/nota-fly.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
 window.umcoFormatters = { terbilang, formatRupiah, formatRibu, loadNota, saveNota };
+window.umcoFlyToNota = flyToNota;
 
 const modules = {
     'hero': () => import('./sections/hero.js'),

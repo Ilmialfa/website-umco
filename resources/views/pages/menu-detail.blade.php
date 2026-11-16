@@ -69,8 +69,9 @@
                 return nota;
             },
 
-            addOnly() {
+            addOnly(evt) {
                 this.commitToNota();
+                window.umcoFlyToNota?.(evt?.currentTarget, @js($item->imageUrlFor(480)));
                 this.addedFeedback = true;
                 setTimeout(() => { this.addedFeedback = false; }, 2200);
             },
@@ -248,7 +249,7 @@
 
                                 <button
                                     type="button"
-                                    @click="addOnly()"
+                                    @click="addOnly($event)"
                                     :disabled="!item.is_available"
                                     class="btn-umco bg-[var(--batu)] text-[var(--tinta)] hover:bg-[var(--tinta)] hover:text-[var(--kertas)] disabled:opacity-50 cursor-pointer"
                                 >

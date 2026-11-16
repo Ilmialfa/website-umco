@@ -26,6 +26,9 @@
 
             init() {
                 this.nota = window.umcoFormatters.loadNota();
+                window.addEventListener('umco:nota-updated', () => {
+                    this.nota = window.umcoFormatters.loadNota();
+                });
                 const hash = window.location.hash.replace('#', '');
                 if (hash && this.categories.some(c => c.slug === hash)) {
                     this.activeCategory = hash;
@@ -78,12 +81,39 @@
                 return this.selectedItem.variants[this.selectedVariantIdx]?.label || '';
             },
 
-            addToNota() {
+            handleNotaClick(item, evt) {
+                if ((item.variants && item.variants.length) || item.has_temperature || !item.is_available) {
+                    this.openDetail(item);
+                    return;
+                }
+
+                const key = item.slug;
+                const existing = this.nota.find(r => (r.key || r.slug) === key);
+                if (existing) {
+                    existing.qty += 1;
+                } else {
+                    this.nota.push({
+                        id: item.id,
+                        key: key,
+                        slug: item.slug,
+                        name: item.name,
+                        variant_label: null,
+                        temperature: null,
+                        price: Number(item.price),
+                        qty: 1
+                    });
+                }
+                window.umcoFormatters.saveNota(this.nota);
+                window.umcoFlyToNota?.(evt?.currentTarget, !item.is_placeholder ? item.image_800 : null);
+            },
+
+            addToNota(evt) {
                 if (!this.selectedItem || !this.selectedItem.is_available) return;
                 const variantLabel = this.activeVariantLabel();
                 const temp = this.selectedItem.has_temperature ? this.selectedTemp : null;
                 const price = this.activeUnitPrice();
                 const key = [this.selectedItem.slug, variantLabel, temp].filter(Boolean).join('|');
+                const imgUrl = !this.selectedItem.is_placeholder ? this.selectedItem.image_800 : null;
 
                 const existing = this.nota.find(r => (r.key || r.slug) === key);
                 if (existing) {
@@ -101,6 +131,7 @@
                     });
                 }
                 window.umcoFormatters.saveNota(this.nota);
+                window.umcoFlyToNota?.(evt?.currentTarget, imgUrl);
                 this.selectedItem = null;
             },
 
@@ -260,7 +291,7 @@
 
                                     <button
                                         type="button"
-                                        @click="openDetail(item)"
+                                        @click="handleNotaClick(item, $event)"
                                         class="self-start sm:self-center shrink-0 rounded-full bg-[var(--batu)] hover:bg-[var(--mentega)] hover:text-white px-4 h-9 text-xs font-semibold transition-colors cursor-pointer"
                                     >
                                         + Nota
@@ -327,7 +358,7 @@
                                         </a>
                                         <button
                                             type="button"
-                                            @click="openDetail(item)"
+                                            @click="handleNotaClick(item, $event)"
                                             class="rounded-full bg-[var(--batu)] hover:bg-[var(--mentega)] hover:text-white px-3 h-8 text-[11px] font-semibold transition-colors cursor-pointer"
                                         >
                                             + Nota
@@ -348,25 +379,6 @@
                 </div>
             </div>
         </section>
-
-        {{-- Bar nota lengket bawah bila sudah memilih menu --}}
-        <div
-            x-show="notaQty() > 0"
-            style="display: none;"
-            class="fixed bottom-14 sm:bottom-6 left-4 right-4 lg:left-auto lg:right-6 lg:w-[390px] z-40"
-        >
-            <div class="rounded-2xl bg-[var(--tinta)] text-[var(--kertas)] px-5 py-3.5 flex items-center justify-between gap-3">
-                <button type="button" @click="notaOpen = true" class="text-left flex-1 cursor-pointer">
-                    <p class="text-sm font-semibold tabular-nums">
-                        <span x-text="notaQty() + ' item di nota'"></span> · <span x-text="formatRupiah(notaTotal())"></span>
-                    </p>
-                    <p class="text-xs text-[var(--kertas)]/75 underline underline-offset-4">Ubah isi nota</p>
-                </button>
-                <a :href="reserveUrl()" wire:navigate class="btn-umco bg-white text-[#141916] hover:bg-[#EDE9E0] min-h-0 h-10 px-4 text-sm shrink-0">
-                    Pesan meja
-                </a>
-            </div>
-        </div>
 
         {{-- Side sheet (Desktop) / Bottom sheet (HP) Tambah Nota Cepat --}}
         <div
@@ -458,7 +470,7 @@
 
                         <button
                             type="button"
-                            @click="addToNota()"
+                            @click="addToNota($event)"
                             :disabled="!selectedItem.is_available"
                             class="btn-umco btn-umco-primary flex-1"
                         >
@@ -466,43 +478,6 @@
                         </button>
                     </div>
                 </template>
-            </div>
-        </div>
-
-        {{-- Sheet ubah isi nota --}}
-        <div
-            x-show="notaOpen"
-            @click.self="notaOpen = false"
-            style="display: none;"
-            class="fixed inset-0 z-[60] bg-[var(--tinta)]/60 flex items-end sm:items-center justify-center p-3"
-        >
-            <div class="w-full max-w-md rounded-2xl bg-[var(--kertas-terang)] text-[var(--tinta)] p-6 space-y-4 max-h-[82svh] overflow-y-auto">
-                <div class="flex items-center justify-between">
-                    <h3 class="font-display font-bold text-xl">Nota pilihanmu</h3>
-                    <button type="button" @click="notaOpen = false" class="text-sm font-semibold underline underline-offset-4 cursor-pointer">Tutup</button>
-                </div>
-                <div class="divide-y divide-[var(--garis)]">
-                    <template x-for="(row, idx) in nota" :key="(row.key || row.slug) + idx">
-                        <div class="py-3 flex items-center justify-between gap-3 text-sm">
-                            <div>
-                                <p class="font-semibold" x-text="row.name"></p>
-                                <p class="text-xs text-[var(--tinta-70)]" x-text="[row.variant_label, row.temperature, formatRupiah(row.price)].filter(Boolean).join(' · ')"></p>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button type="button" @click="decNota(idx)" class="w-8 h-8 rounded-full bg-[var(--batu)] cursor-pointer">-</button>
-                                <span class="w-6 text-center tabular-nums font-semibold" x-text="row.qty"></span>
-                                <button type="button" @click="incNota(idx)" class="w-8 h-8 rounded-full bg-[var(--batu)] cursor-pointer">+</button>
-                            </div>
-                        </div>
-                    </template>
-                </div>
-                <div class="pt-3 flex justify-between items-baseline">
-                    <span class="font-semibold">Total sementara</span>
-                    <span class="font-bold text-lg tabular-nums text-[var(--mentega-tua)]" x-text="formatRupiah(notaTotal())"></span>
-                </div>
-                <a :href="reserveUrl()" wire:navigate class="btn-umco btn-umco-primary w-full">
-                    Lanjut pesan meja &rarr;
-                </a>
             </div>
         </div>
     </div>

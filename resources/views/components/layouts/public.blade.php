@@ -121,11 +121,12 @@
         {{ $slot }}
     </main>
 
-    @if (! request()->routeIs('menu', 'reservation', 'reservation.status'))
+    @if (! request()->routeIs('reservation', 'reservation.status'))
         <div
             x-data="{
                 nota: [],
                 open: false,
+                bouncing: false,
                 sync() {
                     this.nota = window.umcoFormatters ? window.umcoFormatters.loadNota() : [];
                     if (!this.nota.length) this.open = false;
@@ -133,6 +134,10 @@
                 init() {
                     this.sync();
                     window.addEventListener('umco:nota-updated', () => this.sync());
+                    window.addEventListener('umco:nota-landed', () => {
+                        this.bouncing = true;
+                        setTimeout(() => { this.bouncing = false; }, 450);
+                    });
                     window.addEventListener('storage', (e) => { if (e.key === 'umco_nota_v1') this.sync(); });
                     document.addEventListener('livewire:navigated', () => this.sync());
                 },
@@ -174,26 +179,26 @@
             style="display: none;"
             class="fixed bottom-5 right-4 sm:right-6 z-40 flex flex-col items-end gap-2.5 max-w-[calc(100vw-2rem)]"
         >
-            {{-- Mini-drawer daftar menu tersimpan di Nota --}}
+            {{-- Mini-karcis nota tersimpan --}}
             <div
                 x-show="open"
                 x-transition.opacity.duration.180ms
                 @click.outside="open = false"
-                class="w-[330px] sm:w-[370px] max-w-full rounded-2xl bg-[var(--kertas-terang)] text-[var(--tinta)] p-4 sm:p-5 space-y-3.5"
+                class="w-[330px] sm:w-[370px] max-w-full rounded-2xl bg-[var(--kertas-terang)] text-[var(--tinta)] border-t-[3px] border-t-[var(--mentega)] p-4 sm:p-5 space-y-3.5"
                 role="dialog"
                 aria-label="Nota pesanan tersimpan"
             >
-                <div class="flex items-center justify-between gap-2">
+                <div class="flex items-start justify-between gap-2">
                     <div>
-                        <p class="font-display font-bold text-base leading-tight">Nota pesananmu</p>
-                        <p class="text-xs text-[var(--tinta-70)]">Otomatis terbawa saat pesan meja.</p>
+                        <p class="font-hand text-xl leading-none text-[var(--mentega)]">nota pilihanmu</p>
+                        <p class="font-display font-bold text-lg leading-tight mt-0.5">Daftar Menu</p>
                     </div>
                     <button type="button" @click="open = false" class="text-xs font-semibold text-[var(--tinta-70)] hover:text-[var(--tinta)] underline underline-offset-4 cursor-pointer">
                         Tutup
                     </button>
                 </div>
 
-                <div class="max-h-56 overflow-y-auto divide-y divide-[var(--garis)] pr-0.5">
+                <div class="max-h-56 overflow-y-auto divide-y divide-dashed divide-[var(--garis-kuwat)] pr-0.5">
                     <template x-for="(row, idx) in nota" :key="(row.key || row.slug) + idx">
                         <div class="py-2.5 flex items-center justify-between gap-3 text-sm">
                             <div class="min-w-0">
@@ -209,9 +214,9 @@
                     </template>
                 </div>
 
-                <div class="pt-2 border-t border-[var(--garis)] flex items-baseline justify-between">
+                <div class="pt-2.5 border-t border-dashed border-[var(--garis-kuwat)] flex items-baseline justify-between">
                     <span class="text-xs font-medium text-[var(--tinta-70)]">Estimasi menu</span>
-                    <span class="font-display font-bold text-base tabular-nums text-[var(--mentega-tua)]" x-text="formatRupiah(totalAmount())"></span>
+                    <span class="font-display font-bold text-lg tabular-nums text-[var(--mentega-tua)]" x-text="formatRupiah(totalAmount())"></span>
                 </div>
 
                 <div class="flex items-center gap-2 pt-0.5">
@@ -225,25 +230,45 @@
                 </div>
             </div>
 
-            {{-- Floating pill ringkas di pojok kanan bawah --}}
-            <div class="inline-flex items-center gap-1.5 rounded-full bg-[#141916] text-white p-1 pl-4">
+            {{-- Pill Nota UMCO Putih Bersih + Hijau Botani --}}
+            <div
+                data-nota-pill
+                class="inline-flex items-center gap-2 rounded-full bg-[var(--kertas-terang)] text-[var(--tinta)] ring-1 ring-[#1B5E42]/20 p-1.5 pl-2.5"
+            >
                 <button
                     type="button"
                     @click="open = !open"
-                    class="inline-flex items-center gap-2 text-xs font-medium tabular-nums cursor-pointer pr-1.5 py-1"
+                    class="inline-flex items-center gap-2.5 cursor-pointer pr-1"
                 >
-                    <span class="w-2 h-2 rounded-full bg-[#34D399] shrink-0" aria-hidden="true"></span>
-                    <span>Nota · <strong x-text="qtyCount()"></strong> item</span>
-                    <span class="text-white/60">·</span>
-                    <span class="font-semibold text-[#DCEBE1]" x-text="formatRupiah(totalAmount())"></span>
+                    <span
+                        data-nota-target
+                        class="relative w-8 h-8 rounded-full bg-[#E8F1EB] text-[var(--mentega)] inline-flex items-center justify-center shrink-0 transition-transform duration-300"
+                        :class="bouncing ? 'scale-110 -rotate-6' : ''"
+                        aria-hidden="true"
+                    >
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/>
+                            <path d="M8 7h8"/>
+                            <path d="M8 11h8"/>
+                            <path d="M8 15h5"/>
+                        </svg>
+                        <span
+                            x-text="qtyCount()"
+                            class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-[var(--mentega)] text-white text-[10px] font-bold leading-none inline-flex items-center justify-center tabular-nums"
+                        ></span>
+                    </span>
+                    <span class="text-left leading-tight">
+                        <span class="block text-[11px] font-medium text-[var(--tinta-70)]">Nota</span>
+                        <span class="block font-display font-bold text-sm tabular-nums text-[var(--tinta)]" x-text="formatRupiah(totalAmount())"></span>
+                    </span>
                 </button>
                 <a
                     :href="reserveUrl()"
                     wire:navigate
-                    class="inline-flex items-center gap-1 rounded-full bg-[var(--mentega)] hover:bg-white hover:text-[#141916] text-white text-xs font-semibold px-3.5 h-8 transition-colors whitespace-nowrap"
+                    class="inline-flex items-center gap-1.5 rounded-full bg-[var(--mentega)] hover:bg-[var(--mentega-tua)] text-white text-xs sm:text-[13px] font-semibold px-4 h-9 transition-colors whitespace-nowrap"
                 >
                     <span>Lanjut Reservasi</span>
-                    <svg class="w-3 h-3 shrink-0"><use href="#icon-arrow-right"/></svg>
+                    <svg class="w-3.5 h-3.5 shrink-0"><use href="#icon-arrow-right"/></svg>
                 </a>
             </div>
         </div>

@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'instagram' => [
+        'sociablekit_feed_id' => env('SOCIABLEKIT_INSTAGRAM_FEED_ID', '25729989'),
+    ],
+
 ];

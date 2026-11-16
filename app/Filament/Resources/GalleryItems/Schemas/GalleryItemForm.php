@@ -16,8 +16,10 @@ class GalleryItemForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
+            ->columns(1)
             ->components([
                 Grid::make(['default' => 1, 'lg' => 3])
+                    ->columnSpanFull()
                     ->schema([
                         Group::make([
                             Section::make('Aset Galeri Suasana Kedai')
@@ -48,11 +50,11 @@ class GalleryItemForm
                                                 ->required(),
 
                                             Select::make('orientation')
-                                                ->label('Penempatan Galeri Beranda')
+                                                ->label('Penempatan Tampil')
                                                 ->options([
-                                                    'portrait' => 'Galeri Portrait Infinite (Rasio 3:4)',
-                                                    'diagonal' => 'Galeri Diagonal Campuran (Semua Rasio)',
-                                                    'mixed' => 'Tampil di Keduanya (Otomatis)',
+                                                    'mixed' => 'Beranda & Halaman /galeri (Otomatis)',
+                                                    'diagonal' => 'Prioritas Galeri Beranda (/)',
+                                                    'galeri_only' => 'Hanya Halaman /galeri',
                                                 ])
                                                 ->default('mixed')
                                                 ->required()

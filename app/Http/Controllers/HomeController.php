@@ -40,7 +40,7 @@ class HomeController extends Controller
         $activeBanners = Banner::active()->get();
 
         $diagonalGallery = GalleryItem::active()
-            ->whereIn('orientation', ['diagonal', 'mixed'])
+            ->where('orientation', '!=', 'galeri_only')
             ->orderBy('sort')
             ->limit(14)
             ->get();
@@ -60,7 +60,7 @@ class HomeController extends Controller
             'closedDates' => $closedDates,
             'faqs' => Faq::active()->get(),
             'testimonials' => Testimonial::where('is_featured', true)->orderBy('sort')->limit(9)->get(),
-            'instagramFeed' => app(InstagramFeedService::class)->getCachedOrFallback(8),
+            'instagramFeed' => app(InstagramFeedService::class)->getFeed(8),
             'diagonalGallery' => $diagonalGallery,
             'galleryItems' => $diagonalGallery,
         ]);

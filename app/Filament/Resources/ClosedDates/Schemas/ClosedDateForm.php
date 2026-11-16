@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ClosedDates\Schemas;
 
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Group;
@@ -14,8 +15,10 @@ class ClosedDateForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
+            ->columns(1)
             ->components([
                 Grid::make(['default' => 1, 'lg' => 3])
+                    ->columnSpanFull()
                     ->schema([
                         Group::make([
                             Section::make('Penetapan Tanggal Tutup / Libur Khusus')
@@ -30,7 +33,7 @@ class ClosedDateForm
 
                                     TextInput::make('reason')
                                         ->label('Alasan Libur / Keterangan Penutupan')
-                                        ->placeholder('Contoh: Libur Bersama Idul Fitri / Maintenance Listrik Kampus')
+                                        ->placeholder('Contoh: Libur Bersama Idul Fitri / Maintenance Listrik')
                                         ->required()
                                         ->helperText('Alasan ini akan diinformasikan ke calon tamu jika mereka memilih tanggal ini.'),
                                 ]),
@@ -41,12 +44,9 @@ class ClosedDateForm
                                 ->description('Dampak terhadap reservasi online.')
                                 ->icon('heroicon-o-information-circle')
                                 ->schema([
-                                    TextInput::make('info_notice')
+                                    Placeholder::make('info_notice')
                                         ->label('Informasi Sistem')
-                                        ->disabled()
-                                        ->dehydrated(false)
-                                        ->default('Slot meja dinonaktifkan otomatis')
-                                        ->helperText('Semua jam operasional pada tanggal terpilih tidak akan memunculkan slot reservasi di website publik.'),
+                                        ->content('Slot meja dinonaktifkan otomatis. Semua jam operasional pada tanggal terpilih tidak akan memunculkan slot reservasi di website publik.'),
                                 ]),
                         ])->columnSpan(['default' => 1, 'lg' => 1]),
                     ]),

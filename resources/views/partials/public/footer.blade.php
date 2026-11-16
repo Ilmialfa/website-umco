@@ -54,7 +54,7 @@
     <div class="relative w-full overflow-hidden select-none -mt-4 sm:-mt-8 lg:-mt-12">
         <div
             data-footer-wordmark
-            class="absolute inset-x-0 top-[4.5vw] sm:top-[5vw] lg:top-[5.5vw] z-0 px-2 sm:px-4 font-display font-bold text-[38vw] sm:text-[36.5vw] lg:text-[35vw] leading-[0.84] tracking-[-0.03em] bg-gradient-to-b from-white via-[#F1F7F3] to-white/0 bg-clip-text text-transparent text-center whitespace-nowrap will-change-transform pointer-events-none"
+            class="absolute inset-x-0 top-[4.5vw] sm:top-[5vw] lg:top-[5.5vw] z-0 px-2 sm:px-4 font-condensed font-bold text-[38vw] sm:text-[36.5vw] lg:text-[35vw] leading-[0.84] tracking-[-0.03em] bg-gradient-to-b from-white via-[#F1F7F3] to-white/0 bg-clip-text text-transparent text-center whitespace-nowrap will-change-transform pointer-events-none"
         >
             {{ $footerWordmark }}
         </div>

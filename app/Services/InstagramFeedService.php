@@ -4,15 +4,16 @@ namespace App\Services;
 
 use App\Models\GalleryItem;
 use App\Support\Settings;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
 class InstagramFeedService
 {
-    public const CACHE_KEY = 'umco.instagram_feed.v1';
+    public const CACHE_KEY = 'instagram_feed_data';
 
     public const STALE_CACHE_KEY = 'umco.instagram_feed.last_live.v1';
+
+    public const CACHE_TTL_SECONDS = 3600;
 
     public static function flushCache(): void
     {
@@ -27,24 +28,38 @@ class InstagramFeedService
      */
     public function getCachedOrFallback(int $limit = 8): array
     {
-        $handle = ltrim((string) Settings::get('contact.instagram_handle', 'um.co_house'), '@') ?: 'um.co_house';
-        $profileUrl = (string) Settings::get('contact.instagram_url', 'https://www.instagram.com/um.co_house') ?: 'https://www.instagram.com/um.co_house';
+        $handle = $this->resolveHandle();
+        $profileUrl = $this->resolveProfileUrl($handle);
+        $limit = min(max($limit, 1), 8);
 
         $cached = Cache::get(self::CACHE_KEY);
-        if (is_array($cached) && ! empty($cached['posts'])) {
-            $cached['posts'] = array_slice($cached['posts'], 0, $limit);
-            $cached['profile_url'] = $profileUrl;
-            $cached['username'] = $handle;
+        if (is_array($cached)) {
+            if (($cached['hidden'] ?? false) === true) {
+                return [
+                    'username' => $handle,
+                    'profile_url' => $profileUrl,
+                    'bio' => null,
+                    'source' => 'hidden',
+                    'hidden' => true,
+                    'posts' => [],
+                ];
+            }
 
-            return $cached;
+            if (! empty($cached['posts'])) {
+                $cached['posts'] = array_slice($cached['posts'], 0, $limit);
+                $cached['profile_url'] = $cached['bio']['link'] ?? $profileUrl;
+                $cached['username'] = $cached['bio']['username'] ?? $handle;
+
+                return $cached;
+            }
         }
 
         $stale = Cache::get(self::STALE_CACHE_KEY);
         if (is_array($stale) && ! empty($stale['posts'])) {
             $stale['source'] = 'cache';
             $stale['posts'] = array_slice($stale['posts'], 0, $limit);
-            $stale['profile_url'] = $profileUrl;
-            $stale['username'] = $handle;
+            $stale['profile_url'] = $stale['bio']['link'] ?? $profileUrl;
+            $stale['username'] = $stale['bio']['username'] ?? $handle;
 
             return $stale;
         }
@@ -53,47 +68,64 @@ class InstagramFeedService
     }
 
     /**
-     * Ambil daftar postingan Instagram UMCO secara otomatis & berkala.
-     * Prioritas:
-     * 1) Cache aktif (15 menit)
-     * 2) Instagram Graph API (jika token diisi oleh Owner di Pengaturan)
-     * 3) Public profile web endpoint (@um.co_house)
-     * 4) Cache live sebelumnya (hingga 7 hari) atau galeri kurasi @um.co_house
+     * Ambil feed Instagram via SociableKIT (AccentAPI JSON) dengan cache 1 jam (3600 detik).
+     * Mengembalikan struktur ter-normalisasi sesuai kontrak Custom UI Instagram.
      *
      * @return array<string, mixed>
      */
     public function getFeed(int $limit = 8, bool $forceRefresh = false): array
     {
-        $handle = ltrim((string) Settings::get('contact.instagram_handle', 'um.co_house'), '@') ?: 'um.co_house';
-        $profileUrl = (string) Settings::get('contact.instagram_url', 'https://www.instagram.com/um.co_house') ?: 'https://www.instagram.com/um.co_house';
-        $token = trim((string) Settings::get('contact.instagram_access_token', ''));
+        $handle = $this->resolveHandle();
+        $profileUrl = $this->resolveProfileUrl($handle);
+        $limit = min(max($limit, 1), 8);
+        $widgetId = $this->resolveWidgetId();
 
         if ($forceRefresh) {
             Cache::forget(self::CACHE_KEY);
         }
 
         $cached = Cache::get(self::CACHE_KEY);
-        if (is_array($cached) && ! empty($cached['posts'])) {
-            $cached['posts'] = array_slice($cached['posts'], 0, $limit);
-            $cached['profile_url'] = $profileUrl;
-            $cached['username'] = $handle;
-
-            return $cached;
-        }
-
-        if (! app()->runningUnitTests()) {
-            $live = null;
-
-            if ($token !== '') {
-                $live = $this->fetchViaGraphApi($token, $handle, $profileUrl, max($limit, 8));
+        if (is_array($cached)) {
+            if (($cached['hidden'] ?? false) === true) {
+                return [
+                    'username' => $handle,
+                    'profile_url' => $profileUrl,
+                    'bio' => null,
+                    'source' => 'hidden',
+                    'hidden' => true,
+                    'posts' => [],
+                ];
             }
 
-            if ($live === null) {
-                $live = $this->fetchViaPublicProfile($handle, $profileUrl, max($limit, 8));
+            if (! empty($cached['posts'])) {
+                $cached['posts'] = array_slice($cached['posts'], 0, $limit);
+                $cached['profile_url'] = $cached['bio']['link'] ?? $profileUrl;
+                $cached['username'] = $cached['bio']['username'] ?? $handle;
+
+                return $cached;
+            }
+        }
+
+        if ($widgetId !== '' && (! app()->runningUnitTests() || $forceRefresh)) {
+            $live = $this->fetchViaSociableKit($widgetId, $handle, $profileUrl);
+
+            if ($live === false) {
+                // Kuota free tier habis / user_info.show_feed = false / feed kosong -> sembunyikan section sesuai panduan
+                $hiddenState = [
+                    'username' => $handle,
+                    'profile_url' => $profileUrl,
+                    'bio' => null,
+                    'source' => 'hidden',
+                    'hidden' => true,
+                    'posts' => [],
+                ];
+                Cache::put(self::CACHE_KEY, $hiddenState, now()->addMinutes(15));
+
+                return $hiddenState;
             }
 
             if (is_array($live) && ! empty($live['posts'])) {
-                Cache::put(self::CACHE_KEY, $live, now()->addMinutes(15));
+                Cache::put(self::CACHE_KEY, $live, now()->addSeconds(self::CACHE_TTL_SECONDS));
                 Cache::put(self::STALE_CACHE_KEY, $live, now()->addDays(7));
                 $live['posts'] = array_slice($live['posts'], 0, $limit);
 
@@ -117,60 +149,91 @@ class InstagramFeedService
     }
 
     /**
-     * @return array<string, mixed>|null
+     * Ambil feed JSON dari endpoint SociableKIT AccentAPI.
+     * Mengembalikan array ternormalisasi, `false` jika show_feed dimatikan / feed kosong, atau `null` jika jaringan gagal.
+     *
+     * @return array<string, mixed>|false|null
      */
-    private function fetchViaGraphApi(string $token, string $handle, string $profileUrl, int $limit): ?array
+    private function fetchViaSociableKit(string $widgetId, string $handle, string $profileUrl): array|false|null
     {
         try {
-            $response = Http::timeout(4)
-                ->retry(1, 200)
-                ->get('https://graph.instagram.com/me/media', [
-                    'fields' => 'id,caption,media_type,media_url,thumbnail_url,permalink,timestamp,like_count,comments_count',
-                    'limit' => $limit,
-                    'access_token' => $token,
-                ]);
+            $response = Http::timeout(3)
+                ->acceptJson()
+                ->get("https://data.accentapi.com/feed/{$widgetId}.json");
 
             if (! $response->successful()) {
                 return null;
             }
 
-            $items = $response->json('data', []);
-            if (! is_array($items) || empty($items)) {
+            $json = $response->json();
+            if (! is_array($json)) {
                 return null;
             }
 
-            $posts = [];
-            foreach ($items as $row) {
-                $img = ($row['media_type'] ?? '') === 'VIDEO'
-                    ? ($row['thumbnail_url'] ?? $row['media_url'] ?? null)
-                    : ($row['media_url'] ?? null);
+            $showFeed = (bool) ($json['user_info']['show_feed'] ?? true);
+            $rawPosts = $json['posts'] ?? [];
 
-                if (! $img) {
+            if (! $showFeed || ! is_array($rawPosts) || empty($rawPosts)) {
+                return false;
+            }
+
+            $rawBio = is_array($json['bio'] ?? null) ? $json['bio'] : [];
+            $bioUsername = ltrim((string) ($rawBio['username'] ?? $handle), '@') ?: $handle;
+            $bioLink = (string) ($rawBio['link'] ?? $profileUrl) ?: $profileUrl;
+
+            $bio = [
+                'username' => $bioUsername,
+                'full_name' => (string) ($rawBio['full_name'] ?? 'UMCO House'),
+                'followers_count' => (int) ($rawBio['followers_count'] ?? 0),
+                'posts_count' => (int) ($rawBio['posts_count'] ?? 0),
+                'profile_pic_url' => (string) ($rawBio['profile_pic_url'] ?? ''),
+                'link' => $bioLink,
+            ];
+
+            $posts = [];
+            foreach ($rawPosts as $row) {
+                if (! is_array($row)) {
                     continue;
                 }
 
-                $ts = ! empty($row['timestamp']) ? Carbon::parse($row['timestamp']) : null;
-                $ts?->locale('id');
+                $image = (string) ($row['image_url'] ?? $row['thumbnail_url'] ?? $row['pic_src'] ?? '');
+                if ($image === '') {
+                    continue;
+                }
+
+                $likes = (int) ($row['pic_like_count_formatted'] ?? 0);
+                $comments = (int) ($row['pic_comment_count_formatted'] ?? 0);
+                $type = (string) ($row['pic_type'] ?? 'Image');
+                $postLink = (string) ($row['link'] ?? $bioLink) ?: $bioLink;
+
                 $posts[] = [
                     'id' => (string) ($row['id'] ?? uniqid('ig-')),
-                    'image' => $img,
-                    'caption' => trim((string) ($row['caption'] ?? 'Aktivitas terbaru dari meja bar @'.$handle)),
-                    'permalink' => (string) ($row['permalink'] ?? $profileUrl),
-                    'likes' => isset($row['like_count']) ? (int) $row['like_count'] : null,
-                    'comments' => isset($row['comments_count']) ? (int) $row['comments_count'] : null,
-                    'timestamp_human' => $ts?->diffForHumans() ?? 'Baru saja',
-                    'is_video' => ($row['media_type'] ?? '') === 'VIDEO',
+                    'link' => $postLink,
+                    'permalink' => $postLink,
+                    'image' => $image,
+                    'caption' => trim((string) ($row['pic_text'] ?? '')),
+                    'likes' => $likes > 0 ? $likes : null,
+                    'comments' => $comments > 0 ? $comments : null,
+                    'type' => $type,
+                    'timestamp_human' => null,
+                    'is_video' => strcasecmp($type, 'Video') === 0,
                 ];
+
+                if (count($posts) >= 8) {
+                    break;
+                }
             }
 
-            if (empty($posts)) {
-                return null;
+            if ($posts === []) {
+                return false;
             }
 
             return [
-                'username' => $handle,
-                'profile_url' => $profileUrl,
-                'source' => 'live',
+                'username' => $bioUsername,
+                'profile_url' => $bioLink,
+                'bio' => $bio,
+                'source' => 'sociablekit',
+                'hidden' => false,
                 'synced_at' => now()->toIso8601String(),
                 'posts' => $posts,
             ];
@@ -179,73 +242,23 @@ class InstagramFeedService
         }
     }
 
-    /**
-     * @return array<string, mixed>|null
-     */
-    private function fetchViaPublicProfile(string $handle, string $profileUrl, int $limit): ?array
+    private function resolveHandle(): string
     {
-        try {
-            $response = Http::timeout(4)
-                ->withHeaders([
-                    'x-ig-app-id' => '936619743392459',
-                    'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
-                    'Accept' => '*/*',
-                    'Referer' => 'https://www.instagram.com/'.$handle.'/',
-                ])
-                ->get('https://www.instagram.com/api/v1/users/web_profile_info/', [
-                    'username' => $handle,
-                ]);
+        return ltrim((string) Settings::get('contact.instagram_handle', 'um.co_house'), '@') ?: 'um.co_house';
+    }
 
-            if (! $response->successful()) {
-                return null;
-            }
+    private function resolveProfileUrl(string $handle): string
+    {
+        return (string) Settings::get('contact.instagram_url', 'https://www.instagram.com/'.$handle)
+            ?: 'https://www.instagram.com/'.$handle;
+    }
 
-            $user = $response->json('data.user');
-            $edges = $user['edge_owner_to_timeline_media']['edges'] ?? [];
-            if (! is_array($edges) || empty($edges)) {
-                return null;
-            }
+    private function resolveWidgetId(): string
+    {
+        $fromSetting = trim((string) Settings::get('contact.instagram_widget_id', ''));
+        $raw = $fromSetting !== '' ? $fromSetting : trim((string) config('services.instagram.sociablekit_feed_id', ''));
 
-            $posts = [];
-            foreach (array_slice($edges, 0, $limit) as $edge) {
-                $node = $edge['node'] ?? [];
-                $img = $node['display_url'] ?? $node['thumbnail_src'] ?? null;
-                $shortcode = $node['shortcode'] ?? null;
-                if (! $img || ! $shortcode) {
-                    continue;
-                }
-
-                $caption = $node['edge_media_to_caption']['edges'][0]['node']['text'] ?? ('Momen harian di @'.$handle);
-                $takenAt = ! empty($node['taken_at_timestamp']) ? Carbon::createFromTimestamp((int) $node['taken_at_timestamp']) : null;
-                $takenAt?->locale('id');
-
-                $posts[] = [
-                    'id' => (string) ($node['id'] ?? $shortcode),
-                    'image' => $img,
-                    'caption' => trim((string) $caption),
-                    'permalink' => 'https://www.instagram.com/p/'.$shortcode.'/',
-                    'likes' => $node['edge_liked_by']['count'] ?? $node['edge_media_preview_like']['count'] ?? null,
-                    'comments' => $node['edge_media_to_comment']['count'] ?? null,
-                    'timestamp_human' => $takenAt?->diffForHumans() ?? 'Baru saja',
-                    'is_video' => (bool) ($node['is_video'] ?? false),
-                ];
-            }
-
-            if (empty($posts)) {
-                return null;
-            }
-
-            return [
-                'username' => $handle,
-                'profile_url' => $profileUrl,
-                'followers' => $user['edge_followed_by']['count'] ?? null,
-                'source' => 'live',
-                'synced_at' => now()->toIso8601String(),
-                'posts' => $posts,
-            ];
-        } catch (\Throwable) {
-            return null;
-        }
+        return (string) preg_replace('/[^A-Za-z0-9_-]/', '', $raw);
     }
 
     /**
@@ -265,11 +278,13 @@ class InstagramFeedService
 
             return [
                 'id' => 'curated-'.$item->id,
+                'link' => $profileUrl,
+                'permalink' => $profileUrl,
                 'image' => asset($img),
                 'caption' => $item->caption ?: 'Suasana harian dan sajian bar UMCO House Kampus 2 UMRI.',
-                'permalink' => $profileUrl,
                 'likes' => null,
                 'comments' => null,
+                'type' => 'Image',
                 'timestamp_human' => null,
                 'is_video' => false,
             ];
@@ -286,11 +301,13 @@ class InstagramFeedService
             foreach ($defaults as $idx => [$src, $cap]) {
                 $posts[] = [
                     'id' => 'default-'.$idx,
+                    'link' => $profileUrl,
+                    'permalink' => $profileUrl,
                     'image' => asset($src),
                     'caption' => $cap,
-                    'permalink' => $profileUrl,
                     'likes' => null,
                     'comments' => null,
+                    'type' => 'Image',
                     'timestamp_human' => null,
                     'is_video' => false,
                 ];
@@ -300,7 +317,9 @@ class InstagramFeedService
         return [
             'username' => $handle,
             'profile_url' => $profileUrl,
+            'bio' => null,
             'source' => 'curated',
+            'hidden' => false,
             'synced_at' => now()->toIso8601String(),
             'posts' => array_slice($posts, 0, $limit),
         ];

@@ -4,7 +4,8 @@
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
 @theme {
-    --font-display: 'Barlow Condensed', 'Plus Jakarta Sans', 'Instrument Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-display: 'Plus Jakarta Sans', 'Instrument Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-condensed: 'Barlow Condensed', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     --font-sans: 'Plus Jakarta Sans', 'Instrument Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     --font-hand: 'Reenie Beanie', 'Segoe Print', cursive;
     --font-led: 'Plus Jakarta Sans', 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
@@ -45,7 +46,8 @@
     --stempel: #134731;
     --cabai: #1B5E42;
 
-    --font-display: 'Barlow Condensed', 'Plus Jakarta Sans', 'Instrument Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-display: 'Plus Jakarta Sans', 'Instrument Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-condensed: 'Barlow Condensed', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     --font-sans: 'Plus Jakarta Sans', 'Instrument Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     --font-hand: 'Reenie Beanie', 'Segoe Print', cursive;
     --font-led: 'Plus Jakarta Sans', 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
@@ -95,56 +97,56 @@
     visibility: hidden !important;
 }
 
-/* Skala Tipografi Tegas Condensed (Barlow Condensed) + Sans (Plus Jakarta Sans) */
+/* Skala Tipografi Tegas Modern Geometric (Plus Jakarta Sans Tight Tracking) */
 .type-display-xl {
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 3.35rem;
-    line-height: 0.94;
-    letter-spacing: -0.015em;
+    font-size: 2.5rem;
+    line-height: 1.02;
+    letter-spacing: -0.035em;
 }
 .type-display-l {
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 2.5rem;
-    line-height: 0.96;
-    letter-spacing: -0.015em;
+    font-size: 2rem;
+    line-height: 1.06;
+    letter-spacing: -0.03em;
 }
 .type-display-m {
     font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 1.85rem;
-    line-height: 1.02;
-    letter-spacing: -0.01em;
+    font-weight: 700;
+    font-size: 1.55rem;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
 }
 .type-title,
 .type-h3 {
     font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 1.35rem;
-    line-height: 1.15;
-    letter-spacing: -0.005em;
+    font-weight: 700;
+    font-size: 1.2rem;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
 }
 .type-display {
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 2.75rem;
-    line-height: 0.96;
-    letter-spacing: -0.015em;
+    font-size: 2.15rem;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
 }
 .type-h1 {
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 2.25rem;
-    line-height: 1;
-    letter-spacing: -0.015em;
+    font-size: 1.95rem;
+    line-height: 1.08;
+    letter-spacing: -0.03em;
 }
 .type-h2 {
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 1.9rem;
-    line-height: 1.02;
-    letter-spacing: -0.01em;
+    font-size: 1.65rem;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
 }
 .type-body-l {
     font-size: 1.0625rem;
@@ -160,25 +162,25 @@
 }
 
 @media (min-width: 640px) {
-    .type-display-xl { font-size: 5rem; }
-    .type-display-l, .type-display { font-size: 3.85rem; }
-    .type-display-m { font-size: 2.45rem; }
-    .type-h1 { font-size: 3rem; }
-    .type-h2 { font-size: 2.65rem; }
-    .type-title, .type-h3 { font-size: 1.55rem; }
+    .type-display-xl { font-size: 3.5rem; }
+    .type-display-l, .type-display { font-size: 2.75rem; }
+    .type-display-m { font-size: 2rem; }
+    .type-h1 { font-size: 2.45rem; }
+    .type-h2 { font-size: 2.1rem; }
+    .type-title, .type-h3 { font-size: 1.4rem; }
     .type-body-l { font-size: 1.125rem; }
     .type-body { font-size: 1rem; }
     .type-small { font-size: 0.8125rem; }
 }
 
 @media (min-width: 1024px) {
-    .type-display-xl { font-size: clamp(5.5rem, 9.2vw, 9.5rem); }
-    .type-display-l { font-size: clamp(2.85rem, 4.2vw, 4.25rem); }
-    .type-display { font-size: clamp(3rem, 4.35vw, 4.35rem); }
-    .type-display-m { font-size: 2.85rem; }
-    .type-h1 { font-size: clamp(3rem, 4vw, 4rem); }
-    .type-h2 { font-size: clamp(2.5rem, 3.6vw, 3.5rem); }
-    .type-title, .type-h3 { font-size: 1.65rem; }
+    .type-display-xl { font-size: clamp(3.75rem, 6vw, 5.75rem); }
+    .type-display-l { font-size: clamp(2.45rem, 3.6vw, 3.35rem); }
+    .type-display { font-size: clamp(2.55rem, 3.8vw, 3.55rem); }
+    .type-display-m { font-size: 2.25rem; }
+    .type-h1 { font-size: clamp(2.45rem, 3.4vw, 3.25rem); }
+    .type-h2 { font-size: clamp(2rem, 2.9vw, 2.75rem); }
+    .type-title, .type-h3 { font-size: 1.5rem; }
     .type-body-l { font-size: 1.125rem; }
     .type-body { font-size: 1.0625rem; }
     .type-small { font-size: 0.875rem; }

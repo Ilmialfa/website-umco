@@ -22,6 +22,11 @@ class PublicContentObserver
 
     protected function purgePublicCache(): void
     {
+        self::clearAllCaches();
+    }
+
+    public static function clearAllCaches(): void
+    {
         Settings::flush();
         Cache::forget('umco_home_data');
         Cache::forget('umco_menu_data');

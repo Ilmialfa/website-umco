@@ -5,7 +5,6 @@ namespace App\Filament\Resources\PageSections;
 use App\Filament\Resources\PageSections\Pages\ManagePageSections;
 use App\Models\PageSection;
 use BackedEnum;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\KeyValue;
@@ -78,6 +77,11 @@ class PageSectionResource extends Resource
     public static function canAccess(): bool
     {
         return auth()->user()?->isOwner() ?? false;
+    }
+
+    public static function canCreate(): bool
+    {
+        return false;
     }
 
     public static function form(Schema $schema): Schema
@@ -212,7 +216,6 @@ class PageSectionResource extends Resource
             ])
             ->recordActions([
                 EditAction::make(),
-                DeleteAction::make(),
             ]);
     }
 

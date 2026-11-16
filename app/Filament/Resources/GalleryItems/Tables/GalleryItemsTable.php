@@ -35,18 +35,32 @@ class GalleryItemsTable
                     ->defaultImageUrl(asset('/images/menu-placeholder.svg')),
 
                 TextColumn::make('group')
-                    ->label('Area')
+                    ->label('Kategori')
                     ->badge()
                     ->formatStateUsing(fn ($state) => match ($state) {
-                        'indoor' => 'Indoor AC',
-                        'outdoor' => 'Outdoor',
+                        'kopi' => 'Kopi & Bar',
+                        'makanan' => 'Makanan & Camilan',
+                        'suasana' => 'Suasana Kedai',
+                        'komunitas' => 'Komunitas & Acara',
                         default => 'Umum',
                     })
                     ->color(fn ($state) => match ($state) {
-                        'indoor' => 'info',
-                        'outdoor' => 'warning',
+                        'kopi' => 'success',
+                        'makanan' => 'warning',
+                        'suasana' => 'info',
+                        'komunitas' => 'primary',
                         default => 'gray',
                     }),
+
+                TextColumn::make('orientation')
+                    ->label('Penempatan')
+                    ->badge()
+                    ->formatStateUsing(fn ($state) => match ($state) {
+                        'galeri_only' => 'Hanya /galeri',
+                        'diagonal' => 'Beranda & Galeri',
+                        default => 'Otomatis',
+                    })
+                    ->color(fn ($state) => $state === 'galeri_only' ? 'gray' : 'success'),
 
                 TextColumn::make('type')
                     ->label('Tipe')
@@ -66,11 +80,13 @@ class GalleryItemsTable
             ])
             ->filters([
                 SelectFilter::make('group')
-                    ->label('Filter Area')
+                    ->label('Filter Kategori')
                     ->options([
-                        'indoor' => 'Indoor',
-                        'outdoor' => 'Outdoor',
-                        'general' => 'Umum',
+                        'umum' => 'Umum',
+                        'suasana' => 'Suasana Kedai',
+                        'kopi' => 'Kopi & Bar',
+                        'makanan' => 'Makanan & Camilan',
+                        'komunitas' => 'Komunitas & Acara',
                     ]),
             ])
             ->recordActions([

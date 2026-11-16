@@ -15,8 +15,10 @@ class ReservationInfolist
     public static function configure(Schema $schema): Schema
     {
         return $schema
+            ->columns(1)
             ->components([
                 Section::make('Rincian Reservasi Meja')
+                    ->columnSpanFull()
                     ->columns(3)
                     ->schema([
                         TextEntry::make('code')
@@ -83,6 +85,7 @@ class ReservationInfolist
                     ]),
 
                 Section::make('Rincian Pesanan Menu & Pembayaran')
+                    ->columnSpanFull()
                     ->columns(3)
                     ->schema([
                         TextEntry::make('subtotal')
@@ -128,6 +131,7 @@ class ReservationInfolist
                     ]),
 
                 Section::make('Daftar Menu yang Dipesan')
+                    ->columnSpanFull()
                     ->schema([
                         RepeatableEntry::make('items')
                             ->label('')

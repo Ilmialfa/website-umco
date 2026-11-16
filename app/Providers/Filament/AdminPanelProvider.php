@@ -3,8 +3,9 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\AdminLogin;
-use App\Filament\Widgets\PlaceholderAuditWidget;
 use App\Filament\Widgets\ReservationStatsWidget;
+use App\Filament\Widgets\ReservationStatusChartWidget;
+use App\Filament\Widgets\ReservationTrendChartWidget;
 use App\Filament\Widgets\UpcomingReservationsWidget;
 use App\Http\Middleware\EnforcePasswordChange;
 use App\Http\Middleware\SecurityHeaders;
@@ -42,13 +43,14 @@ class AdminPanelProvider extends PanelProvider
             ->brandName('UMCO')
             ->brandLogo(fn (): HtmlString => new HtmlString(
                 '<span class="inline-flex items-center gap-2.5">'
-                .'<img src="/images/umco-logo.webp" alt="Logo UMCO" width="28" height="28" style="height:1.75rem;width:1.75rem;border-radius:9999px;object-fit:cover;flex-shrink:0;" class="h-7 w-7 shrink-0 rounded-full object-cover" />'
+                .'<img src="/images/umco-logo.webp?v=umco2" alt="Logo UMCO" width="28" height="28" style="height:1.75rem;width:1.75rem;border-radius:9999px;object-fit:contain;flex-shrink:0;" class="h-7 w-7 shrink-0 rounded-full object-contain" />'
                 .'<span class="umco-brand-label font-semibold tracking-tight text-slate-900 whitespace-nowrap">UMCO Backoffice</span>'
                 .'</span>'
             ))
             ->brandLogoHeight('1.75rem')
-            ->favicon('/favicon.svg')
+            ->favicon('/favicon.ico?v=umco2')
             ->sidebarCollapsibleOnDesktop()
+            ->spa()
             ->maxContentWidth(Width::Full)
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->databaseNotifications()
@@ -110,7 +112,8 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->widgets([
                 ReservationStatsWidget::class,
-                PlaceholderAuditWidget::class,
+                ReservationTrendChartWidget::class,
+                ReservationStatusChartWidget::class,
                 UpcomingReservationsWidget::class,
             ])
             ->middleware([

@@ -224,14 +224,17 @@
                     @foreach ($facilities as $idx => $fac)
                         @php
                             $lblLower = mb_strtolower((string) $fac->label);
-                            $iconType = match (true) {
-                                str_contains($lblLower, 'wifi') || str_contains($lblLower, 'wi-fi') || str_contains($lblLower, 'internet') => 'wifi',
-                                str_contains($lblLower, 'colok') || str_contains($lblLower, 'listrik') || str_contains($lblLower, 'daya') => 'bolt',
-                                str_contains($lblLower, 'meja') || str_contains($lblLower, 'diskusi') || str_contains($lblLower, 'kursi') => 'desk',
-                                str_contains($lblLower, 'musik') || str_contains($lblLower, 'audio') || str_contains($lblLower, 'suara') => 'music',
-                                str_contains($lblLower, 'teras') || str_contains($lblLower, 'indoor') || str_contains($lblLower, 'outdoor') || str_contains($lblLower, 'ac') => 'space',
-                                default => 'compass',
-                            };
+                            $explicitIcon = trim((string) ($fac->icon ?? ''));
+                            $iconType = in_array($explicitIcon, ['wifi', 'bolt', 'desk', 'music', 'space', 'compass'], true)
+                                ? $explicitIcon
+                                : match (true) {
+                                    str_contains($lblLower, 'wifi') || str_contains($lblLower, 'wi-fi') || str_contains($lblLower, 'internet') => 'wifi',
+                                    str_contains($lblLower, 'colok') || str_contains($lblLower, 'listrik') || str_contains($lblLower, 'daya') => 'bolt',
+                                    str_contains($lblLower, 'meja') || str_contains($lblLower, 'diskusi') || str_contains($lblLower, 'kursi') => 'desk',
+                                    str_contains($lblLower, 'musik') || str_contains($lblLower, 'audio') || str_contains($lblLower, 'suara') => 'music',
+                                    str_contains($lblLower, 'teras') || str_contains($lblLower, 'indoor') || str_contains($lblLower, 'outdoor') || str_contains($lblLower, 'ac') => 'space',
+                                    default => 'compass',
+                                };
                             $facNum = str_pad((string) ($idx + 1), 2, '0', STR_PAD_LEFT);
                         @endphp
                         <div data-reveal="rise" class="rounded-2xl bg-[var(--kertas-terang)] p-5 sm:p-6 flex items-start justify-between gap-4 transition-colors duration-200 hover:bg-[var(--aksen-soft)]/45">

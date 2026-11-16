@@ -73,26 +73,10 @@
                     @if ($step === 6)
                         Tunjukkan kode karcis di kasir waktu datang. Kami tunggu {{ \App\Support\Settings::get('reservation.grace_minutes', 15) }} menit setelah jam pesan.
                     @else
-                        Minimal {{ $this->minParty }} orang, pilih menu sekalian, lalu bayar DP {{ $quoteData['dp_percentage'] }}% atau lunas.
+                        Pilih meja, tambah menu sekalian bila perlu, lalu bayar DP {{ $quoteData['dp_percentage'] }}% atau lunas.
                     @endif
                 </p>
-                @php $todayNote = trim((string) \App\Support\Settings::get('brand.today_note', '')); @endphp
-                @if ($step < 6 && $todayNote !== '')
-                    <p class="mt-3 inline-flex items-center gap-2 rounded-full bg-[var(--kertas-terang)] px-3.5 py-1.5 text-xs font-medium text-[var(--mentega-tua)]">
-                        <span class="w-1.5 h-1.5 rounded-full bg-[var(--mentega)]" aria-hidden="true"></span>
-                        <span>{{ $todayNote }}</span>
-                    </p>
-                @endif
             </div>
-
-            @if ($step < 6)
-                <div class="flex items-center gap-3 text-xs sm:text-sm text-[var(--tinta-70)]">
-                    <span>Minimal belanja {{ $partySize }} orang:</span>
-                    <span class="font-display font-bold text-[var(--tinta)] rounded-full px-3 py-1 bg-[var(--kertas-terang)]">
-                        {{ \App\Support\IndonesianFormat::rupiah($quoteData['min_spend']) }}
-                    </span>
-                </div>
-            @endif
         </div>
 
         @if ($step < 6)

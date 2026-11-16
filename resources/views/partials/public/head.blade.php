@@ -17,9 +17,10 @@
     <meta name="twitter:description" content="{{ $metaDescription }}">
     <meta name="twitter:image" content="{{ $ogImageUrl }}">
 
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
+    <link rel="shortcut icon" href="/favicon.ico?v=umco2">
+    <link rel="icon" href="/favicon.svg?v=umco2" type="image/svg+xml">
+    <link rel="icon" href="/favicon-32.png?v=umco2" sizes="32x32" type="image/png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=umco2" sizes="180x180">
     <link rel="canonical" href="{{ url()->current() }}">
 
     <link rel="preload" href="/fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>

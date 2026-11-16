@@ -162,7 +162,7 @@ class ReservationActions
 
             Action::make('mark_arrived')
                 ->label('Tandai datang')
-                ->icon('heroicon-o-user-check')
+                ->icon('heroicon-o-check-circle')
                 ->color('info')
                 ->authorize(fn (): bool => in_array(auth()->user()?->role, ['owner', 'admin', 'cashier'], true))
                 ->visible(fn (Reservation $record): bool => $record->status === 'confirmed' && $record->arrived_at === null)

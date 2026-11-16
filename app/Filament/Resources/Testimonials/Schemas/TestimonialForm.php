@@ -17,8 +17,10 @@ class TestimonialForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
+            ->columns(1)
             ->components([
                 Grid::make(['default' => 1, 'lg' => 3])
+                    ->columnSpanFull()
                     ->schema([
                         // Main Content (2 cols)
                         Group::make([
@@ -88,8 +90,8 @@ class TestimonialForm
                                         ->default(true),
 
                                     Toggle::make('is_sample')
-                                        ->label('Tandai Sebagai Placeholder/Contoh')
-                                        ->helperText('Jika aktif, akan muncul di detektor placeholder agar diganti ulasan riil.')
+                                        ->label('Tandai Sebagai Ulasan Contoh')
+                                        ->helperText('Tandai bila ulasan ini bersifat sampel sementara sebelum ulasan pelanggan asli dimasukkan.')
                                         ->default(false),
 
                                     TextInput::make('sort')

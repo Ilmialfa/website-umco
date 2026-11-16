@@ -61,6 +61,7 @@ class RuleResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->description('Daftar ini ditampilkan saat tamu mengklik "Baca aturan" di Langkah 5 (Pembayaran) pada halaman reservasi.')
             ->defaultSort('sort')
             ->reorderable('sort')
             ->columns([

@@ -240,8 +240,8 @@ class CreateReservation extends CreateRecord
         $lastBeforeClose = max(0, (int) Settings::get('reservation.last_slot_before_close', 60));
 
         $today = Carbon::now()->format('Y-m-d');
-        $cursor = Carbon::createFromFormat('Y-m-d H:i', $today.' '.$openStr);
-        $last = Carbon::createFromFormat('Y-m-d H:i', $today.' '.$closeStr)->subMinutes($lastBeforeClose);
+        $cursor = Carbon::createFromFormat('Y-m-d H:i', $today.' '.$openStr) ?: Carbon::now()->startOfDay()->setTime(8, 0);
+        $last = (Carbon::createFromFormat('Y-m-d H:i', $today.' '.$closeStr) ?: Carbon::now()->startOfDay()->setTime(22, 0))->subMinutes($lastBeforeClose);
 
         $opts = [];
         while ($cursor->lte($last)) {

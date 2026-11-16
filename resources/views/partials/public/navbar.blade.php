@@ -28,17 +28,17 @@
                     href="{{ url('/') }}"
                     wire:navigate
                     aria-label="UM.CO House — Beranda"
-                    class="justify-self-center inline-flex items-center gap-1.5 lg:gap-2 font-display font-bold text-[24px] lg:text-[28px] tracking-[0.06em] leading-none group"
+                    class="justify-self-center inline-flex items-center gap-1.5 font-condensed font-bold text-[38px] lg:text-[44px] tracking-[0.03em] leading-none group"
                 >
                     <span>UM</span>
                     <img
-                        src="{{ asset('/images/umco-logo.webp') }}"
+                        src="{{ asset('/images/umco-logo.webp?v=umco2') }}"
                         alt=""
                         aria-hidden="true"
-                        width="24"
-                        height="36"
+                        width="21"
+                        height="32"
                         decoding="async"
-                        class="h-8 lg:h-9 w-auto object-contain select-none transition-transform duration-300 group-hover:scale-105"
+                        class="h-7 lg:h-8 w-auto object-contain select-none transition-transform duration-300 group-hover:scale-105"
                     >
                     <span>CO</span>
                 </a>
@@ -102,17 +102,17 @@
                 wire:navigate
                 @click="openNav = false"
                 aria-label="UM.CO House — Beranda"
-                class="justify-self-center inline-flex items-center gap-1 font-display font-bold text-[22px] tracking-[0.06em] leading-none"
+                class="justify-self-center inline-flex items-center gap-1 font-condensed font-bold text-[34px] tracking-[0.03em] leading-none"
             >
                 <span>UM</span>
                 <img
-                    src="{{ asset('/images/umco-logo.webp') }}"
+                    src="{{ asset('/images/umco-logo.webp?v=umco2') }}"
                     alt=""
                     aria-hidden="true"
-                    width="19"
-                    height="28"
+                    width="16"
+                    height="24"
                     decoding="async"
-                    class="h-7 w-auto object-contain select-none"
+                    class="h-6 w-auto object-contain select-none"
                 >
                 <span>CO</span>
             </a>

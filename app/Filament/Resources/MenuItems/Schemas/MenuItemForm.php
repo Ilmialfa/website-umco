@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\MenuItems\Schemas;
 
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -17,8 +18,10 @@ class MenuItemForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
+            ->columns(1)
             ->components([
                 Grid::make(['default' => 1, 'lg' => 3])
+                    ->columnSpanFull()
                     ->schema([
                         // Left / Main Content (2 cols)
                         Group::make([
@@ -57,6 +60,12 @@ class MenuItemForm
                                         ->columnSpanFull()
                                         ->placeholder('Jelaskan karakter rasa, perpaduan bahan utama, atau sensasi minuman/makanan ini.'),
 
+                                    Textarea::make('ingredients')
+                                        ->label('Komposisi / Bahan Utama (Opsional)')
+                                        ->rows(2)
+                                        ->columnSpanFull()
+                                        ->placeholder('Contoh: Double shot espresso, susu oat, pandan alami, gula aren.'),
+
                                     FileUpload::make('image_path')
                                         ->label('Foto Menu Asli')
                                         ->disk('public')
@@ -65,6 +74,34 @@ class MenuItemForm
                                         ->maxSize(5120)
                                         ->columnSpanFull()
                                         ->helperText('Format JPG, PNG, atau WebP (maks. 5 MB). Jika dikosongkan, kartu menu otomatis menggunakan visual estetik UMCO.'),
+                                ]),
+
+                            Section::make('Pilihan Varian & Suhu')
+                                ->description('Opsi yang dapat dipilih pengunjung di halaman menu dan reservasi.')
+                                ->icon('heroicon-o-adjustments-horizontal')
+                                ->schema([
+                                    Toggle::make('has_temperature')
+                                        ->label('Sediakan Pilihan Suhu (Panas / Es)')
+                                        ->helperText('Aktifkan untuk minuman yang bisa dipesan Panas maupun Es.')
+                                        ->default(false),
+
+                                    Repeater::make('variants')
+                                        ->label('Varian Ukuran / Campuran (Opsional)')
+                                        ->schema([
+                                            TextInput::make('label')
+                                                ->label('Nama Varian')
+                                                ->placeholder('Contoh: Regular / Jumbo / Oat')
+                                                ->required(),
+                                            TextInput::make('price')
+                                                ->label('Harga (Rp)')
+                                                ->numeric()
+                                                ->prefix('Rp')
+                                                ->required(),
+                                        ])
+                                        ->columns(2)
+                                        ->defaultItems(0)
+                                        ->addActionLabel('Tambah Varian')
+                                        ->columnSpanFull(),
                                 ]),
                         ])->columnSpan(['default' => 1, 'lg' => 2]),
 

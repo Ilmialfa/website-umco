@@ -18,8 +18,10 @@ class ReservationForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
+            ->columns(1)
             ->components([
                 Grid::make(['default' => 1, 'lg' => 3])
+                    ->columnSpanFull()
                     ->schema([
                         // Main Board (2 cols)
                         Group::make([
@@ -50,8 +52,7 @@ class ReservationForm
 
                                             TextInput::make('phone_wa')
                                                 ->label('Format WhatsApp Sistem (628...)')
-                                                ->required()
-                                                ->helperText('Otomatis dinormalisasi untuk link WhatsApp kasir.'),
+                                                ->helperText('Otomatis dinormalisasi dari nomor tamu saat disimpan.'),
                                         ]),
                                 ]),
 
@@ -124,6 +125,16 @@ class ReservationForm
                                 ->description('Status verifikasi pembayaran DP.')
                                 ->icon('heroicon-o-banknotes')
                                 ->schema([
+                                    Select::make('payment_type')
+                                        ->label('Skema Pembayaran')
+                                        ->options([
+                                            'dp' => 'DP Sebagian',
+                                            'full' => 'Bayar Lunas',
+                                            'cash' => 'Tunai di Kasir',
+                                        ])
+                                        ->disabled(fn (): bool => ! (auth()->user()?->isOwner() ?? false))
+                                        ->default('dp'),
+
                                     Select::make('payment_status')
                                         ->label('Status DP')
                                         ->options([
@@ -144,7 +155,21 @@ class ReservationForm
                                         ->default(0),
 
                                     TextInput::make('dp_amount')
-                                        ->label('Nominal DP Diterima')
+                                        ->label('Nominal DP Wajib')
+                                        ->prefix('Rp')
+                                        ->numeric()
+                                        ->disabled(fn (): bool => ! (auth()->user()?->isOwner() ?? false))
+                                        ->default(0),
+
+                                    TextInput::make('amount_due')
+                                        ->label('Tagihan Awal (DP/Lunas)')
+                                        ->prefix('Rp')
+                                        ->numeric()
+                                        ->disabled(fn (): bool => ! (auth()->user()?->isOwner() ?? false))
+                                        ->default(0),
+
+                                    TextInput::make('amount_paid')
+                                        ->label('Nominal Sudah Dibayar')
                                         ->prefix('Rp')
                                         ->numeric()
                                         ->disabled(fn (): bool => ! (auth()->user()?->isOwner() ?? false))

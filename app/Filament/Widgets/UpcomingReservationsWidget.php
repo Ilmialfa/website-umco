@@ -14,7 +14,7 @@ use Filament\Widgets\TableWidget as BaseWidget;
 
 class UpcomingReservationsWidget extends BaseWidget
 {
-    protected static ?int $sort = 3;
+    protected static ?int $sort = 5;
 
     protected static bool $isLazy = false;
 

@@ -3,11 +3,16 @@
 namespace App\Support;
 
 use App\Models\Setting;
+use App\Observers\PublicContentObserver;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class Settings
 {
     protected const CACHE_KEY = 'umco_all_settings';
+
+    /** @var array<string, mixed>|null */
+    protected static ?array $memoryCache = null;
 
     /**
      * Get a setting by key (e.g. 'brand.brand_name', 'contact.phone_wa', 'reservation.dp_percentage').
@@ -30,7 +35,11 @@ class Settings
      */
     public static function all(): array
     {
-        return Cache::rememberForever(self::CACHE_KEY, function (): array {
+        if (self::$memoryCache !== null) {
+            return self::$memoryCache;
+        }
+
+        return self::$memoryCache = Cache::rememberForever(self::CACHE_KEY, function (): array {
             try {
                 $settings = Setting::query()->orderBy('id')->get();
                 $dict = [];
@@ -82,6 +91,44 @@ class Settings
      */
     public static function set(string $key, mixed $value, ?string $group = null): void
     {
+        [$resolvedGroup, $resolvedKey, $payload] = self::prepareEntry($key, $value, $group);
+
+        Setting::updateOrCreate(
+            ['group' => $resolvedGroup, 'key' => $resolvedKey],
+            ['payload' => $payload]
+        );
+
+        self::flush();
+    }
+
+    /**
+     * Save many settings in one transaction and purge caches once.
+     *
+     * @param  array<string, mixed>  $values  Keyed by 'group.key'
+     */
+    public static function setMany(array $values): void
+    {
+        Setting::withoutEvents(function () use ($values): void {
+            DB::transaction(function () use ($values): void {
+                foreach ($values as $key => $value) {
+                    [$resolvedGroup, $resolvedKey, $payload] = self::prepareEntry((string) $key, $value);
+
+                    Setting::updateOrCreate(
+                        ['group' => $resolvedGroup, 'key' => $resolvedKey],
+                        ['payload' => $payload]
+                    );
+                }
+            });
+        });
+
+        PublicContentObserver::clearAllCaches();
+    }
+
+    /**
+     * @return array{0: string, 1: string, 2: ?string}
+     */
+    protected static function prepareEntry(string $key, mixed $value, ?string $group = null): array
+    {
         $itemKey = $key;
         if (str_contains($key, '.')) {
             [$grp, $k] = explode('.', $key, 2);
@@ -97,12 +144,7 @@ class Settings
             default => (string) $value,
         };
 
-        Setting::updateOrCreate(
-            ['group' => $group, 'key' => $itemKey],
-            ['payload' => $payload]
-        );
-
-        self::flush();
+        return [$group, $itemKey, $payload];
     }
 
     /**
@@ -110,6 +152,7 @@ class Settings
      */
     public static function flush(): void
     {
+        self::$memoryCache = null;
         Cache::forget(self::CACHE_KEY);
     }
 }

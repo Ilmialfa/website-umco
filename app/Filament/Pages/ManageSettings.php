@@ -73,7 +73,7 @@ class ManageSettings extends Page implements HasForms
         'google_maps_url' => ['setting' => 'contact.google_maps_url', 'default' => '', 'type' => 'string'],
         'instagram_url' => ['setting' => 'contact.instagram_url', 'default' => 'https://www.instagram.com/um.co_house', 'type' => 'string'],
         'instagram_handle' => ['setting' => 'contact.instagram_handle', 'default' => '@um.co_house', 'type' => 'string'],
-        'instagram_access_token' => ['setting' => 'contact.instagram_access_token', 'default' => '', 'type' => 'string'],
+        'instagram_widget_id' => ['setting' => 'contact.instagram_widget_id', 'default' => '25729989', 'type' => 'string'],
         'phone_wa' => ['setting' => 'contact.phone_wa', 'default' => '02248001571', 'type' => 'string'],
         'business_wa' => ['setting' => 'contact.business_wa', 'default' => '622248001571', 'type' => 'string'],
         'collab_template' => ['setting' => 'contact.collab_template', 'default' => '', 'type' => 'string'],
@@ -156,8 +156,10 @@ class ManageSettings extends Page implements HasForms
     public function form(Schema $schema): Schema
     {
         return $schema
+            ->columns(1)
             ->schema([
                 Tabs::make('Pengaturan')
+                    ->columnSpanFull()
                     ->tabs([
                         Tabs\Tab::make('Brand & Tampilan')
                             ->icon('heroicon-o-sparkles')
@@ -170,7 +172,7 @@ class ManageSettings extends Page implements HasForms
                                 Textarea::make('hero_description')->label('Sub-headline Hero Beranda')->rows(2)->columnSpanFull(),
                                 Textarea::make('today_note')
                                     ->label('Catatan Hari Ini (Opsional)')
-                                    ->helperText('Jika diisi, tampil sebagai catatan bar di hero dan pengumuman atas halaman reservasi.')
+                                    ->helperText('Jika diisi, tampil sebagai catatan kecil di bagian hero beranda.')
                                     ->rows(2)
                                     ->columnSpanFull(),
                                 Textarea::make('story_snippet')
@@ -209,11 +211,10 @@ class ManageSettings extends Page implements HasForms
                                     ->required(),
                                 TextInput::make('instagram_handle')->label('Username Instagram')->placeholder('@um.co_house'),
                                 TextInput::make('instagram_url')->label('URL Instagram')->url()->placeholder('https://www.instagram.com/um.co_house'),
-                                TextInput::make('instagram_access_token')
-                                    ->label('Token Akses Instagram Graph API (Opsional, Real-Time)')
-                                    ->password()
-                                    ->revealable()
-                                    ->helperText('Jika kosong, website menyinkronkan profil publik @um.co_house otomatis. Isi Long-Lived Token untuk sync Graph API resmi.')
+                                TextInput::make('instagram_widget_id')
+                                    ->label('ID Widget Instagram SociableKIT (Opsional)')
+                                    ->placeholder('Contoh: 25728125')
+                                    ->helperText('Buat widget Instagram Feed di SociableKIT lalu masukkan Widget ID-nya (endpoint https://data.accentapi.com/feed/{ID}.json). Jika kosong, website menampilkan galeri kurasi @um.co_house. Bisa juga diset via .env SOCIABLEKIT_INSTAGRAM_FEED_ID.')
                                     ->columnSpanFull(),
                                 TextInput::make('google_maps_url')->label('URL Google Maps')->url(),
                                 TextInput::make('coordinates')
@@ -371,12 +372,13 @@ class ManageSettings extends Page implements HasForms
             'business_wa' => PhoneNumber::normalizeBusiness(trim((string) ($state['business_wa'] ?? $state['phone_wa'] ?? '02248001571'))),
             'hero_cutout_image' => ! empty($state['hero_cutout_upload'])
                 ? '/storage/'.ltrim((string) $state['hero_cutout_upload'], '/')
-                : ($state['hero_cutout_image'] ?? '/images/hero-cutout.webp'),
+                : (filled($state['hero_cutout_image'] ?? null) ? (string) $state['hero_cutout_image'] : '/images/hero-cutout.webp'),
             'footer_cutout_image' => ! empty($state['footer_cutout_upload'])
                 ? '/storage/'.ltrim((string) $state['footer_cutout_upload'], '/')
-                : ($state['footer_cutout_image'] ?? '/images/footer-cutout.webp'),
+                : (filled($state['footer_cutout_image'] ?? null) ? (string) $state['footer_cutout_image'] : '/images/footer-cutout.webp'),
         ];
 
+        $batch = [];
         foreach (self::FIELD_MAP as $field => $config) {
             $value = array_key_exists($field, $overrides)
                 ? $overrides[$field]
@@ -392,8 +394,10 @@ class ManageSettings extends Page implements HasForms
                 $value = (string) ($value ?? '');
             }
 
-            Settings::set($config['setting'], $value);
+            $batch[$config['setting']] = $value;
         }
+
+        Settings::setMany($batch);
 
         InstagramFeedService::flushCache();
 

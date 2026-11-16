@@ -46,9 +46,24 @@ class MenuItem extends Model
 
     protected static function booted(): void
     {
-        static::saving(function ($item) {
+        static::saving(function (self $item): void {
             if (empty($item->slug)) {
-                $item->slug = Str::slug($item->name);
+                $baseSlug = Str::slug((string) $item->name) ?: 'menu-item';
+                $slug = $baseSlug;
+                $suffix = 2;
+                while (static::query()
+                    ->where('slug', $slug)
+                    ->when($item->exists, fn ($q) => $q->where('id', '!=', $item->id))
+                    ->exists()) {
+                    $slug = "{$baseSlug}-{$suffix}";
+                    $suffix++;
+                }
+                $item->slug = $slug;
+            }
+
+            if ($item->isDirty('image_path')) {
+                $item->image_variants = null;
+                $item->is_placeholder = empty($item->image_path);
             }
         });
     }

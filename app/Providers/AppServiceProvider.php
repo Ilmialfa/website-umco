@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use App\Models\ActivityLog;
 use App\Models\Banner;
-use App\Models\BeanOrigin;
 use App\Models\ClosedDate;
 use App\Models\Facility;
 use App\Models\Faq;
@@ -114,7 +113,6 @@ class AppServiceProvider extends ServiceProvider
 
         foreach ([
             Banner::class,
-            BeanOrigin::class,
             Facility::class,
             Faq::class,
             GalleryItem::class,
@@ -150,11 +148,14 @@ class AppServiceProvider extends ServiceProvider
         Rule::observe(PublicContentObserver::class);
         SpendTier::observe(PublicContentObserver::class);
         SeatingOption::observe(PublicContentObserver::class);
-        BeanOrigin::observe(PublicContentObserver::class);
 
         $flushAdminStats = static function (): void {
             Cache::forget('filament.reservations.pending_count');
+            Cache::forget('filament.reservations.tab_counts');
             Cache::forget('filament.dashboard.stats');
+            Cache::forget('filament.dashboard.charts.14d');
+            Cache::forget('filament.dashboard.charts.30d');
+            Cache::forget('filament.dashboard.charts.mix');
         };
 
         Reservation::saved($flushAdminStats);

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Facilities\Schemas;
 
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
@@ -14,8 +15,10 @@ class FacilityForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
+            ->columns(1)
             ->components([
                 Grid::make(['default' => 1, 'lg' => 3])
+                    ->columnSpanFull()
                     ->schema([
                         Group::make([
                             Section::make('Fasilitas Nyata Kafe')
@@ -28,10 +31,19 @@ class FacilityForm
                                         ->required()
                                         ->columnSpanFull(),
 
-                                    TextInput::make('icon')
-                                        ->label('Nama Ikon Heroicon')
-                                        ->default('sparkles')
-                                        ->helperText('Contoh: sparkles, bolt, wifi, sun, cake, truck, shopping-bag')
+                                    Select::make('icon')
+                                        ->label('Ikon Fasilitas')
+                                        ->options([
+                                            'auto' => 'Otomatis dari Nama Fasilitas',
+                                            'wifi' => 'Wi-Fi / Internet',
+                                            'bolt' => 'Listrik / Colokan',
+                                            'desk' => 'Meja & Kursi',
+                                            'music' => 'Musik / Suara',
+                                            'space' => 'Ruang Indoor / Outdoor',
+                                            'compass' => 'Fasilitas Lainnya',
+                                        ])
+                                        ->default('auto')
+                                        ->helperText('Ditampilkan pada kartu fasilitas di halaman Cerita (/cerita).')
                                         ->columnSpanFull(),
                                 ]),
                         ])->columnSpan(['default' => 1, 'lg' => 2]),

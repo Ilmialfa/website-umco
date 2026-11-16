@@ -5,7 +5,6 @@ use App\Filament\Pages\ManageSettings;
 use App\Filament\Pages\ReservationReports;
 use App\Filament\Resources\ActivityLogs\ActivityLogResource;
 use App\Filament\Resources\Banners\BannerResource;
-use App\Filament\Resources\BeanOrigins\BeanOriginResource;
 use App\Filament\Resources\ClosedDates\ClosedDateResource;
 use App\Filament\Resources\Facilities\FacilityResource;
 use App\Filament\Resources\GalleryItems\GalleryItemResource;
@@ -52,7 +51,6 @@ test('enforces Section 12.5 Filament permission matrix across owner, admin, and 
         ->and(RuleResource::canAccess())->toBeTrue()
         ->and(SpendTierResource::canAccess())->toBeTrue()
         ->and(SeatingOptionResource::canAccess())->toBeTrue()
-        ->and(BeanOriginResource::canAccess())->toBeTrue()
         ->and(BannerResource::canAccess())->toBeTrue()
         ->and(StoryBlockResource::canAccess())->toBeTrue()
         ->and(GalleryItemResource::canAccess())->toBeTrue()
@@ -76,7 +74,6 @@ test('enforces Section 12.5 Filament permission matrix across owner, admin, and 
         ->and(RuleResource::canAccess())->toBeFalse()
         ->and(SpendTierResource::canAccess())->toBeFalse()
         ->and(SeatingOptionResource::canAccess())->toBeFalse()
-        ->and(BeanOriginResource::canAccess())->toBeFalse()
         ->and(BannerResource::canAccess())->toBeFalse()
         ->and(StoryBlockResource::canAccess())->toBeFalse()
         ->and(GalleryItemResource::canAccess())->toBeFalse()
@@ -179,7 +176,7 @@ test('logged WhatsApp redirect route records ActivityLog and redirects to wa.me'
         ->exists())->toBeTrue();
 });
 
-test('enforces policy boundaries, owner-only deletion, last-owner protection, and hides BeanOriginResource nav', function () {
+test('enforces policy boundaries, owner-only deletion, last-owner protection, and removes unused BeanOrigin route', function () {
     $owner = User::factory()->create(['role' => 'owner']);
     $admin = User::factory()->create(['role' => 'admin']);
     $cashier = User::factory()->create(['role' => 'cashier']);
@@ -192,7 +189,7 @@ test('enforces policy boundaries, owner-only deletion, last-owner protection, an
         'party_size' => 2,
     ]);
 
-    expect(BeanOriginResource::shouldRegisterNavigation())->toBeFalse();
+    $this->actingAs($owner)->get('/admin/bean-origins')->assertNotFound();
 
     $this->actingAs($cashier);
     expect(ReservationResource::canDelete($reservation))->toBeFalse()

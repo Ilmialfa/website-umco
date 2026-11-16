@@ -65,7 +65,10 @@
             <div class="umco-login-form-inner">
                 <header class="umco-login-brand">
                     <div class="umco-login-mark-row">
-                        <span class="umco-login-wordmark">UM.CO</span>
+                        <span class="inline-flex items-center gap-2.5">
+                            <img src="/images/umco-logo.webp?v=umco2" alt="Logo UMCO" width="32" height="32" class="h-8 w-8 rounded-full object-contain">
+                            <span class="umco-login-wordmark">UM.CO</span>
+                        </span>
                         <span class="umco-login-role-pill">Portal Staf</span>
                     </div>
                     <h1 class="umco-login-title">MASUK BACKOFFICE</h1>

@@ -13,8 +13,11 @@
     <div class="p-4 sm:p-5 rounded-2xl bg-[var(--kertas-terang)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
             <p class="font-semibold text-base">Jumlah orang</p>
-            <p class="text-xs sm:text-sm text-[var(--tinta-70)] mt-0.5">
-                Minimal {{ $this->minParty }} orang, maksimal {{ $this->maxPartyOnline }} orang online.
+            <p class="text-xs sm:text-sm text-[var(--tinta-70)] mt-1 flex flex-wrap items-center gap-2">
+                <span>Minimal belanja:</span>
+                <span class="font-display font-bold text-[var(--tinta)] rounded-full px-2.5 py-0.5 bg-[var(--kertas)]">
+                    {{ \App\Support\IndonesianFormat::rupiah($quoteData['min_spend']) }}
+                </span>
             </p>
         </div>
         <div class="inline-flex items-center gap-4 self-start sm:self-auto">

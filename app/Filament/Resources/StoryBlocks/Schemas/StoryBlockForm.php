@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\StoryBlocks\Schemas;
 
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
@@ -14,8 +15,10 @@ class StoryBlockForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
+            ->columns(1)
             ->components([
                 Grid::make(['default' => 1, 'lg' => 3])
+                    ->columnSpanFull()
                     ->schema([
                         Group::make([
                             Section::make('Blok Narasi Editorial Kafe')
@@ -42,11 +45,13 @@ class StoryBlockForm
                                 ->description('Penempatan halaman dan urutan.')
                                 ->icon('heroicon-o-tag')
                                 ->schema([
-                                    TextInput::make('page')
+                                    Select::make('page')
                                         ->label('Halaman Target')
-                                        ->default('about')
-                                        ->required()
-                                        ->helperText('Contoh: about, home, contact'),
+                                        ->options([
+                                            'cerita' => 'Halaman Cerita (/cerita)',
+                                        ])
+                                        ->default('cerita')
+                                        ->required(),
 
                                     TextInput::make('key')
                                         ->label('Kunci Pengenal (Key)')

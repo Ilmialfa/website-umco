@@ -32,7 +32,7 @@
                     <span>{{ $eyebrow }}</span>
                 </div>
 
-                <h1 class="font-display font-bold [font-size:clamp(3.2rem,5.8vw,5.8rem)] leading-[0.90] tracking-[-0.025em] text-white max-w-xl">
+                <h1 class="font-display font-bold [font-size:clamp(2.4rem,4.1vw,3.85rem)] leading-[1.03] tracking-[-0.035em] text-white max-w-xl">
                     {{ $heading }}
                 </h1>
 

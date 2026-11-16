@@ -71,16 +71,8 @@ class Redesign2026Seeder extends Seeder
             ]
         );
 
-        User::updateOrCreate(
-            ['email' => 'kasir@umco.house'],
-            [
-                'name' => 'Kasir UMCO',
-                'password' => Hash::make('password123'),
-                'role' => 'cashier',
-                'must_change_password' => false,
-                'email_verified_at' => now(),
-            ]
-        );
+        User::where('email', 'kasir@umco.house')->delete();
+        User::where('role', 'cashier')->update(['role' => 'admin']);
     }
 
     private function seedSettings(): void

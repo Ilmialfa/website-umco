@@ -15,7 +15,7 @@ class AdminWhatsAppRedirectController extends Controller
     public function __invoke(Request $request, Reservation $reservation, string $template): RedirectResponse
     {
         $user = $request->user();
-        abort_unless($user && in_array($user->role, ['owner', 'admin', 'cashier'], true), 403);
+        abort_unless($user && $user->isAdmin(), 403);
 
         $dateObj = Carbon::parse($reservation->date);
         $dateObj->locale('id');

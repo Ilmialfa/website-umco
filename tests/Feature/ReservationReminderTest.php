@@ -11,7 +11,7 @@ test('reservations:remind dispatches 15-minute upcoming reminder once and flags 
     Settings::set('reservation.grace_minutes', '15', 'reservation');
     Settings::flush();
 
-    $cashier = User::factory()->create(['role' => 'cashier']);
+    $admin = User::factory()->create(['role' => 'admin']);
     $owner = User::factory()->create(['role' => 'owner']);
 
     $now = Carbon::now('Asia/Jakarta')->startOfMinute();
@@ -57,12 +57,12 @@ test('reservations:remind dispatches 15-minute upcoming reminder once and flags 
         ->and($farFuture->reminder_notified_at)->toBeNull()
         ->and($lateGuest->late_notified_at)->not->toBeNull();
 
-    // Setiap staf (cashier + owner) mendapat 2 notifikasi: upcoming reminder + late warning
-    expect($cashier->notifications()->count())->toBe(2)
+    // Setiap staf (admin + owner) mendapat 2 notifikasi: upcoming reminder + late warning
+    expect($admin->notifications()->count())->toBe(2)
         ->and($owner->notifications()->count())->toBe(2);
 
     // Panggilan kedua tidak menggandakan notifikasi
     Artisan::call('reservations:remind');
 
-    expect($cashier->notifications()->count())->toBe(2);
+    expect($admin->notifications()->count())->toBe(2);
 });

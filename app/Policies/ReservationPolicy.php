@@ -9,7 +9,7 @@ class ReservationPolicy
 {
     public function viewAny(User $user): bool
     {
-        return in_array($user->role, ['owner', 'admin', 'cashier'], true);
+        return $user->isAdmin();
     }
 
     public function view(User $user, Reservation $reservation): bool

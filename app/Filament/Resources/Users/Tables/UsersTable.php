@@ -29,13 +29,11 @@ class UsersTable
                     ->formatStateUsing(fn ($state) => match ($state) {
                         'owner' => 'Owner',
                         'admin' => 'Admin',
-                        'cashier' => 'Kasir',
                         default => $state,
                     })
                     ->color(fn ($state) => match ($state) {
                         'owner' => 'danger',
                         'admin' => 'primary',
-                        'cashier' => 'success',
                         default => 'gray',
                     }),
 

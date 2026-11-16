@@ -151,7 +151,7 @@ class ReservationStatusPage extends Component
             'path' => $path,
         ]);
 
-        $staff = User::query()->whereIn('role', ['owner', 'admin', 'cashier'])->get();
+        $staff = User::query()->whereIn('role', ['owner', 'admin'])->get();
         if ($staff->isNotEmpty()) {
             Notification::send($staff, new NewReservationNotification($reservation->fresh(['items', 'seatingOption'])));
         }

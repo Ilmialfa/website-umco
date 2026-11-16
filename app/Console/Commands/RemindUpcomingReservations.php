@@ -24,7 +24,7 @@ class RemindUpcomingReservations extends Command
         $graceMinutes = max(5, (int) Settings::get('reservation.grace_minutes', 15));
 
         $staff = User::query()
-            ->whereIn('role', ['owner', 'admin', 'cashier'])
+            ->whereIn('role', ['owner', 'admin'])
             ->get();
 
         if ($staff->isEmpty()) {

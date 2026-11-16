@@ -318,9 +318,9 @@ class CreateReservation
 
         $reservation->load(['items', 'seatingOption']);
 
-        // Notifikasi database Filament ke owner / admin / kasir
+        // Notifikasi database Filament ke owner / admin
         $staff = User::query()
-            ->whereIn('role', ['owner', 'admin', 'cashier'])
+            ->whereIn('role', ['owner', 'admin'])
             ->get();
 
         if ($staff->isNotEmpty()) {

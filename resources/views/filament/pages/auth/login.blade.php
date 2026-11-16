@@ -50,7 +50,7 @@
                     </div>
                     <div class="umco-login-pillar">
                         <span class="umco-login-pillar-val">RBAC Staf</span>
-                        <span class="umco-login-pillar-lbl">Owner · Admin · Kasir</span>
+                        <span class="umco-login-pillar-lbl">Owner · Admin</span>
                     </div>
                     <div class="umco-login-pillar">
                         <span class="umco-login-pillar-val">Diaudit</span>

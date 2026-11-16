@@ -67,7 +67,7 @@ test('users cannot authenticate with invalid password or guest role', function (
 });
 
 test('authenticated staff users can logout from admin panel', function () {
-    $staff = User::factory()->create(['role' => 'cashier']);
+    $staff = User::factory()->create(['role' => 'admin']);
 
     $this->actingAs($staff)
         ->post('/admin/logout')

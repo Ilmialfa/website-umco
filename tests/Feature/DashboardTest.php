@@ -12,8 +12,8 @@ test('legacy dashboard redirects unauthenticated and staff users to admin panel'
         ->assertRedirect('/admin');
 });
 
-test('staff roles can visit admin dashboard while guest role receives forbidden', function () {
-    foreach (['owner', 'admin', 'cashier'] as $role) {
+test('staff roles can visit admin dashboard while non-staff roles receive forbidden', function () {
+    foreach (['owner', 'admin'] as $role) {
         $user = User::factory()->create(['role' => $role]);
 
         $this->actingAs($user)
@@ -21,9 +21,11 @@ test('staff roles can visit admin dashboard while guest role receives forbidden'
             ->assertOk();
     }
 
-    $guest = User::factory()->create(['role' => 'guest']);
+    foreach (['guest', 'cashier'] as $blockedRole) {
+        $blocked = User::factory()->create(['role' => $blockedRole]);
 
-    $this->actingAs($guest)
-        ->get('/admin')
-        ->assertForbidden();
+        $this->actingAs($blocked)
+            ->get('/admin')
+            ->assertForbidden();
+    }
 });

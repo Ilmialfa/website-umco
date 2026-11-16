@@ -84,7 +84,7 @@ class UpcomingReservationsWidget extends BaseWidget
                     ->label('Konfirmasi')
                     ->icon('heroicon-o-check')
                     ->color('primary')
-                    ->authorize(fn (): bool => in_array(auth()->user()?->role, ['owner', 'admin', 'cashier'], true))
+                    ->authorize(fn (): bool => auth()->user()?->isAdmin() ?? false)
                     ->visible(fn (Reservation $record) => $record->status === 'pending')
                     ->requiresConfirmation()
                     ->action(function (Reservation $record) {

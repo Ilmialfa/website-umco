@@ -34,7 +34,7 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return in_array($this->role, ['owner', 'admin', 'cashier'], true);
+        return in_array($this->role, ['owner', 'admin'], true);
     }
 
     public function isOwner(): bool
@@ -45,11 +45,6 @@ class User extends Authenticatable implements FilamentUser
     public function isAdmin(): bool
     {
         return in_array($this->role, ['owner', 'admin'], true);
-    }
-
-    public function isCashier(): bool
-    {
-        return $this->role === 'cashier';
     }
 
     /**

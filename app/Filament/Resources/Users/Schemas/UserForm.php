@@ -67,10 +67,9 @@ class UserForm
                                         ->label('Peran / Role')
                                         ->options([
                                             'owner' => 'Owner (Akses Penuh)',
-                                            'admin' => 'Admin (Reservasi & Konten)',
-                                            'cashier' => 'Kasir (Reservasi & Stok Menu)',
+                                            'admin' => 'Admin (Reservasi, Menu & Laporan)',
                                         ])
-                                        ->default('cashier')
+                                        ->default('admin')
                                         ->disabled(fn ($record): bool => $record !== null && auth()->id() === $record->id)
                                         ->helperText('Role diri sendiri tidak bisa diturunkan langsung untuk mencegah terkunci.')
                                         ->required(),

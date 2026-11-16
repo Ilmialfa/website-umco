@@ -30,10 +30,10 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\ValidationException;
 
-test('enforces Section 12.5 Filament permission matrix across owner, admin, and cashier', function () {
+test('enforces Filament permission matrix across owner and admin only', function () {
     $owner = User::factory()->create(['role' => 'owner']);
     $admin = User::factory()->create(['role' => 'admin']);
-    $cashier = User::factory()->create(['role' => 'cashier']);
+    $removedCashier = User::factory()->create(['role' => 'cashier']);
 
     $cat = MenuCategory::create(['name' => 'Kopi', 'slug' => 'kopi', 'is_active' => true]);
     $menu = MenuItem::create(['category_id' => $cat->id, 'name' => 'V60', 'slug' => 'v60', 'price' => 30000, 'is_active' => true]);
@@ -84,24 +84,14 @@ test('enforces Section 12.5 Filament permission matrix across owner, admin, and 
         ->and(UserResource::canAccess())->toBeFalse()
         ->and(ActivityLogResource::canAccess())->toBeFalse();
 
-    // CASHIER: reservasi & lihat/ubah status habis menu, TIDAK bisa buat/ubah harga/foto menu, CMS, settings, audit
-    $this->actingAs($cashier);
-    expect(ReservationResource::canAccess())->toBeTrue()
-        ->and(MenuItemResource::canAccess())->toBeTrue()
-        ->and(MenuItemResource::canCreate())->toBeFalse()
-        ->and(MenuItemResource::canEdit($menu))->toBeFalse()
-        ->and(MenuItemResource::canDelete($menu))->toBeFalse()
-        ->and(MenuCategoryResource::canAccess())->toBeFalse()
-        ->and(ClosedDateResource::canAccess())->toBeFalse()
-        ->and(ReservationReports::canAccess())->toBeFalse()
-        ->and(ManageSettings::canAccess())->toBeFalse()
-        ->and(UserResource::canAccess())->toBeFalse()
-        ->and(ActivityLogResource::canAccess())->toBeFalse()
-        ->and(PageSectionResource::canAccess())->toBeFalse();
+    // CASHIER ROLE DIHAPUS: tidak punya akses panel & route staf
+    $this->actingAs($removedCashier);
+    expect(ReservationResource::canAccess())->toBeFalse()
+        ->and(MenuItemResource::canAccess())->toBeFalse();
 
     $this->actingAs($admin)->get('/admin/manage-settings')->assertForbidden();
     $this->actingAs($admin)->get('/admin/page-sections')->assertForbidden();
-    $this->actingAs($cashier)->get('/admin/manage-settings')->assertForbidden();
+    $this->actingAs($removedCashier)->get('/admin')->assertForbidden();
     $this->actingAs($owner)->get('/admin/manage-settings')->assertOk();
 });
 
@@ -154,7 +144,7 @@ test('admin walk-in cash and owner skip_min_rules go through shared CreateReserv
 });
 
 test('logged WhatsApp redirect route records ActivityLog and redirects to wa.me', function () {
-    $cashier = User::factory()->create(['role' => 'cashier']);
+    $admin = User::factory()->create(['role' => 'admin']);
     $reservation = Reservation::create([
         'name' => 'Dinda Kirana',
         'phone_input' => '082248001571',
@@ -166,7 +156,7 @@ test('logged WhatsApp redirect route records ActivityLog and redirects to wa.me'
         'amount_due' => 50000,
     ]);
 
-    $response = $this->actingAs($cashier)
+    $response = $this->actingAs($admin)
         ->get(route('admin.wa.redirect', ['reservation' => $reservation->id, 'template' => 'reminder']));
 
     $response->assertRedirect();
@@ -179,7 +169,6 @@ test('logged WhatsApp redirect route records ActivityLog and redirects to wa.me'
 test('enforces policy boundaries, owner-only deletion, last-owner protection, and removes unused BeanOrigin route', function () {
     $owner = User::factory()->create(['role' => 'owner']);
     $admin = User::factory()->create(['role' => 'admin']);
-    $cashier = User::factory()->create(['role' => 'cashier']);
 
     $reservation = Reservation::create([
         'name' => 'Rina Test',
@@ -191,20 +180,16 @@ test('enforces policy boundaries, owner-only deletion, last-owner protection, an
 
     $this->actingAs($owner)->get('/admin/bean-origins')->assertNotFound();
 
-    $this->actingAs($cashier);
-    expect(ReservationResource::canDelete($reservation))->toBeFalse()
-        ->and(ReservationResource::canDeleteAny())->toBeFalse()
-        ->and($cashier->can('delete', $reservation))->toBeFalse();
-
     $this->actingAs($admin);
     expect(ReservationResource::canDelete($reservation))->toBeFalse()
+        ->and(ReservationResource::canDeleteAny())->toBeFalse()
         ->and($admin->can('delete', $reservation))->toBeFalse();
 
     $this->actingAs($owner);
     expect(ReservationResource::canDelete($reservation))->toBeTrue()
         ->and($owner->can('delete', $reservation))->toBeTrue()
         ->and($owner->can('delete', $owner))->toBeFalse()
-        ->and($owner->can('delete', $cashier))->toBeTrue();
+        ->and($owner->can('delete', $admin))->toBeTrue();
 });
 
 test('sends HTTP security headers on public responses', function () {

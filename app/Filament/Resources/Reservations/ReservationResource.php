@@ -37,7 +37,7 @@ class ReservationResource extends Resource
 
     public static function canAccess(): bool
     {
-        return in_array(auth()->user()?->role, ['owner', 'admin', 'cashier'], true);
+        return auth()->user()?->isAdmin() ?? false;
     }
 
     public static function canDelete(Model $record): bool

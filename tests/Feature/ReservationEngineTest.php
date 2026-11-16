@@ -165,7 +165,7 @@ test('creates reservation via CreateReservation action, saves items and proof, n
     [$coffee] = createSampleMenus();
     $seating = SeatingOption::create(['label' => 'Dekat colokan', 'sort' => 1, 'is_active' => true]);
     $owner = User::factory()->create(['role' => 'owner']);
-    $cashier = User::factory()->create(['role' => 'cashier']);
+    $admin = User::factory()->create(['role' => 'admin']);
 
     $tomorrow = now('Asia/Jakarta')->addDay()->format('Y-m-d');
     $proof = UploadedFile::fake()->image('bukti-qris.jpg', 800, 1000);
@@ -199,7 +199,7 @@ test('creates reservation via CreateReservation action, saves items and proof, n
 
     expect(ActivityLog::where('action', 'reservation.created')->where('subject_id', $reservation->id)->exists())->toBeTrue();
 
-    Notification::assertSentTo([$owner, $cashier], NewReservationNotification::class);
+    Notification::assertSentTo([$owner, $admin], NewReservationNotification::class);
     Bus::assertDispatched(NotifyUmcoWhatsApp::class);
 
     $waLink = NotifyUmcoWhatsApp::waLink($reservation);

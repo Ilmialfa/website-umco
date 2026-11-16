@@ -9,7 +9,6 @@ gsap.registerPlugin(ScrollTrigger);
 window.umcoFormatters = { terbilang, formatRupiah, formatRibu, loadNota, saveNota };
 
 const modules = {
-    'scroll-meter': () => import('./sections/scroll-meter.js'),
     'hero': () => import('./sections/hero.js'),
     'marquee-collage': () => import('./sections/marquee-collage.js'),
     'signature-reel': () => import('./sections/signature-reel.js'),

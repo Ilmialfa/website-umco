@@ -24,9 +24,9 @@ class RuleResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'Aturan & Kapasitas';
 
-    protected static ?string $modelLabel = 'Aturan Kedai';
+    protected static ?string $modelLabel = 'Aturan Cafe';
 
-    protected static ?string $pluralModelLabel = 'Aturan Main Kedai';
+    protected static ?string $pluralModelLabel = 'Aturan Main Cafe';
 
     protected static ?int $navigationSort = 3;
 

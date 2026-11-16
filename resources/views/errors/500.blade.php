@@ -40,7 +40,7 @@
                                 <span>Perlu muat ulang</span>
                             </div>
                             <div class="flex justify-between">
-                                <span>Lokasi kedai</span>
+                                <span>Lokasi cafe</span>
                                 <span>Tetap buka normal</span>
                             </div>
                         </div>

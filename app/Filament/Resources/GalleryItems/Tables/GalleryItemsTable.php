@@ -40,7 +40,7 @@ class GalleryItemsTable
                     ->formatStateUsing(fn ($state) => match ($state) {
                         'kopi' => 'Kopi & Bar',
                         'makanan' => 'Makanan & Camilan',
-                        'suasana' => 'Suasana Kedai',
+                        'suasana' => 'Suasana Cafe',
                         'komunitas' => 'Komunitas & Acara',
                         default => 'Umum',
                     })
@@ -83,7 +83,7 @@ class GalleryItemsTable
                     ->label('Filter Kategori')
                     ->options([
                         'umum' => 'Umum',
-                        'suasana' => 'Suasana Kedai',
+                        'suasana' => 'Suasana Cafe',
                         'kopi' => 'Kopi & Bar',
                         'makanan' => 'Makanan & Camilan',
                         'komunitas' => 'Komunitas & Acara',

@@ -35,7 +35,7 @@
             </div>
 
             <div class="umco-login-visual-copy">
-                <p class="umco-login-hand">~ ruang kendali harian kedai</p>
+                <p class="umco-login-hand">~ ruang kendali harian cafe</p>
                 <h2 class="umco-login-headline">
                     MEJA SIAP. RACIKAN TERJAGA.
                 </h2>
@@ -73,7 +73,7 @@
                     </div>
                     <h1 class="umco-login-title">MASUK BACKOFFICE</h1>
                     <p class="umco-login-subtitle">
-                        Gunakan akun staf resmi yang diberikan oleh Owner kedai.
+                        Gunakan akun staf resmi yang diberikan oleh Owner cafe.
                     </p>
                 </header>
 

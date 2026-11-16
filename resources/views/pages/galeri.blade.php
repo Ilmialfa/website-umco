@@ -13,7 +13,7 @@
         $groupLabel = match ($g->group) {
             'kopi' => 'Kopi & Minuman',
             'makanan' => 'Makanan & Camilan',
-            'suasana' => 'Suasana Kedai',
+            'suasana' => 'Suasana Cafe',
             default => ucfirst((string) ($g->group ?: 'Umum')),
         };
 
@@ -33,7 +33,7 @@
             'label' => match ($grp) {
                 'kopi' => 'Kopi & Minuman',
                 'makanan' => 'Makanan & Camilan',
-                'suasana' => 'Suasana Kedai',
+                'suasana' => 'Suasana Cafe',
                 default => ucfirst((string) $grp),
             },
         ];
@@ -138,7 +138,7 @@
             <div class="umco-container flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                 <div class="space-y-2 max-w-xl">
                     <p class="font-hand text-2xl text-[var(--mentega)]">Mau duduk di sudut favoritmu?</p>
-                    <h2 class="type-h2 font-display font-bold">Pesan meja sebelum datang ke kedai.</h2>
+                    <h2 class="type-h2 font-display font-bold">Pesan meja sebelum datang ke cafe.</h2>
                 </div>
                 <div class="flex flex-wrap gap-3">
                     <a href="{{ url('/reservasi') }}" wire:navigate class="btn-umco btn-umco-primary">

@@ -266,3 +266,11 @@ test('instagram service fetches and normalizes sociablekit feed with 1h cache an
     expect($hiddenFeed['hidden'])->toBeTrue()
         ->and($hiddenFeed['posts'])->toBeEmpty();
 });
+
+test('public homepage replaces scroll meter with floating nota and uses cafe terminology', function () {
+    $this->get('/')
+        ->assertOk()
+        ->assertDontSee('scroll-meter', false)
+        ->assertSee('umco:nota-updated', false)
+        ->assertDontSee('kedai', false);
+});

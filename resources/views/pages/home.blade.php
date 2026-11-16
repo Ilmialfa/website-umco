@@ -29,7 +29,7 @@
 <x-layouts.public
     page="home"
     initial-nav-theme="dark"
-    :title="\App\Support\Settings::get('seo.meta_title', 'UMCO — Kedai Kopi di Kampus UMRI Pekanbaru')"
+    :title="\App\Support\Settings::get('seo.meta_title', 'UMCO — Cafe di Kampus UMRI Pekanbaru')"
 >
     @foreach ($orderedSections as $section)
         @if (isset($partialMap[$section->key]))

@@ -33,7 +33,7 @@
     $collabImg = $resolveImg($collab?->media['desktop'] ?? null, '/images/bistro-patio-table.webp');
 
     $milestones = $history?->data['milestones'] ?? [
-        '2024' => 'Gagasan kedai kampus untuk ruang nugas dan diskusi mahasiswa UMRI mulai dirumuskan.',
+        '2024' => 'Gagasan cafe kampus untuk ruang nugas dan diskusi mahasiswa UMRI mulai dirumuskan.',
         '2025' => 'Resmi menyeduh harian di Jalan Tuanku Tambusai Ujung dengan bar kopi manual dan menu hangat.',
         '2026' => 'Menghadirkan sistem reservasi meja online plus pesan menu lebih dulu agar antrean jam padat lebih rapi.',
     ];
@@ -73,7 +73,7 @@
             <div data-reveal-media class="rounded-2xl overflow-hidden max-h-[62svh] bg-[var(--batu)]">
                 <img
                     src="{{ $heroImg }}"
-                    alt="Suasana kedai kopi UMCO di Kampus 2 UMRI"
+                    alt="Suasana cafe UMCO di Kampus 2 UMRI"
                     loading="eager"
                     decoding="async"
                     class="w-full h-full object-cover"
@@ -94,7 +94,7 @@
                         {{ $history?->heading ?: 'Berawal dari meja kecil yang selalu penuh oleh obrolan kuliah' }}
                     </h2>
                     <p data-reveal="fade" class="type-body text-[var(--tinta-70)] leading-relaxed">
-                        {{ $history?->body ?: 'UMCO lahir dari kebutuhan sederhana di sekitar Kampus 2 UMRI: mencari kedai kopi dengan harga masuk akal di kantong mahasiswa, seduhan yang konsisten setiap cangkir, serta colokan dan Wi-Fi yang selalu siap menemani tugas akhir maupun diskusi kelompok.' }}
+                        {{ $history?->body ?: 'UMCO lahir dari kebutuhan sederhana di sekitar Kampus 2 UMRI: mencari cafe dengan harga masuk akal di kantong mahasiswa, seduhan yang konsisten setiap cangkir, serta colokan dan Wi-Fi yang selalu siap menemani tugas akhir maupun diskusi kelompok.' }}
                     </p>
                 </div>
 
@@ -277,7 +277,7 @@
         <section data-nav-theme="light" class="umco-section bg-[var(--kertas-terang)] text-[var(--tinta)]">
             <div class="umco-container space-y-8">
                 <div class="max-w-xl space-y-2">
-                    <p class="font-hand text-2xl text-[var(--mentega)]">{{ $stallsSec?->subheading ?: 'Sekitar Halaman Kedai' }}</p>
+                    <p class="font-hand text-2xl text-[var(--mentega)]">{{ $stallsSec?->subheading ?: 'Sekitar Halaman Cafe' }}</p>
                     <h2 data-reveal="rise" class="type-h2 font-display font-semibold">{{ $stallsSec?->heading ?: 'Teman jajan' }}</h2>
                     <p class="type-body text-[var(--tinta-70)]">
                         {{ $stallsSec?->body ?: 'Stan makanan di sekitar halaman UMCO yang bisa dipesan langsung di tempat.' }}

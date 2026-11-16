@@ -58,7 +58,7 @@ class FaqResource extends Resource
                     ->label('Kategori')
                     ->options([
                         'reservasi' => 'Reservasi & Pembayaran',
-                        'menu' => 'Menu & Kedai',
+                        'menu' => 'Menu & Cafe',
                         'kolaborasi' => 'Acara & Kolaborasi',
                         'umum' => 'Umum',
                     ])

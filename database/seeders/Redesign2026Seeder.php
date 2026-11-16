@@ -82,13 +82,13 @@ class Redesign2026Seeder extends Seeder
             ['group' => 'brand', 'key' => 'brand_name', 'payload' => 'UMCO'],
             ['group' => 'brand', 'key' => 'brand_short', 'payload' => 'UMCO'],
             ['group' => 'brand', 'key' => 'tagline', 'payload' => 'Kopi hangat, meja lapang di Kampus UMRI Pekanbaru.'],
-            ['group' => 'brand', 'key' => 'story_snippet', 'payload' => 'Kedai kami di Kampus 2 UMRI buka tiap hari buat kamu yang butuh tempat nugas, diskusi kelompok, atau ngopi santai sampai malam.'],
+            ['group' => 'brand', 'key' => 'story_snippet', 'payload' => 'Cafe kami di Kampus 2 UMRI buka tiap hari buat kamu yang butuh tempat nugas, diskusi kelompok, atau ngopi santai sampai malam.'],
             ['group' => 'brand', 'key' => 'footer_wordmark', 'payload' => 'UMCO'],
             ['group' => 'brand', 'key' => 'hero_cutout_image', 'payload' => '/images/hero-cutout.webp'],
             ['group' => 'brand', 'key' => 'footer_cutout_image', 'payload' => '/images/footer-cutout.webp'],
             ['group' => 'brand', 'key' => 'signature_drink_image', 'payload' => '/images/footer-cutout.webp'],
             ['group' => 'brand', 'key' => 'hero_headline', 'payload' => 'Kopi hangat, meja lapang di tepi kampus.'],
-            ['group' => 'brand', 'key' => 'hero_description', 'payload' => 'Kedai kami di Kampus 2 UMRI buka tiap hari dari pagi sampai malam. Datang sendiri buat nugas atau ramean bareng teman.'],
+            ['group' => 'brand', 'key' => 'hero_description', 'payload' => 'Cafe kami di Kampus 2 UMRI buka tiap hari dari pagi sampai malam. Datang sendiri buat nugas atau ramean bareng teman.'],
             ['group' => 'brand', 'key' => 'today_note', 'payload' => 'Gayo baru turun dari mesin sangrai Selasa lalu. Cocok diseduh V60.'],
 
             // Motion
@@ -152,8 +152,8 @@ class Redesign2026Seeder extends Seeder
             ['group' => 'whatsapp_templates', 'key' => 'cancellation', 'payload' => 'Halo {nama}, mohon maaf reservasi {kode} terpaksa kami batalkan karena {alasan}. Kami bantu atur ulang kalau kamu mau.'],
 
             // SEO
-            ['group' => 'seo', 'key' => 'meta_title', 'payload' => 'UMCO — Kedai Kopi di Kampus UMRI Pekanbaru'],
-            ['group' => 'seo', 'key' => 'meta_description', 'payload' => 'Kedai kopi di Kampus 2 UMRI Pekanbaru. Kopi harian, camilan, dan pesan meja dengan pilihan menu siap saji.'],
+            ['group' => 'seo', 'key' => 'meta_title', 'payload' => 'UMCO — Cafe di Kampus UMRI Pekanbaru'],
+            ['group' => 'seo', 'key' => 'meta_description', 'payload' => 'Cafe di Kampus 2 UMRI Pekanbaru. Kopi harian, camilan, dan pesan meja dengan pilihan menu siap saji.'],
             ['group' => 'seo', 'key' => 'og_image', 'payload' => ''],
         ];
 
@@ -205,7 +205,7 @@ class Redesign2026Seeder extends Seeder
         $rules = [
             [
                 'title' => 'Minimal 2 orang per reservasi',
-                'body' => 'Pemesanan meja lewat situs dibuka mulai dua orang agar kursi kelompok tidak pecah. Datang sendirian tetap bisa langsung masuk ke kedai.',
+                'body' => 'Pemesanan meja lewat situs dibuka mulai dua orang agar kursi kelompok tidak pecah. Datang sendirian tetap bisa langsung masuk ke cafe.',
                 'sort' => 1,
             ],
             [
@@ -707,7 +707,7 @@ class Redesign2026Seeder extends Seeder
                 'heading' => 'Semua buat duduk tenang',
                 'subheading' => 'Dari kopi pagi sebelum kelas sampai meja panjang untuk diskusi malam di Kampus 2 UMRI.',
                 'data' => [
-                    'eyebrow' => 'Suasana Kedai',
+                    'eyebrow' => 'Suasana Cafe',
                     'phrases' => [
                         'Buka tiap hari 08.00 - 22.00 WIB',
                         'Aren Coffee Rp 25.500',
@@ -743,7 +743,7 @@ class Redesign2026Seeder extends Seeder
                 'key' => 'gallery_diagonal',
                 'sort' => 6,
                 'heading' => 'Sudut ruang & cangkir harian',
-                'subheading' => 'Cuplikan suasana kedai dan meja kerja sepanjang hari. Kunjungi halaman galeri untuk foto lengkapnya.',
+                'subheading' => 'Cuplikan suasana cafe dan meja kerja sepanjang hari. Kunjungi halaman galeri untuk foto lengkapnya.',
                 'cta_label' => 'Buka halaman galeri',
                 'cta_url' => '/galeri',
                 'data' => ['eyebrow' => 'Galeri UMCO'],
@@ -815,11 +815,11 @@ class Redesign2026Seeder extends Seeder
                 'sort' => 2,
                 'heading' => 'Berawal dari meja kecil yang selalu penuh oleh obrolan kuliah',
                 'subheading' => 'Sejarah Singkat UMCO',
-                'body' => 'UMCO lahir dari kebutuhan sederhana di sekitar Kampus 2 UMRI: mencari kedai kopi dengan harga masuk akal di kantong mahasiswa, seduhan yang konsisten setiap cangkir, dan colokan serta Wi-Fi yang tidak pernah rewel saat mengerjakan skripsi atau diskusi kelompok.',
+                'body' => 'UMCO lahir dari kebutuhan sederhana di sekitar Kampus 2 UMRI: mencari cafe dengan harga masuk akal di kantong mahasiswa, seduhan yang konsisten setiap cangkir, dan colokan serta Wi-Fi yang tidak pernah rewel saat mengerjakan skripsi atau diskusi kelompok.',
                 'media' => ['desktop' => '/images/hero-banner-full.webp'],
                 'data' => [
                     'milestones' => [
-                        '2024' => 'Gagasan kedai kampus untuk ruang nugas dan diskusi mahasiswa UMRI mulai dirumuskan.',
+                        '2024' => 'Gagasan cafe kampus untuk ruang nugas dan diskusi mahasiswa UMRI mulai dirumuskan.',
                         '2025' => 'Resmi menyeduh harian di Jalan Tuanku Tambusai Ujung dengan bar kopi manual dan menu hangat.',
                         '2026' => 'Menghadirkan sistem reservasi meja online plus pesan menu lebih dulu agar antrean jam padat lebih rapi.',
                     ],
@@ -860,7 +860,7 @@ class Redesign2026Seeder extends Seeder
                 'key' => 'stalls',
                 'sort' => 6,
                 'heading' => 'Teman jajan',
-                'subheading' => 'Sekitar Halaman Kedai',
+                'subheading' => 'Sekitar Halaman Cafe',
                 'body' => 'Stan makanan di sekitar halaman UMCO yang bisa dipesan langsung di tempat.',
             ],
             [
@@ -1132,7 +1132,7 @@ class Redesign2026Seeder extends Seeder
 
             // Diagonal gallery (bebas semua rasio — portrait, square, landscape tanpa duplikasi gambar bersebelahan)
             ['group' => 'suasana', 'orientation' => 'diagonal', 'image_path' => '/images/bistro-patio-table.webp', 'caption' => 'Meja sore paling sering dipilih', 'sort' => 7],
-            ['group' => 'suasana', 'orientation' => 'diagonal', 'image_path' => '/images/hero-banner-full.webp', 'caption' => 'Halaman teduh depan kedai', 'sort' => 8],
+            ['group' => 'suasana', 'orientation' => 'diagonal', 'image_path' => '/images/hero-banner-full.webp', 'caption' => 'Halaman teduh depan cafe', 'sort' => 8],
             ['group' => 'kopi', 'orientation' => 'diagonal', 'image_path' => '/images/drinks-trio-banner.webp', 'caption' => 'Tiga gelas meja diskusi', 'sort' => 9],
             ['group' => 'kopi', 'orientation' => 'diagonal', 'image_path' => '/images/hero-iced-coffee-splash.webp', 'caption' => 'Susu segar bertemu espresso', 'sort' => 10],
             ['group' => 'kopi', 'orientation' => 'diagonal', 'image_path' => '/storage/menu/americano-800.webp', 'caption' => 'Americano dingin sebelum kelas', 'sort' => 11],

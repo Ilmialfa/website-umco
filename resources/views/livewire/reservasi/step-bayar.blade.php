@@ -146,7 +146,7 @@
         @enderror
     </div>
 
-    {{-- Persetujuan aturan kedai --}}
+    {{-- Persetujuan aturan cafe --}}
     <div class="space-y-2">
         <label class="inline-flex items-start gap-3 cursor-pointer">
             <input
@@ -155,7 +155,7 @@
                 class="mt-1 w-4 h-4 accent-[var(--tinta)]"
             >
             <span class="text-sm text-[var(--tinta)]">
-                Saya sudah baca aturan main kedai (datang tepat waktu, karcis berlaku sampai {{ \App\Support\Settings::get('reservation.grace_minutes', 15) }} menit setelah jam pesan).
+                Saya sudah baca aturan main cafe (datang tepat waktu, karcis berlaku sampai {{ \App\Support\Settings::get('reservation.grace_minutes', 15) }} menit setelah jam pesan).
                 <button
                     type="button"
                     wire:click="$toggle('showRulesDrawer')"

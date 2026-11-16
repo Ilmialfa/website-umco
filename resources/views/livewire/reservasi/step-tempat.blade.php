@@ -42,7 +42,7 @@
 
     @if ($this->floorPlanUrl)
         <div class="p-4 rounded-2xl bg-[var(--kertas-terang)] space-y-2">
-            <p class="text-xs font-semibold text-[var(--tinta-70)]">Denah kedai (panduan area)</p>
+            <p class="text-xs font-semibold text-[var(--tinta-70)]">Denah cafe (panduan area)</p>
             <img
                 src="{{ $this->floorPlanUrl }}"
                 alt="Panduan denah area duduk UMCO"

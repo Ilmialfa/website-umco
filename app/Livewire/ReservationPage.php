@@ -681,7 +681,7 @@ class ReservationPage extends Component
         $this->validateStep4();
 
         if (! $this->acceptedRules) {
-            $this->addError('acceptedRules', 'Centang dulu tanda sudah baca aturan kedai.');
+            $this->addError('acceptedRules', 'Centang dulu tanda sudah baca aturan cafe.');
 
             return;
         }

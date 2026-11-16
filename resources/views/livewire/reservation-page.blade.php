@@ -211,7 +211,7 @@
                         <p class="text-xs text-[var(--tinta-70)]">Kode booking kamu</p>
                         <p class="font-display font-extrabold text-3xl tracking-tight">{{ $createdCode }}</p>
                         <p class="text-sm text-[var(--tinta-70)]">
-                            Bukti transfer sudah masuk ke kasir kami. Biasanya dicek dalam beberapa menit di jam buka kedai.
+                            Bukti transfer sudah masuk ke kasir kami. Biasanya dicek dalam beberapa menit di jam buka cafe.
                         </p>
                     </div>
 

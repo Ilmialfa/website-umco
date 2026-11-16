@@ -29,7 +29,7 @@
                                 <span>Pembaruan singkat</span>
                             </div>
                             <div class="flex justify-between">
-                                <span>Kedai fisik</span>
+                                <span>Cafe fisik</span>
                                 <span>08.00 - 22.00 WIB</span>
                             </div>
                         </div>

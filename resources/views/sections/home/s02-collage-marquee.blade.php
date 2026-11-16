@@ -1,5 +1,5 @@
 @php
-    $eyebrow = $section?->data['eyebrow'] ?? 'Suasana Kedai';
+    $eyebrow = $section?->data['eyebrow'] ?? 'Suasana Cafe';
     $heading = $section?->heading ?: 'Semua buat duduk tenang';
     $subheading = $section?->subheading ?: 'Dari kopi pagi sebelum kelas sampai meja panjang untuk diskusi malam di Kampus 2 UMRI.';
     $operatingDays = trim((string) \App\Support\Settings::get('hours.operating_days', '')) ?: 'Buka tiap hari 08.00 - 22.00 WIB';
@@ -16,7 +16,7 @@
 
     $collagePhotos = [
         ['src' => '/images/bistro-patio-table.webp', 'alt' => 'Meja outdoor UMCO di bawah pepohonan'],
-        ['src' => '/images/hero-banner-full.webp', 'alt' => 'Suasana pagi depan kedai kopi kampus'],
+        ['src' => '/images/hero-banner-full.webp', 'alt' => 'Suasana pagi depan cafe kampus'],
         ['src' => '/images/drinks-trio-banner.webp', 'alt' => 'Tiga pilihan minuman dingin di meja kayu'],
         ['src' => '/storage/menu/matcha-800.webp', 'alt' => 'Es Matcha racikan bar UMCO'],
         ['src' => '/storage/menu/nasi-ayam-sambal-matah-800.webp', 'alt' => 'Nasi Ayam Sambal Matah hangat'],

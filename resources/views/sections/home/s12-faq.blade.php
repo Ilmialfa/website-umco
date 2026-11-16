@@ -12,7 +12,7 @@
         $waDigits = '62' . substr($waDigits, 1);
     }
     $waAskLink = $waDigits
-        ? ('https://wa.me/' . $waDigits . '?text=' . rawurlencode('Halo UMCO, saya ingin bertanya mengenai reservasi atau kedai.'))
+        ? ('https://wa.me/' . $waDigits . '?text=' . rawurlencode('Halo UMCO, saya ingin bertanya mengenai reservasi atau cafe.'))
         : '#';
 
     $faqList = ($faqs ?? collect())->values();

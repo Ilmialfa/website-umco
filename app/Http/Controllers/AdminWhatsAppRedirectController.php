@@ -65,7 +65,7 @@ class AdminWhatsAppRedirectController extends Controller
             '{dp}' => 'Rp '.number_format($reservation->dp_amount, 0, ',', '.'),
             '{nominal_masuk}' => 'Rp '.number_format($amountPaid, 0, ',', '.'),
             '{kekurangan}' => 'Rp '.number_format($shortfall, 0, ',', '.'),
-            '{alasan}' => $reservation->cancelled_reason ?: 'penyesuaian jadwal kedai',
+            '{alasan}' => $reservation->cancelled_reason ?: 'penyesuaian jadwal cafe',
             '{link_status}' => route('reservation.status', ['code' => $reservation->code]),
             '{catatan}' => $reservation->note ?? '-',
         ]);

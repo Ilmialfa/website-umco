@@ -50,8 +50,10 @@ export function loadNota() {
 }
 
 export function saveNota(items) {
+    const clean = Array.isArray(items) ? items : [];
     try {
-        window.localStorage.setItem(NOTA_STORAGE_KEY, JSON.stringify(items || []));
+        window.localStorage.setItem(NOTA_STORAGE_KEY, JSON.stringify(clean));
+        window.dispatchEvent(new CustomEvent('umco:nota-updated', { detail: clean }));
     } catch {
         // abaikan bila private mode memblokir storage
     }

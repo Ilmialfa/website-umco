@@ -22,8 +22,8 @@ class GalleryItemForm
                     ->columnSpanFull()
                     ->schema([
                         Group::make([
-                            Section::make('Aset Galeri Suasana Kedai')
-                                ->description('Dokumentasi visual suasana kedai, kopi, bar seduh, dan kegiatan.')
+                            Section::make('Aset Galeri Suasana Cafe')
+                                ->description('Dokumentasi visual suasana cafe, kopi, bar seduh, dan kegiatan.')
                                 ->icon('heroicon-o-photo')
                                 ->schema([
                                     Grid::make(2)
@@ -32,7 +32,7 @@ class GalleryItemForm
                                                 ->label('Tag / Kategori Foto')
                                                 ->options([
                                                     'umum' => 'Umum',
-                                                    'suasana' => 'Suasana Kedai',
+                                                    'suasana' => 'Suasana Cafe',
                                                     'kopi' => 'Kopi & Bar',
                                                     'makanan' => 'Makanan & Camilan',
                                                     'komunitas' => 'Komunitas & Acara',

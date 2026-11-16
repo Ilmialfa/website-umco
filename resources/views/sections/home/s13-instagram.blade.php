@@ -13,7 +13,7 @@
     $heading = $section?->heading ?: 'Aktivitas Terbaru di Instagram';
     $followersCount = (int) ($feed['bio']['followers_count'] ?? 0);
     $defaultSubheading = $followersCount > 0
-        ? 'Dokumentasi visual harian dan info kedai untuk ' . number_format($followersCount, 0, ',', '.') . ' pengikut @' . $igUsername . '.'
+        ? 'Dokumentasi visual harian dan info cafe untuk ' . number_format($followersCount, 0, ',', '.') . ' pengikut @' . $igUsername . '.'
         : 'Potret harian dari meja bar, seduhan sore, dan kabar acara di @' . $igUsername . '.';
     $subheading = $section?->subheading ?: $defaultSubheading;
     $ctaLabel = $section?->cta_label ?: 'Ikuti @' . $igUsername;
@@ -37,7 +37,7 @@
         get subheadingText() {
             const count = Number(this.bio?.followers_count ?? 0);
             if (count > 0) {
-                return `Dokumentasi visual harian dan info kedai untuk ${count.toLocaleString('id-ID')} pengikut @${this.username}.`;
+                return `Dokumentasi visual harian dan info cafe untuk ${count.toLocaleString('id-ID')} pengikut @${this.username}.`;
             }
             return @js($subheading);
         },

@@ -58,3 +58,21 @@ export function saveNota(items) {
         // abaikan bila private mode memblokir storage
     }
 }
+
+export function buildReserveUrl(items, baseUrl = '/reservasi') {
+    const list = Array.isArray(items) ? items : [];
+    const encoded = list
+        .filter((r) => r && r.slug && Number(r.qty || 0) > 0)
+        .map((r) => {
+            const v = String(r.variant_label || '').trim();
+            const t = String(r.temperature || '').trim();
+            const qty = Math.max(1, Number(r.qty || 1));
+            if (v || t) {
+                return `${r.slug}~${v}~${t}:${qty}`;
+            }
+            return `${r.slug}:${qty}`;
+        })
+        .join(',');
+
+    return encoded ? `${baseUrl}?items=${encodeURIComponent(encoded)}` : baseUrl;
+}

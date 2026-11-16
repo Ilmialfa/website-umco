@@ -18,6 +18,7 @@ use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
@@ -114,6 +115,9 @@ class ReservationPage extends Component
 
     public bool $tabletKarcisExpanded = false;
 
+    /** @var array<string, array<string, int>>|null */
+    protected ?array $preloadedBookedMap = null;
+
     public function mount(Request $request): void
     {
         $minParty = $this->minParty;
@@ -123,12 +127,16 @@ class ReservationPage extends Component
         $this->partySize = max($minParty, min($maxParty, $reqParty));
 
         $reqSeating = (int) $request->query('seating', 0);
-        if ($reqSeating > 0 && SeatingOption::where('id', $reqSeating)->where('is_active', true)->exists()) {
+        if ($reqSeating > 0 && $this->seatingOptions->contains('id', $reqSeating)) {
             $this->seatingOptionId = $reqSeating;
         }
 
         // Default tanggal: pakai ?date= kalau valid & buka, else tanggal terbuka pertama
         $dates = $this->dateOptions;
+        if ($dates !== []) {
+            $this->preloadedBookedMap = $this->loadBookedRange($dates[0]['date'], $dates[array_key_last($dates)]['date']);
+        }
+
         $reqDate = trim((string) $request->query('date', ''));
         $matchedDate = collect($dates)->first(fn ($d) => $d['date'] === $reqDate && ! $d['closed']);
 
@@ -176,10 +184,18 @@ class ReservationPage extends Component
                         if (str_contains($pair, ':')) {
                             [$keyOrId, $qty] = explode(':', $pair, 2);
                             $keyOrId = trim($keyOrId);
+                            $variant = null;
+                            $temp = null;
+                            if (str_contains($keyOrId, '~')) {
+                                $parts = explode('~', $keyOrId, 3);
+                                $keyOrId = trim($parts[0]);
+                                $variant = isset($parts[1]) && trim($parts[1]) !== '' ? trim($parts[1]) : null;
+                                $temp = isset($parts[2]) && trim($parts[2]) !== '' ? trim($parts[2]) : null;
+                            }
                             if (ctype_digit($keyOrId)) {
-                                $parsed[] = ['id' => (int) $keyOrId, 'qty' => (int) $qty];
+                                $parsed[] = ['id' => (int) $keyOrId, 'qty' => (int) $qty, 'variant' => $variant, 'temp' => $temp];
                             } elseif ($keyOrId !== '') {
-                                $parsed[] = ['slug' => $keyOrId, 'qty' => (int) $qty];
+                                $parsed[] = ['slug' => $keyOrId, 'qty' => (int) $qty, 'variant' => $variant, 'temp' => $temp];
                             }
                         }
                     }
@@ -196,6 +212,28 @@ class ReservationPage extends Component
     }
 
     /**
+     * @return array<string, array<string, int>>
+     */
+    protected function loadBookedRange(string $startDate, string $endDate): array
+    {
+        $rows = Reservation::query()
+            ->select(['date', 'time', 'party_size'])
+            ->whereDate('date', '>=', $startDate)
+            ->whereDate('date', '<=', $endDate)
+            ->whereIn('status', ['pending', 'confirmed', 'arrived'])
+            ->get();
+
+        $map = [];
+        foreach ($rows as $row) {
+            $d = $row->date->format('Y-m-d');
+            $t = substr((string) $row->time, 0, 5);
+            $map[$d][$t] = ($map[$d][$t] ?? 0) + (int) $row->party_size;
+        }
+
+        return $map;
+    }
+
+    /**
      * @param  array<int, array<string, mixed>>  $notaItems
      */
     public function importNotaItems(array $notaItems): void
@@ -204,37 +242,31 @@ class ReservationPage extends Component
             return;
         }
 
-        $ids = collect($notaItems)
-            ->map(fn ($row) => (int) ($row['menu_item_id'] ?? $row['id'] ?? 0))
-            ->filter(fn ($id) => $id > 0)
-            ->unique()
-            ->values();
+        /** @var array<int, array{id: int, slug: string, name: string, price: int, variants: array<int, mixed>, has_temperature: bool}> $menuMap */
+        $menuMap = Cache::rememberForever('umco_active_menu_map', static function (): array {
+            return MenuItem::query()
+                ->where('is_active', true)
+                ->where('is_available', true)
+                ->get(['id', 'slug', 'name', 'price', 'variants', 'has_temperature'])
+                ->mapWithKeys(static fn (MenuItem $m): array => [
+                    $m->id => [
+                        'id' => $m->id,
+                        'slug' => (string) $m->slug,
+                        'name' => $m->name,
+                        'price' => (int) $m->price,
+                        'variants' => is_array($m->variants) ? $m->variants : [],
+                        'has_temperature' => (bool) $m->has_temperature,
+                    ],
+                ])
+                ->all();
+        });
 
-        $slugs = collect($notaItems)
-            ->map(fn ($row) => trim((string) ($row['slug'] ?? '')))
-            ->filter(fn ($slug) => $slug !== '')
-            ->unique()
-            ->values();
-
-        if ($ids->isEmpty() && $slugs->isEmpty()) {
-            return;
+        $bySlug = [];
+        foreach ($menuMap as $row) {
+            if ($row['slug'] !== '') {
+                $bySlug[$row['slug']] = $row;
+            }
         }
-
-        $menuRows = MenuItem::query()
-            ->where('is_active', true)
-            ->where('is_available', true)
-            ->where(function ($q) use ($ids, $slugs) {
-                if ($ids->isNotEmpty()) {
-                    $q->whereIn('id', $ids);
-                }
-                if ($slugs->isNotEmpty()) {
-                    $q->orWhereIn('slug', $slugs);
-                }
-            })
-            ->get();
-
-        $menusById = $menuRows->keyBy('id');
-        $menusBySlug = $menuRows->keyBy('slug');
 
         foreach ($notaItems as $row) {
             $menuId = (int) ($row['menu_item_id'] ?? $row['id'] ?? 0);
@@ -244,28 +276,42 @@ class ReservationPage extends Component
                 continue;
             }
 
-            /** @var MenuItem|null $menu */
             $menu = $menuId > 0
-                ? $menusById->get($menuId)
-                : ($slug !== '' ? $menusBySlug->get($slug) : null);
+                ? ($menuMap[$menuId] ?? null)
+                : ($slug !== '' ? ($bySlug[$slug] ?? null) : null);
 
             if (! $menu) {
                 continue;
             }
+
             $variant = isset($row['variant_label']) ? trim((string) $row['variant_label']) : (isset($row['variant']) ? trim((string) $row['variant']) : null);
             $variant = $variant !== '' ? $variant : null;
             $temp = isset($row['temperature']) ? trim((string) $row['temperature']) : (isset($row['temp']) ? trim((string) $row['temp']) : null);
-            $temp = in_array($temp, ['Panas', 'Es'], true) ? $temp : ($menu->has_temperature ? 'Es' : null);
+            $temp = in_array($temp, ['Panas', 'Es'], true) ? $temp : ($menu['has_temperature'] ? 'Es' : null);
 
-            $unitPrice = $this->resolveMenuPrice($menu, $variant);
-            $key = $this->lineKey($menu->id, $variant, $temp);
+            $unitPrice = (int) $menu['price'];
+            if ($variant !== null && $menu['variants'] !== []) {
+                foreach ($menu['variants'] as $v) {
+                    if (
+                        is_array($v)
+                        && isset($v['label'])
+                        && mb_strtolower(trim((string) $v['label'])) === mb_strtolower($variant)
+                    ) {
+                        $unitPrice = (int) ($v['price'] ?? $unitPrice);
+                        $variant = (string) $v['label'];
+                        break;
+                    }
+                }
+            }
+
+            $key = $this->lineKey($menu['id'], $variant, $temp);
 
             if (isset($this->selectedItems[$key])) {
                 $this->selectedItems[$key]['qty'] += $qty;
             } else {
                 $this->selectedItems[$key] = [
-                    'menu_item_id' => $menu->id,
-                    'name' => $menu->name,
+                    'menu_item_id' => $menu['id'],
+                    'name' => $menu['name'],
                     'variant_label' => $variant,
                     'temperature' => $temp,
                     'unit_price' => $unitPrice,
@@ -307,27 +353,29 @@ class ReservationPage extends Component
     {
         $now = Carbon::now()->startOfDay();
         $maxDays = max(1, (int) Settings::get('reservation.max_advance_days', 14));
-        $end = $now->copy()->addDays($maxDays);
 
-        $closedDates = ClosedDate::query()
-            ->whereBetween('date', [$now->format('Y-m-d'), $end->format('Y-m-d')])
-            ->get()
-            ->keyBy(fn ($c) => $c->date->format('Y-m-d'));
+        /** @var array<string, string|null> $closedDates */
+        $closedDates = Cache::rememberForever('umco_closed_dates', static function (): array {
+            return ClosedDate::query()
+                ->get(['date', 'reason'])
+                ->mapWithKeys(static fn (ClosedDate $c): array => [$c->date->format('Y-m-d') => $c->reason])
+                ->all();
+        });
 
         $list = [];
         for ($i = 0; $i <= $maxDays; $i++) {
             $d = $now->copy()->addDays($i);
             $d->locale('id');
             $key = $d->format('Y-m-d');
-            $closed = $closedDates->get($key);
+            $isClosed = array_key_exists($key, $closedDates);
 
             $list[] = [
                 'date' => $key,
                 'day_short' => $i === 0 ? 'Hari ini' : $d->isoFormat('ddd'),
                 'date_short' => $d->isoFormat('D MMM'),
                 'full_label' => $d->isoFormat('ddd, D MMM YYYY'),
-                'closed' => (bool) $closed,
-                'reason' => $closed?->reason,
+                'closed' => $isClosed,
+                'reason' => $isClosed ? $closedDates[$key] : null,
             ];
         }
 
@@ -362,12 +410,17 @@ class ReservationPage extends Component
             return [];
         }
 
-        $bookedByTime = Reservation::query()
-            ->selectRaw('time, SUM(party_size) as total_guests')
-            ->whereDate('date', $this->date)
-            ->whereIn('status', ['pending', 'confirmed', 'arrived'])
-            ->groupBy('time')
-            ->pluck('total_guests', 'time');
+        if ($this->preloadedBookedMap !== null) {
+            $bookedByTime = $this->preloadedBookedMap[$this->date] ?? [];
+        } else {
+            $bookedByTime = Reservation::query()
+                ->selectRaw('time, SUM(party_size) as total_guests')
+                ->whereDate('date', $this->date)
+                ->whereIn('status', ['pending', 'confirmed', 'arrived'])
+                ->groupBy('time')
+                ->pluck('total_guests', 'time')
+                ->all();
+        }
 
         $slots = [];
         while ($cursor->lte($last)) {

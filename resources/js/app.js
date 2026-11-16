@@ -2,12 +2,46 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { initReveal, cleanupReveal } from './motion/reveal.js';
 import { initNav } from './motion/nav.js';
-import { terbilang, formatRupiah, formatRibu, loadNota, saveNota } from './lib/formatters.js';
+import { terbilang, formatRupiah, formatRibu, loadNota, saveNota, buildReserveUrl } from './lib/formatters.js';
 import { flyToNota } from './lib/nota-fly.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
-window.umcoFormatters = { terbilang, formatRupiah, formatRibu, loadNota, saveNota };
+const scrollLocks = new Set();
+
+function applyScrollLockState() {
+    const locked = scrollLocks.size > 0;
+    document.documentElement.classList.toggle('overflow-hidden', locked);
+    document.documentElement.style.overflow = locked ? 'hidden' : '';
+    if (document.body) {
+        document.body.classList.toggle('overflow-hidden', locked);
+        document.body.style.overflowY = locked ? 'hidden' : '';
+    }
+    if (lenisInstance) {
+        if (locked) {
+            lenisInstance.stop();
+        } else {
+            lenisInstance.start();
+        }
+    }
+}
+
+window.umcoScrollLock = (key, locked) => {
+    const lockKey = String(key || 'default');
+    if (locked) {
+        scrollLocks.add(lockKey);
+    } else {
+        scrollLocks.delete(lockKey);
+    }
+    applyScrollLockState();
+};
+
+function clearAllScrollLocks() {
+    scrollLocks.clear();
+    applyScrollLockState();
+}
+
+window.umcoFormatters = { terbilang, formatRupiah, formatRibu, loadNota, saveNota, buildReserveUrl };
 window.umcoFlyToNota = flyToNota;
 
 const modules = {
@@ -88,6 +122,9 @@ async function initLenisIfEnabled() {
         touchMultiplier: 1.35,
         autoResize: true,
     });
+    if (scrollLocks.size > 0) {
+        lenisInstance.stop();
+    }
     lenisInstance.on('scroll', ScrollTrigger.update);
     rafCallback = (time) => lenisInstance?.raf(time * 1000);
     gsap.ticker.add(rafCallback);
@@ -131,31 +168,46 @@ function initSectionModules() {
     const targets = document.querySelectorAll('[data-module]');
     if (!targets.length) return;
 
+    const loadModuleEl = async (el) => {
+        const key = el.dataset.module;
+        const loader = modules[key];
+        if (!loader || el.dataset.moduleLoaded === '1') return;
+        el.dataset.moduleLoaded = '1';
+
+        try {
+            const mod = await loader();
+            const initFn = mod?.default || mod?.init;
+            const destroy = typeof initFn === 'function' ? initFn(el) : undefined;
+            if (typeof destroy === 'function') {
+                cleanups.push(destroy);
+            }
+        } catch {}
+    };
+
+    const lazyTargets = [];
+    targets.forEach((el) => {
+        if (el.dataset.eager === '1') {
+            loadModuleEl(el);
+        } else {
+            lazyTargets.push(el);
+        }
+    });
+
+    if (!lazyTargets.length) return;
+
     io = new IntersectionObserver(
         (entries) => {
-            entries.forEach(async (entry) => {
+            entries.forEach((entry) => {
                 if (!entry.isIntersecting) return;
                 const el = entry.target;
                 io?.unobserve(el);
-
-                const key = el.dataset.module;
-                const loader = modules[key];
-                if (!loader) return;
-
-                try {
-                    const mod = await loader();
-                    const initFn = mod?.default || mod?.init;
-                    const destroy = typeof initFn === 'function' ? initFn(el) : undefined;
-                    if (typeof destroy === 'function') {
-                        cleanups.push(destroy);
-                    }
-                } catch {}
+                loadModuleEl(el);
             });
         },
         { rootMargin: '400px 0px' }
     );
 
-    targets.forEach((el) => io.observe(el));
+    lazyTargets.forEach((el) => io.observe(el));
 }
 
 function bootPage() {
@@ -209,6 +261,7 @@ function teardownPage() {
         rafCallback = null;
     }
 
+    clearAllScrollLocks();
     cleanupReveal();
     ScrollTrigger.getAll().forEach((t) => t.kill());
 }

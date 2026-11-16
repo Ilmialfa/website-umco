@@ -162,11 +162,15 @@
             },
 
             reserveUrl() {
+                if (window.umcoFormatters?.buildReserveUrl) {
+                    return window.umcoFormatters.buildReserveUrl(this.nota, '{{ url('/reservasi') }}');
+                }
                 if (!this.nota.length) return '{{ url('/reservasi') }}';
                 const encoded = this.nota.map(r => r.slug + ':' + r.qty).join(',');
                 return '{{ url('/reservasi') }}?items=' + encodeURIComponent(encoded);
             }
         }"
+        x-effect="window.umcoScrollLock?.('menu-sheet', selectedItem !== null)"
         @keydown.escape.window="selectedItem = null; notaOpen = false"
     >
         {{-- Hero pendek --}}
@@ -257,7 +261,7 @@
         </section>
 
         {{-- Katalog Daftar & Foto --}}
-        <section class="py-10 sm:py-14 lg:py-16 bg-[var(--kertas)] text-[var(--tinta)]">
+        <section class="pt-10 sm:pt-14 lg:pt-16 pb-28 sm:pb-24 bg-[var(--kertas)] text-[var(--tinta)]">
             <div class="umco-container space-y-14 sm:space-y-16">
                 <template x-for="group in groupedCategories()" :key="group.slug">
                     <div :id="'kat-' + group.slug" class="space-y-6">
@@ -384,6 +388,8 @@
         <div
             x-show="selectedItem !== null"
             @click.self="selectedItem = null"
+            @wheel.self.prevent
+            @touchmove.self.prevent
             style="display: none;"
             class="fixed inset-0 z-[60] bg-[var(--tinta)]/60 flex items-end lg:items-stretch lg:justify-end"
             role="dialog"
@@ -391,7 +397,8 @@
         >
             <div
                 x-show="selectedItem !== null"
-                class="w-full lg:w-[440px] rounded-t-3xl lg:rounded-none bg-[var(--kertas-terang)] text-[var(--tinta)] p-6 sm:p-7 max-h-[88svh] lg:max-h-none overflow-y-auto flex flex-col justify-between gap-6"
+                data-lenis-prevent
+                class="w-full lg:w-[440px] rounded-t-3xl lg:rounded-none bg-[var(--kertas-terang)] text-[var(--tinta)] p-6 sm:p-7 max-h-[88svh] lg:max-h-none overflow-y-auto overscroll-contain flex flex-col justify-between gap-6"
             >
                 <template x-if="selectedItem">
                     <div class="space-y-5">

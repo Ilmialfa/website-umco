@@ -15,7 +15,7 @@
                     @foreach ($navItems as $item)
                         <a
                             href="{{ $item['href'] }}"
-                            @if (! str_contains($item['href'], '#')) wire:navigate @endif
+                            @if (! str_contains($item['href'], '#')) wire:navigate.hover @endif
                             class="nav-link-line whitespace-nowrap"
                             @if ($item['active']) aria-current="page" @endif
                         >
@@ -54,7 +54,7 @@
                     </a>
                     <a
                         href="{{ url('/reservasi') }}"
-                        wire:navigate
+                        wire:navigate.hover
                         class="nav-reservasi-pill btn-umco min-h-0 h-9 lg:h-10 px-5 text-[13px] lg:text-[14px] whitespace-nowrap"
                     >
                         <span class="btn-roll">
@@ -74,7 +74,11 @@
         x-effect="
             const hdr = document.getElementById('umco-navbar');
             if (hdr) hdr.setAttribute('data-menu-open', openNav ? '1' : '0');
-            document.documentElement.classList.toggle('overflow-hidden', openNav);
+            if (window.umcoScrollLock) {
+                window.umcoScrollLock('mobile-nav', openNav);
+            } else {
+                document.documentElement.classList.toggle('overflow-hidden', openNav);
+            }
         "
         @keydown.escape.window="openNav = false"
         x-on:livewire:navigated.window="openNav = false"

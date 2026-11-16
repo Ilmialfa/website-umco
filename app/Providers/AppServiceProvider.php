@@ -148,6 +148,7 @@ class AppServiceProvider extends ServiceProvider
         Rule::observe(PublicContentObserver::class);
         SpendTier::observe(PublicContentObserver::class);
         SeatingOption::observe(PublicContentObserver::class);
+        ClosedDate::observe(PublicContentObserver::class);
 
         $flushAdminStats = static function (): void {
             Cache::forget('filament.reservations.pending_count');

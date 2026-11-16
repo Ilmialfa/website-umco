@@ -14,8 +14,21 @@
             notaCount: 0,
 
             init() {
-                const list = window.umcoFormatters ? window.umcoFormatters.loadNota() : [];
-                this.notaCount = list.reduce((s, r) => s + Number(r.qty || 1), 0);
+                const syncNota = () => {
+                    const list = window.umcoFormatters ? window.umcoFormatters.loadNota() : [];
+                    this.notaCount = list.reduce((s, r) => s + Number(r.qty || 1), 0);
+                };
+                syncNota();
+                window.addEventListener('umco:nota-updated', syncNota);
+            },
+
+            reserveUrl() {
+                const nota = window.umcoFormatters ? window.umcoFormatters.loadNota() : [];
+                if (window.umcoFormatters?.buildReserveUrl) {
+                    return window.umcoFormatters.buildReserveUrl(nota, '{{ url('/reservasi') }}');
+                }
+                const encoded = nota.map(r => r.slug + ':' + r.qty).join(',');
+                return encoded ? '{{ url('/reservasi') }}?items=' + encodeURIComponent(encoded) : '{{ url('/reservasi') }}';
             },
 
             activeUnitPrice() {
@@ -78,17 +91,20 @@
 
             reserveNow() {
                 const nota = this.commitToNota();
-                const encoded = nota.map(r => r.slug + ':' + r.qty).join(',');
-                const target = encoded
-                    ? '{{ url('/reservasi') }}?items=' + encodeURIComponent(encoded)
-                    : '{{ url('/reservasi') }}';
-                window.location.href = target;
+                const target = window.umcoFormatters?.buildReserveUrl
+                    ? window.umcoFormatters.buildReserveUrl(nota, '{{ url('/reservasi') }}')
+                    : (nota.length ? '{{ url('/reservasi') }}?items=' + encodeURIComponent(nota.map(r => r.slug + ':' + r.qty).join(',')) : '{{ url('/reservasi') }}');
+                if (window.Livewire?.navigate) {
+                    window.Livewire.navigate(target);
+                } else {
+                    window.location.href = target;
+                }
             }
         }"
         class="bg-[var(--kertas)] text-[var(--tinta)]"
     >
         {{-- Bagian atas: Breadcrumb + Detail Menu --}}
-        <section data-nav-theme="light" class="pt-24 sm:pt-28 pb-16 sm:pb-20">
+        <section data-nav-theme="light" class="pt-24 sm:pt-28 pb-24">
             <div class="umco-container space-y-8 sm:space-y-10">
                 <div data-reveal="fade" class="flex flex-wrap items-center justify-between gap-3 text-sm text-[var(--tinta-70)]">
                     <nav aria-label="Breadcrumb" class="flex items-center gap-2">
@@ -103,8 +119,8 @@
 
                     <a
                         x-show="notaCount > 0"
-                        href="{{ url('/reservasi') }}"
-                        wire:navigate
+                        :href="reserveUrl()"
+                        wire:navigate.hover
                         style="display: none;"
                         class="rounded-full bg-[var(--aksen-soft)] text-[var(--tinta)] px-4 py-1.5 text-xs font-semibold"
                     >
@@ -258,7 +274,7 @@
                             </div>
 
                             <p class="text-xs text-[var(--tinta-70)] leading-relaxed">
-                                Menu yang kamu pilih langsung terbawa ke formulir reservasi meja (minimal 2 orang, minimal belanja mulai Rp 50.000).
+                                Menu yang kamu pilih langsung terbawa ke formulir reservasi meja.
                             </p>
                         </div>
                     </div>

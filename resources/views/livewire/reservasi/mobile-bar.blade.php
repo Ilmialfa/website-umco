@@ -48,8 +48,10 @@
     style="display: none;"
     class="sm:hidden fixed inset-0 z-50 bg-[var(--tinta)]/60 flex items-end"
     @click.self="mobileSheetOpen = false"
+    @wheel.self.prevent
+    @touchmove.self.prevent
 >
-    <div class="w-full bg-[var(--kertas)] p-4 pt-5 max-h-[85vh] overflow-y-auto">
+    <div data-lenis-prevent class="w-full bg-[var(--kertas)] p-4 pt-5 max-h-[85vh] overflow-y-auto overscroll-contain">
         <div class="flex items-center justify-between mb-3">
             <p class="font-display font-bold text-base">Isi karcismu</p>
             <button type="button" @click="mobileSheetOpen = false" class="text-sm font-semibold underline">Tutup</button>

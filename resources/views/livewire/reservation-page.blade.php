@@ -27,10 +27,12 @@
 <div
     id="reservasi-wizard"
     data-module="reservasi-tools"
+    data-eager="1"
     data-nav-bg="#F6F4ED"
     data-has-query-items="{{ $hasQueryItems ? '1' : '0' }}"
     @umco-step-changed.window="window.scrollTo({ top: 0, behavior: 'smooth' })"
     @keydown.escape.window="mobileSheetOpen = false"
+    x-effect="window.umcoScrollLock?.('reservasi-sheet', mobileSheetOpen)"
     x-data="{
         mobileSheetOpen: @entangle('mobileSheetOpen'),
         tabletExpanded: @entangle('tabletKarcisExpanded'),

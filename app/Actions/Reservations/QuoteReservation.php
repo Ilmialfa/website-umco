@@ -5,6 +5,7 @@ namespace App\Actions\Reservations;
 use App\Models\MenuItem;
 use App\Models\SpendTier;
 use App\Support\Settings;
+use Illuminate\Support\Facades\Cache;
 
 class QuoteReservation
 {
@@ -36,14 +37,26 @@ class QuoteReservation
             ->unique()
             ->values();
 
-        $menus = $menuIds->isNotEmpty()
-            ? MenuItem::query()
-                ->whereIn('id', $menuIds)
-                ->where('is_active', true)
-                ->where('is_available', true)
-                ->get()
-                ->keyBy('id')
-            : collect();
+        /** @var array<int, array{id: int, slug: string, name: string, price: int, variants: array<int, mixed>, has_temperature: bool}> $menuMap */
+        $menuMap = $menuIds->isNotEmpty()
+            ? Cache::rememberForever('umco_active_menu_map', static function (): array {
+                return MenuItem::query()
+                    ->where('is_active', true)
+                    ->where('is_available', true)
+                    ->get(['id', 'slug', 'name', 'price', 'variants', 'has_temperature'])
+                    ->mapWithKeys(static fn (MenuItem $m): array => [
+                        $m->id => [
+                            'id' => $m->id,
+                            'slug' => (string) $m->slug,
+                            'name' => $m->name,
+                            'price' => (int) $m->price,
+                            'variants' => is_array($m->variants) ? $m->variants : [],
+                            'has_temperature' => (bool) $m->has_temperature,
+                        ],
+                    ])
+                    ->all();
+            })
+            : [];
 
         $normalizedItems = [];
         $subtotal = 0;
@@ -55,8 +68,7 @@ class QuoteReservation
                 continue;
             }
 
-            /** @var MenuItem|null $menu */
-            $menu = $menus->get($menuId);
+            $menu = $menuMap[$menuId] ?? null;
             if (! $menu) {
                 continue;
             }
@@ -71,8 +83,8 @@ class QuoteReservation
                 $temperature = null;
             }
 
-            $unitPrice = (int) $menu->price;
-            $variants = is_array($menu->variants) ? $menu->variants : [];
+            $unitPrice = (int) $menu['price'];
+            $variants = $menu['variants'];
 
             if ($variantLabel !== null && $variants !== []) {
                 foreach ($variants as $variant) {
@@ -91,8 +103,8 @@ class QuoteReservation
             $subtotal += $unitPrice * $qty;
 
             $normalizedItems[] = [
-                'menu_item_id' => $menu->id,
-                'name_snapshot' => $menu->name,
+                'menu_item_id' => $menu['id'],
+                'name_snapshot' => $menu['name'],
                 'variant_label' => $variantLabel,
                 'temperature' => $temperature,
                 'price_snapshot' => $unitPrice,

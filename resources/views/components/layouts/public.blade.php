@@ -170,21 +170,38 @@
                     window.umcoFormatters?.saveNota([]);
                 },
                 reserveUrl() {
+                    if (window.umcoFormatters?.buildReserveUrl) {
+                        return window.umcoFormatters.buildReserveUrl(this.nota, '{{ url('/reservasi') }}');
+                    }
                     const encoded = this.nota.map(r => r.slug + ':' + r.qty).join(',');
                     return encoded ? '{{ url('/reservasi') }}?items=' + encodeURIComponent(encoded) : '{{ url('/reservasi') }}';
                 }
             }"
+            x-effect="window.umcoScrollLock?.('nota-drawer', open)"
             x-show="qtyCount() > 0"
             @keydown.escape.window="open = false"
             style="display: none;"
             class="fixed bottom-5 right-4 sm:right-6 z-40 flex flex-col items-end gap-2.5 max-w-[calc(100vw-2rem)]"
         >
+            {{-- Lapisan penutup latar agar guliran halaman belakang terkunci saat daftar nota dibuka --}}
+            <div
+                x-show="open"
+                x-transition.opacity.duration.150ms
+                @click="open = false"
+                @wheel.prevent
+                @touchmove.prevent
+                style="display: none;"
+                class="fixed inset-0 z-[-1] bg-[var(--tinta)]/25"
+                aria-hidden="true"
+            ></div>
+
             {{-- Mini-karcis nota tersimpan --}}
             <div
                 x-show="open"
                 x-transition.opacity.duration.180ms
                 @click.outside="open = false"
-                class="w-[330px] sm:w-[370px] max-w-full rounded-2xl bg-[var(--kertas-terang)] text-[var(--tinta)] border-t-[3px] border-t-[var(--mentega)] p-4 sm:p-5 space-y-3.5"
+                data-lenis-prevent
+                class="w-[330px] sm:w-[370px] max-w-full rounded-2xl bg-[var(--kertas-terang)] text-[var(--tinta)] border-t-[3px] border-t-[var(--mentega)] p-4 sm:p-5 space-y-3.5 overscroll-contain"
                 role="dialog"
                 aria-label="Nota pesanan tersimpan"
             >
@@ -198,7 +215,7 @@
                     </button>
                 </div>
 
-                <div class="max-h-56 overflow-y-auto divide-y divide-dashed divide-[var(--garis-kuwat)] pr-0.5">
+                <div data-lenis-prevent class="max-h-56 overflow-y-auto overscroll-contain divide-y divide-dashed divide-[var(--garis-kuwat)] pr-0.5">
                     <template x-for="(row, idx) in nota" :key="(row.key || row.slug) + idx">
                         <div class="py-2.5 flex items-center justify-between gap-3 text-sm">
                             <div class="min-w-0">
@@ -223,7 +240,7 @@
                     <button type="button" @click="clearAll()" class="px-3.5 h-10 rounded-full bg-[var(--batu)] hover:bg-[var(--garis-kuwat)] text-xs font-semibold text-[var(--tinta-70)] transition-colors cursor-pointer">
                         Kosongkan
                     </button>
-                    <a :href="reserveUrl()" wire:navigate class="btn-umco btn-umco-primary flex-1 min-h-0 h-10 px-4 text-xs sm:text-sm">
+                    <a :href="reserveUrl()" wire:navigate.hover class="btn-umco btn-umco-primary flex-1 min-h-0 h-10 px-4 text-xs sm:text-sm">
                         <span>Lanjut reservasi</span>
                         <svg class="w-3.5 h-3.5 shrink-0"><use href="#icon-arrow-right"/></svg>
                     </a>
@@ -264,7 +281,7 @@
                 </button>
                 <a
                     :href="reserveUrl()"
-                    wire:navigate
+                    wire:navigate.hover
                     class="inline-flex items-center gap-1.5 rounded-full bg-[var(--mentega)] hover:bg-[var(--mentega-tua)] text-white text-xs sm:text-[13px] font-semibold px-4 h-9 transition-colors whitespace-nowrap"
                 >
                     <span>Lanjut Reservasi</span>

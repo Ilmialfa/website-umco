@@ -41,5 +41,7 @@ class PublicContentObserver
         Cache::forget('umco_spend_tiers');
         Cache::forget('umco_seating_options');
         Cache::forget('umco_bean_origins');
+        Cache::forget('umco_active_menu_map');
+        Cache::forget('umco_closed_dates');
     }
 }

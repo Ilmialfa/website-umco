@@ -28,7 +28,7 @@ class ReservationStatusChartWidget extends ChartWidget
      */
     protected function getData(): array
     {
-        $counts = Cache::remember('filament.dashboard.charts.mix', 30, static function (): array {
+        $counts = Cache::rememberForever('filament.dashboard.charts.mix', static function (): array {
             $rows = Reservation::query()
                 ->toBase()
                 ->selectRaw('status, COUNT(*) as total')

@@ -229,6 +229,11 @@ class CreateReservation extends CreateRecord
         }
     }
 
+    protected function afterCreate(): void
+    {
+        $this->dispatch('refresh-sidebar');
+    }
+
     /**
      * @return array<string, string>
      */

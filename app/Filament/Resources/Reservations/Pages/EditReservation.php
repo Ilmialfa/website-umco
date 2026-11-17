@@ -41,4 +41,9 @@ class EditReservation extends EditRecord
 
         return $data;
     }
+
+    protected function afterSave(): void
+    {
+        $this->dispatch('refresh-sidebar');
+    }
 }

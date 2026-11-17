@@ -61,17 +61,23 @@ class ReservationReports extends Page
     }
 
     /**
-     * @return array{total_reservations: int, total_pax: int, total_subtotal: int, total_dp: int, records: Collection<int, Reservation>}
+     * @return array{total_reservations: int, total_pax: int, total_subtotal: int, total_dp: int, total_remaining: int, records: Collection<int, Reservation>}
      */
     public function getReportDataProperty(): array
     {
         $reservations = $this->getReportQuery()->get();
+        $active = $reservations->where('status', '!=', 'cancelled');
 
         return [
-            'total_reservations' => $reservations->count(),
-            'total_pax' => (int) $reservations->sum('party_size'),
-            'total_subtotal' => (int) $reservations->sum('subtotal'),
-            'total_dp' => (int) $reservations->whereIn('payment_status', ['verified', 'proof_uploaded'])->sum('dp_amount'),
+            'total_reservations' => $active->count(),
+            'total_pax' => (int) $active->sum('party_size'),
+            'total_subtotal' => (int) $active->sum('subtotal'),
+            'total_dp' => (int) $active
+                ->where('payment_status', 'verified')
+                ->sum(static fn (Reservation $r): int => (int) ($r->amount_paid ?? $r->dp_amount)),
+            'total_remaining' => (int) $active
+                ->whereIn('status', ['pending', 'confirmed'])
+                ->sum(static fn (Reservation $r): int => $r->remainingBalance()),
             'records' => $reservations,
         ];
     }
@@ -112,11 +118,13 @@ class ReservationReports extends Page
                 'Status Meja',
                 'Status DP',
                 'Total Menu (Rp)',
-                'DP Amount (Rp)',
+                'Sudah Masuk (Rp)',
+                'Sisa Tagihan (Rp)',
                 'Catatan',
             ]);
 
             foreach ($records as $r) {
+                $paid = $r->payment_status === 'verified' ? (int) ($r->amount_paid ?? 0) : 0;
                 fputcsv($handle, [
                     $this->safeCsvCell($r->code),
                     $this->safeCsvCell($r->name),
@@ -128,7 +136,8 @@ class ReservationReports extends Page
                     $this->safeCsvCell($r->status_label),
                     $this->safeCsvCell($r->payment_status_label),
                     $r->subtotal,
-                    $r->dp_amount,
+                    $paid,
+                    $r->remainingBalance(),
                     $this->safeCsvCell($r->note ?? ''),
                 ]);
             }

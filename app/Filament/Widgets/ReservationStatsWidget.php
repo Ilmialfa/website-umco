@@ -16,8 +16,8 @@ class ReservationStatsWidget extends BaseWidget
 
     protected function getStats(): array
     {
-        $metrics = Cache::remember('filament.dashboard.stats', 15, function (): array {
-            $today = now()->toDateString();
+        $today = now()->toDateString();
+        $metrics = Cache::rememberForever("filament.dashboard.stats.{$today}", static function () use ($today): array {
             $weekStart = now()->subDays(6)->toDateString();
             $monthStart = now()->startOfMonth()->toDateString();
             $monthEnd = now()->endOfMonth()->toDateString();
@@ -25,9 +25,9 @@ class ReservationStatsWidget extends BaseWidget
             $resRow = Reservation::query()
                 ->toBase()
                 ->selectRaw(
-                    "SUM(CASE WHEN date = ? THEN 1 ELSE 0 END) as today_count,
+                    "SUM(CASE WHEN date = ? AND status != 'cancelled' THEN 1 ELSE 0 END) as today_count,
                      SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending_count,
-                     SUM(CASE WHEN date BETWEEN ? AND ? AND payment_status IN ('verified', 'proof_uploaded') THEN dp_amount ELSE 0 END) as month_dp",
+                     SUM(CASE WHEN date BETWEEN ? AND ? AND status != 'cancelled' AND payment_status = 'verified' THEN COALESCE(amount_paid, dp_amount) ELSE 0 END) as month_dp",
                     [$today, $monthStart, $monthEnd]
                 )
                 ->first();
@@ -74,8 +74,8 @@ class ReservationStatsWidget extends BaseWidget
                 ->descriptionIcon('heroicon-m-clock')
                 ->color($pendingCount > 0 ? 'warning' : 'success'),
 
-            Stat::make('Total DP Masuk (Bulan Ini)', 'Rp '.number_format($totalDpThisMonth, 0, ',', '.'))
-                ->description('Dari pembayaran DP/Lunas terverifikasi')
+            Stat::make('Pemasukan Reservasi (Bulan Ini)', 'Rp '.number_format($totalDpThisMonth, 0, ',', '.'))
+                ->description('DP & pelunasan terverifikasi')
                 ->descriptionIcon('heroicon-m-banknotes')
                 ->color('success'),
 

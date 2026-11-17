@@ -134,4 +134,26 @@ class Reservation extends Model
             default => ucfirst($this->payment_status),
         };
     }
+
+    public function remainingBalance(): int
+    {
+        if ($this->status === 'cancelled') {
+            return 0;
+        }
+
+        return max(0, (int) $this->subtotal - (int) ($this->amount_paid ?? 0));
+    }
+
+    public function isFullyPaid(): bool
+    {
+        if ($this->status === 'cancelled') {
+            return false;
+        }
+
+        if ($this->payment_status === 'none' && (int) $this->subtotal === 0) {
+            return true;
+        }
+
+        return $this->payment_status === 'verified' && $this->remainingBalance() === 0;
+    }
 }

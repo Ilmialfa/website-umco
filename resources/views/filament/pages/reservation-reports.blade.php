@@ -54,8 +54,12 @@
                 <p class="umco-stat-value umco-stat-value--accent">Rp {{ number_format($data['total_subtotal'], 0, ',', '.') }}</p>
             </div>
             <div class="umco-stat-card">
-                <p class="umco-stat-label">Total DP Masuk</p>
+                <p class="umco-stat-label">Total Uang Masuk (Terverifikasi)</p>
                 <p class="umco-stat-value umco-stat-value--accent">Rp {{ number_format($data['total_dp'], 0, ',', '.') }}</p>
+            </div>
+            <div class="umco-stat-card">
+                <p class="umco-stat-label">Sisa Belum Dilunasi</p>
+                <p class="umco-stat-value">Rp {{ number_format($data['total_remaining'], 0, ',', '.') }}</p>
             </div>
         </div>
 
@@ -70,11 +74,16 @@
                         <th style="text-align: center;">Pax</th>
                         <th>Tipe</th>
                         <th>Status</th>
-                        <th style="text-align: right;">Nominal DP</th>
+                        <th style="text-align: right;">Sudah Masuk</th>
+                        <th style="text-align: right;">Sisa Tagihan</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($data['records'] as $r)
+                        @php
+                            $paid = $r->payment_status === 'verified' ? (int) ($r->amount_paid ?? 0) : 0;
+                            $rem = $r->remainingBalance();
+                        @endphp
                         <tr>
                             <td style="font-weight: 700;">{{ $r->code }}</td>
                             <td style="font-weight: 600;">{{ $r->name }}</td>
@@ -97,12 +106,21 @@
                                 </span>
                             </td>
                             <td style="text-align: right; font-weight: 700; font-variant-numeric: tabular-nums;">
-                                Rp {{ number_format($r->dp_amount, 0, ',', '.') }}
+                                Rp {{ number_format($paid, 0, ',', '.') }}
+                            </td>
+                            <td style="text-align: right; font-weight: 600; font-variant-numeric: tabular-nums;">
+                                @if ($r->status === 'cancelled')
+                                    -
+                                @elseif ($r->isFullyPaid())
+                                    <span class="umco-pill umco-pill--success">Lunas</span>
+                                @else
+                                    Rp {{ number_format($rem, 0, ',', '.') }}
+                                @endif
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" style="text-align: center; padding: 32px; color: var(--umco-tinta-70);">
+                            <td colspan="9" style="text-align: center; padding: 32px; color: var(--umco-tinta-70);">
                                 Tidak ada data reservasi untuk rentang tanggal yang dipilih.
                             </td>
                         </tr>

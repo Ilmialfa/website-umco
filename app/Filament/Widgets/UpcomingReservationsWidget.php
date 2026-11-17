@@ -2,12 +2,12 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Resources\Reservations\Actions\ReservationActions;
 use App\Filament\Resources\Reservations\ReservationResource;
-use App\Models\ActivityLog;
 use App\Models\Reservation;
+use App\Support\IndonesianFormat;
 use App\Support\PhoneNumber;
 use Filament\Actions\Action;
-use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -65,6 +65,14 @@ class UpcomingReservationsWidget extends BaseWidget
                     ->label('Status')
                     ->badge()
                     ->formatStateUsing(fn (Reservation $record) => $record->status_label)
+                    ->description(function (Reservation $record): string {
+                        $rem = $record->remainingBalance();
+                        if ($record->payment_status === 'verified') {
+                            return $rem > 0 ? 'Sisa '.IndonesianFormat::rupiah($rem) : 'Lunas';
+                        }
+
+                        return $record->payment_status_label;
+                    })
                     ->color(fn ($state) => match ($state) {
                         'pending' => 'warning',
                         'confirmed' => 'success',
@@ -72,6 +80,9 @@ class UpcomingReservationsWidget extends BaseWidget
                     }),
             ])
             ->recordActions([
+                ReservationActions::viewProofAction(),
+                ReservationActions::verifyPaymentAction(),
+                ReservationActions::settlePaymentAction(),
                 Action::make('confirm_wa')
                     ->label('WA')
                     ->tooltip('Kirim konfirmasi WhatsApp')
@@ -79,29 +90,6 @@ class UpcomingReservationsWidget extends BaseWidget
                     ->color('success')
                     ->openUrlInNewTab()
                     ->url(fn (Reservation $record): string => route('admin.wa.redirect', ['reservation' => $record->id, 'template' => 'confirmation'])),
-
-                Action::make('mark_confirmed')
-                    ->label('Konfirmasi')
-                    ->icon('heroicon-o-check')
-                    ->color('primary')
-                    ->authorize(fn (): bool => auth()->user()?->isAdmin() ?? false)
-                    ->visible(fn (Reservation $record) => $record->status === 'pending')
-                    ->requiresConfirmation()
-                    ->action(function (Reservation $record) {
-                        $record->update([
-                            'status' => 'confirmed',
-                            'confirmed_at' => now(),
-                        ]);
-
-                        ActivityLog::record('status_change', Reservation::class, $record->id, [
-                            'new_status' => 'confirmed',
-                        ]);
-
-                        Notification::make()
-                            ->title('Reservasi Dikonfirmasi')
-                            ->success()
-                            ->send();
-                    }),
             ])
             ->emptyStateHeading('Belum ada jadwal mendatang')
             ->emptyStateDescription('Semua reservasi yang dikonfirmasi atau menunggu verifikasi untuk hari ini dan mendatang akan muncul di sini.')

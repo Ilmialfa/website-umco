@@ -151,11 +151,18 @@ class AppServiceProvider extends ServiceProvider
         ClosedDate::observe(PublicContentObserver::class);
 
         $flushAdminStats = static function (): void {
+            $today = now()->toDateString();
+            $yesterday = now()->subDay()->toDateString();
+
             Cache::forget('filament.reservations.pending_count');
-            Cache::forget('filament.reservations.tab_counts');
-            Cache::forget('filament.dashboard.stats');
-            Cache::forget('filament.dashboard.charts.14d');
-            Cache::forget('filament.dashboard.charts.30d');
+            Cache::forget("filament.reservations.tab_counts.{$today}");
+            Cache::forget("filament.reservations.tab_counts.{$yesterday}");
+            Cache::forget("filament.dashboard.stats.{$today}");
+            Cache::forget("filament.dashboard.stats.{$yesterday}");
+            Cache::forget("filament.dashboard.charts.14d.{$today}");
+            Cache::forget("filament.dashboard.charts.14d.{$yesterday}");
+            Cache::forget("filament.dashboard.charts.30d.{$today}");
+            Cache::forget("filament.dashboard.charts.30d.{$yesterday}");
             Cache::forget('filament.dashboard.charts.mix');
         };
 

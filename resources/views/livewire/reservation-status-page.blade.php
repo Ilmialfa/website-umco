@@ -127,7 +127,10 @@
                         <x-umco.karcis-line label="Nama" :value="$reservation->name" />
                         <x-umco.karcis-line label="Titipan" :value="$itemsSummary" />
                         <x-umco.karcis-line label="Total" :value="\App\Support\IndonesianFormat::rupiah($reservation->subtotal)" />
-                        <x-umco.karcis-line label="Bayar" :value="$payChoiceLabel . ' · ' . \App\Support\IndonesianFormat::rupiah($reservation->amount_due)" />
+                        <x-umco.karcis-line label="Bayar" :value="$payChoiceLabel . ' · ' . \App\Support\IndonesianFormat::rupiah($reservation->payment_status === 'verified' ? (int) ($reservation->amount_paid ?? $reservation->amount_due) : $reservation->amount_due)" />
+                        @if ($reservation->payment_status === 'verified' && $reservation->remainingBalance() > 0)
+                            <x-umco.karcis-line label="Sisa di kasir" :value="\App\Support\IndonesianFormat::rupiah($reservation->remainingBalance())" />
+                        @endif
                     </x-umco.karcis>
                 </div>
 

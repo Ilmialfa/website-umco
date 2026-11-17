@@ -3,10 +3,11 @@
 namespace App\Filament\Resources\Reservations\Schemas;
 
 use App\Models\Reservation;
+use App\Support\IndonesianFormat;
 use App\Support\PhoneNumber;
-use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\ViewEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
@@ -105,17 +106,44 @@ class ReservationInfolist
                             ->label('Tagihan Awal')
                             ->money('IDR'),
                         TextEntry::make('amount_paid')
-                            ->label('Nominal Masuk')
+                            ->label('Total Masuk (DP / Lunas)')
                             ->money('IDR')
                             ->placeholder('Belum dicek'),
+                        TextEntry::make('remaining_balance')
+                            ->label('Sisa Pelunasan di Kasir')
+                            ->state(function (Reservation $record): string {
+                                if ($record->status === 'cancelled') {
+                                    return 'Dibatalkan';
+                                }
+                                $rem = $record->remainingBalance();
+                                if ($record->payment_status === 'verified' && $rem === 0) {
+                                    return 'Lunas';
+                                }
+
+                                return IndonesianFormat::rupiah($rem);
+                            })
+                            ->badge()
+                            ->color(function (Reservation $record): string {
+                                if ($record->status === 'cancelled') {
+                                    return 'gray';
+                                }
+
+                                return $record->isFullyPaid() ? 'success' : 'warning';
+                            }),
                         TextEntry::make('payment_status')
                             ->label('Status Pembayaran')
                             ->badge()
-                            ->formatStateUsing(fn (Reservation $record) => $record->payment_status_label)
-                            ->color(fn ($state) => match ($state) {
+                            ->formatStateUsing(function (Reservation $record): string {
+                                if ($record->payment_status === 'verified') {
+                                    return $record->remainingBalance() === 0 ? 'Lunas' : 'DP Terverifikasi';
+                                }
+
+                                return $record->payment_status_label;
+                            })
+                            ->color(fn (Reservation $record, $state) => match ($state) {
                                 'waiting_proof' => 'warning',
                                 'proof_uploaded' => 'info',
-                                'verified' => 'success',
+                                'verified' => $record->remainingBalance() > 0 ? 'warning' : 'success',
                                 'rejected' => 'danger',
                                 default => 'gray',
                             }),
@@ -123,11 +151,10 @@ class ReservationInfolist
                             ->label('Alasan Bukti Ditolak')
                             ->columnSpanFull()
                             ->visible(fn (Reservation $record): bool => filled($record->payment_rejected_reason)),
-                        ImageEntry::make('payment_proof_path')
+                        ViewEntry::make('payment_proof_path')
                             ->label('Bukti Transfer Pelanggan')
-                            ->disk('public')
-                            ->columnSpanFull()
-                            ->placeholder('Belum ada bukti yang diunggah.'),
+                            ->view('filament.components.payment-proof-viewer')
+                            ->columnSpanFull(),
                     ]),
 
                 Section::make('Daftar Menu yang Dipesan')

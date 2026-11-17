@@ -8,7 +8,6 @@ use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Cache;
 
 class ListReservations extends ListRecords
 {
@@ -23,20 +22,19 @@ class ListReservations extends ListRecords
 
     public function getTabs(): array
     {
-        $counts = Cache::remember('filament.reservations.tab_counts', 15, static function (): array {
-            $today = now()->toDateString();
-            $row = Reservation::query()
-                ->selectRaw("SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending_count")
-                ->selectRaw("SUM(CASE WHEN status = 'confirmed' THEN 1 ELSE 0 END) as confirmed_count")
-                ->selectRaw("SUM(CASE WHEN date = ? AND status IN ('pending', 'confirmed') THEN 1 ELSE 0 END) as today_count", [$today])
-                ->first();
+        $today = now()->toDateString();
+        $row = Reservation::query()
+            ->toBase()
+            ->selectRaw("SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending_count")
+            ->selectRaw("SUM(CASE WHEN status = 'confirmed' THEN 1 ELSE 0 END) as confirmed_count")
+            ->selectRaw("SUM(CASE WHEN date = ? AND status IN ('pending', 'confirmed') THEN 1 ELSE 0 END) as today_count", [$today])
+            ->first();
 
-            return [
-                'pending' => (int) ($row->pending_count ?? 0),
-                'confirmed' => (int) ($row->confirmed_count ?? 0),
-                'today' => (int) ($row->today_count ?? 0),
-            ];
-        });
+        $counts = [
+            'pending' => $row !== null ? (int) ($row->pending_count ?? 0) : 0,
+            'confirmed' => $row !== null ? (int) ($row->confirmed_count ?? 0) : 0,
+            'today' => $row !== null ? (int) ($row->today_count ?? 0) : 0,
+        ];
 
         return [
             'semua' => Tab::make('Semua'),

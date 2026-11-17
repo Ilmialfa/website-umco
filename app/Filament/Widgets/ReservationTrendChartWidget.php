@@ -41,8 +41,9 @@ class ReservationTrendChartWidget extends ChartWidget
     {
         $filter = $this->filter === '30d' ? '30d' : '14d';
         $days = $filter === '30d' ? 30 : 14;
+        $today = now()->toDateString();
 
-        $payload = Cache::remember("filament.dashboard.charts.{$filter}", 30, static function () use ($days): array {
+        $payload = Cache::rememberForever("filament.dashboard.charts.{$filter}.{$today}", static function () use ($days): array {
             $start = now()->subDays($days - 1)->startOfDay();
             $end = now()->endOfDay();
 

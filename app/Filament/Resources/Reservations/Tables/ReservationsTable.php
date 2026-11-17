@@ -20,6 +20,7 @@ class ReservationsTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn ($query) => $query->with(['seatingOption']))
             ->defaultSort('date', 'desc')
             ->columns([
                 TextColumn::make('code')
@@ -63,12 +64,29 @@ class ReservationsTable
                 TextColumn::make('payment_status')
                     ->label('Pembayaran')
                     ->badge()
-                    ->formatStateUsing(fn (Reservation $record) => $record->payment_status_label)
-                    ->description(fn (Reservation $record): string => IndonesianFormat::rupiah((int) $record->amount_due))
-                    ->color(fn ($state) => match ($state) {
+                    ->formatStateUsing(function (Reservation $record): string {
+                        if ($record->payment_status === 'verified') {
+                            return $record->remainingBalance() === 0 ? 'Lunas' : 'DP Terverifikasi';
+                        }
+
+                        return $record->payment_status_label;
+                    })
+                    ->description(function (Reservation $record): string {
+                        if ($record->payment_status === 'verified') {
+                            $paid = (int) ($record->amount_paid ?? 0);
+                            $rem = $record->remainingBalance();
+
+                            return $rem > 0
+                                ? 'Masuk '.IndonesianFormat::rupiah($paid).' · Sisa '.IndonesianFormat::rupiah($rem)
+                                : IndonesianFormat::rupiah($paid);
+                        }
+
+                        return 'Tagihan '.IndonesianFormat::rupiah((int) $record->amount_due);
+                    })
+                    ->color(fn (Reservation $record, $state) => match ($state) {
                         'waiting_proof' => 'warning',
                         'proof_uploaded' => 'info',
-                        'verified' => 'success',
+                        'verified' => $record->remainingBalance() > 0 ? 'warning' : 'success',
                         'rejected' => 'danger',
                         default => 'gray',
                     }),
@@ -141,6 +159,7 @@ class ReservationsTable
                 ActionGroup::make([
                     ViewAction::make(),
                     EditAction::make(),
+                    ReservationActions::viewProofAction(),
                     ...ReservationActions::statusActions(),
                     ...ReservationActions::whatsappActions(prefixed: true),
                 ])

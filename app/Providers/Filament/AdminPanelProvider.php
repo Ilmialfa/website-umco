@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\AvatarProviders\LocalInitialsAvatarProvider;
 use App\Filament\Pages\Auth\AdminLogin;
 use App\Filament\Widgets\ReservationStatsWidget;
 use App\Filament\Widgets\ReservationStatusChartWidget;
@@ -50,11 +51,12 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogoHeight('1.75rem')
             ->favicon('/favicon.ico?v=umco2')
             ->sidebarCollapsibleOnDesktop()
-            ->spa()
+            ->spa(hasPrefetching: true)
+            ->defaultAvatarProvider(LocalInitialsAvatarProvider::class)
             ->maxContentWidth(Width::Full)
             ->viteTheme('resources/css/filament/admin/theme.css')
-            ->databaseNotifications()
-            ->databaseNotificationsPolling('60s')
+            ->databaseNotifications(isLazy: false)
+            ->databaseNotificationsPolling('120s')
             ->renderHook(
                 PanelsRenderHook::HEAD_END,
                 static fn (): HtmlString => new HtmlString(

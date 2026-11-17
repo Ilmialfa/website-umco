@@ -180,7 +180,7 @@ class ReservationStatusPage extends Component
             return ['label' => 'BUKTI DITOLAK', 'hex' => '#C4472E', 'class' => 'text-[var(--stempel)] border-[var(--stempel)]'];
         }
         if ($r->status === 'confirmed') {
-            if ($r->payment_type === 'full' || $r->amount_paid >= $r->subtotal) {
+            if ($r->isFullyPaid()) {
                 return ['label' => 'LUNAS', 'hex' => '#22263A', 'class' => 'text-[var(--tinta)] border-[var(--tinta)]'];
             }
 

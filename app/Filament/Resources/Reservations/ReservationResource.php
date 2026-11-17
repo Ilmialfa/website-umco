@@ -16,7 +16,6 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Cache;
 use UnitEnum;
 
 class ReservationResource extends Resource
@@ -52,11 +51,7 @@ class ReservationResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        $count = Cache::remember(
-            'filament.reservations.pending_count',
-            15,
-            fn (): int => Reservation::where('status', 'pending')->count(),
-        );
+        $count = Reservation::where('status', 'pending')->count();
 
         return $count > 0 ? (string) $count : null;
     }

@@ -14,9 +14,12 @@ it('renders home page without legacy copy, emojis, or external fonts', function 
     $response->assertSee('UM.CO');
     $response->assertSee('Hubungi Kami');
     $response->assertSee('Reservasi');
-    foreach (['hero', 'banner-utama', 'marquee', 'signature-reel', 'karcis-teaser', 'galeri-diagonal', 'faq', 'kata-mereka', 'instagram-feed', 'cta-footer'] as $sectionId) {
+    foreach (['hero', 'banner-utama', 'marquee', 'signature-reel', 'karcis-teaser', 'galeri-diagonal', 'faq', 'kata-mereka', 'instagram-feed', 'lokasi-umco', 'cta-footer'] as $sectionId) {
         $response->assertSee("id=\"{$sectionId}\"", false);
     }
+    $content = (string) $response->getContent();
+    expect(strpos($content, 'id="lokasi-umco"'))->toBeLessThan(strpos($content, 'id="cta-footer"'));
+    $response->assertDontSee('Salin Lat Lng');
     $response->assertDontSee('id="menu-nota"', false);
     $response->assertDontSee('id="galeri"', false);
     $response->assertDontSee('Wing Barat');
@@ -74,6 +77,8 @@ it('renders cerita page and permanently redirects /about to /cerita', function (
     $response->assertSee('Ruang &amp; Fasilitas', false);
     $response->assertSee('Kolaborasi &amp; Reservasi Rombongan', false);
     $response->assertSee('Tiga hal yang kami pegang');
+    $response->assertSee('id="lokasi-umco"', false);
+    $response->assertDontSee('Salin Lat Lng');
     $response->assertDontSee('Wing Barat');
     $response->assertDontSee('Arsitektur');
     $response->assertDontSee('id="biji"', false);

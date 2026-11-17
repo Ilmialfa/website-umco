@@ -52,6 +52,7 @@ const modules = {
     'testimonials-parallax': () => import('./sections/testimonials-parallax.js'),
     'gallery-mosaic': () => import('./sections/gallery-mosaic.js'),
     'reservasi-tools': () => import('./sections/reservasi-tools.js'),
+    'location-map': () => import('./sections/location-map.js'),
 };
 
 let io = null;

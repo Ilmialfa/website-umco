@@ -9,6 +9,7 @@
         'faq' => 'sections.home.s12-faq',
         'testimonials' => 'sections.home.s11-testimonials',
         'instagram_feed' => 'sections.home.s13-instagram',
+        'location_map' => 'sections.home.s14-location',
         'cta_footer' => 'sections.home.s10-cta',
     ];
 
@@ -31,9 +32,20 @@
     initial-nav-theme="dark"
     :title="\App\Support\Settings::get('seo.meta_title', 'UMCO — Cafe di Kampus UMRI Pekanbaru')"
 >
+    @php $locationRendered = false; @endphp
     @foreach ($orderedSections as $section)
+        @if ($section->key === 'cta_footer' && ! $locationRendered)
+            @include('sections.home.s14-location', ['section' => null])
+            @php $locationRendered = true; @endphp
+        @endif
         @if (isset($partialMap[$section->key]))
+            @if ($section->key === 'location_map')
+                @php $locationRendered = true; @endphp
+            @endif
             @include($partialMap[$section->key], ['section' => $section])
         @endif
     @endforeach
+    @if (! $locationRendered)
+        @include('sections.home.s14-location', ['section' => null])
+    @endif
 </x-layouts.public>

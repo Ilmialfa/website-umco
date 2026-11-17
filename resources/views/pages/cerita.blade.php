@@ -394,4 +394,12 @@
         </div>
     </section>
     @endif
+
+    {{-- 8. Peta Interaktif Lokasi UMCO --}}
+    <x-umco.interactive-map
+        surface="bg-[var(--kertas-terang)]"
+        eyebrow="lokasi kami"
+        heading="Peta Interaktif UMCO House"
+        subheading="Datang langsung ke Kampus 2 UMRI Pekanbaru. Geser, perbesar, aktifkan sudut 3D, atau pindah ke Google Maps."
+    />
 </x-layouts.public>

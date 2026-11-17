@@ -98,7 +98,7 @@ class Redesign2026Seeder extends Seeder
             ['group' => 'contact', 'key' => 'address', 'payload' => 'Kampus 2 UMRI, Jl. Tuanku Tambusai No. 2, Delima, Binawidya, Pekanbaru 28291'],
             ['group' => 'contact', 'key' => 'coordinates', 'payload' => '0.4999292, 101.4155284'],
             ['group' => 'contact', 'key' => 'plus_code', 'payload' => 'FCX8+X6 Delima, Pekanbaru'],
-            ['group' => 'contact', 'key' => 'google_maps_url', 'payload' => 'https://www.google.com/maps/place/UMCO+HOUSE/@0.4999292,101.4155284,17z'],
+            ['group' => 'contact', 'key' => 'google_maps_url', 'payload' => 'https://maps.app.goo.gl/mySUaws1ixmSqiia8'],
             ['group' => 'contact', 'key' => 'instagram_url', 'payload' => 'https://www.instagram.com/um.co_house'],
             ['group' => 'contact', 'key' => 'instagram_handle', 'payload' => '@um.co_house'],
             ['group' => 'contact', 'key' => 'instagram_access_token', 'payload' => ''],

@@ -490,19 +490,89 @@ section[id] {
     transform: translateY(10px) rotate(1.5deg);
 }
 
-/* Gradasi UMCO (Hero top-green -> bottom Oat Ivory agar mulus menyatu dengan seksi berikutnya) */
+/* Gradasi UMCO (OKLab + eased multi-stop agar mulus bebas pita warna / Mach band) */
 .umco-hero-gradient {
     background:
         radial-gradient(58% 60% at 72% 38%, rgba(169, 214, 187, 0.20) 0%, rgba(169, 214, 187, 0) 70%),
-        linear-gradient(180deg, #0D3526 0%, #154B36 44%, #2B6E51 70%, #9BC4AD 86%, #F6F4ED 100%);
+        linear-gradient(
+            180deg,
+            #0D3526 0%,
+            #103D2C 22%,
+            #154B36 42%,
+            #205D44 56%,
+            #357458 67%,
+            #579274 76%,
+            #83B398 84%,
+            #B4D0BF 91%,
+            #DAE4DA 96%,
+            #F6F4ED 100%
+        );
 }
+
 .umco-cta-gradient {
-    background: linear-gradient(180deg, #F6F4ED 0%, #DFEDE4 44%, #95C5AB 78%, #226649 100%);
+    background: linear-gradient(
+        180deg,
+        #F6F4ED 0%,
+        #F2F2EA 14%,
+        #E9EFE7 28%,
+        #DAE8DC 42%,
+        #C1DAC8 55%,
+        #9EC6AF 67%,
+        #75AE91 77%,
+        #4E9072 86%,
+        #317255 93%,
+        #226246 97.5%,
+        #1F5D42 100%
+    );
 }
+
 .umco-footer-gradient {
     background:
         radial-gradient(65% 42% at 50% 96%, rgba(212, 232, 219, 0.22) 0%, rgba(212, 232, 219, 0) 72%),
-        linear-gradient(180deg, #226649 0%, #19523A 62%, #1D5A40 100%);
+        linear-gradient(180deg, #1F5D42 0%, #1C573E 36%, #184E37 72%, #1B553C 100%);
+}
+
+@supports (background: linear-gradient(in oklab, #fff, #000)) {
+    .umco-hero-gradient {
+        background:
+            radial-gradient(58% 60% at 72% 38%, rgba(169, 214, 187, 0.20) 0%, rgba(169, 214, 187, 0) 70%),
+            linear-gradient(
+                in oklab 180deg,
+                #0D3526 0%,
+                #103D2C 22%,
+                #154B36 42%,
+                #205D44 56%,
+                #357458 67%,
+                #579274 76%,
+                #83B398 84%,
+                #B4D0BF 91%,
+                #DAE4DA 96%,
+                #F6F4ED 100%
+            );
+    }
+
+    .umco-cta-gradient {
+        background: linear-gradient(
+            in oklab 180deg,
+            #F6F4ED 0%,
+            #F2F2EA 14%,
+            #E9EFE7 28%,
+            #DAE8DC 42%,
+            #C1DAC8 55%,
+            #9EC6AF 67%,
+            #75AE91 77%,
+            #4E9072 86%,
+            #317255 93%,
+            #226246 97.5%,
+            #1F5D42 100%
+        );
+    }
+
+    .umco-footer-gradient {
+        background:
+            radial-gradient(65% 42% at 50% 96%, rgba(212, 232, 219, 0.22) 0%, rgba(212, 232, 219, 0) 72%),
+            linear-gradient(in oklab 180deg, #1F5D42 0%, #1C573E 36%, #184E37 72%, #1B553C 100%);
+    }
 }
 
 /* Efek uap dingin halus di dasar gelas footer */

@@ -22,8 +22,8 @@
 <section
     id="cta-footer"
     data-nav-theme="light"
-    data-nav-stops="0:#F6F4ED,0.44:#DFEDE4,0.78:#95C5AB,1:#226649"
-    class="umco-cta-gradient text-[var(--tinta)] pt-20 pb-24 sm:pt-28 sm:pb-32 overflow-hidden"
+    data-nav-stops="0:#F6F4ED,0.42:#DAE8DC,0.67:#9EC6AF,0.86:#4E9072,1:#1F5D42"
+    class="umco-cta-gradient text-[var(--tinta)] pt-24 pb-32 sm:pt-32 sm:pb-44 overflow-hidden"
 >
     <div class="umco-container">
         <div class="max-w-5xl mx-auto text-center space-y-5">

@@ -141,10 +141,10 @@
                     <h2 class="type-h2 font-display font-bold">Pesan meja sebelum datang ke cafe.</h2>
                 </div>
                 <div class="flex flex-wrap gap-3">
-                    <a href="{{ url('/reservasi') }}" wire:navigate class="btn-umco btn-umco-primary">
+                    <a href="{{ url('/reservasi') }}" wire:navigate.hover class="btn-umco btn-umco-primary">
                         <span>Pesan meja</span>
                     </a>
-                    <a href="{{ url('/menu') }}" wire:navigate class="btn-umco bg-[var(--kertas-terang)] text-[var(--tinta)] hover:bg-[var(--tinta)] hover:text-[var(--kertas)]">
+                    <a href="{{ url('/menu') }}" wire:navigate.hover class="btn-umco bg-[var(--kertas-terang)] text-[var(--tinta)] hover:bg-[var(--tinta)] hover:text-[var(--kertas)]">
                         <span>Lihat daftar menu</span>
                     </a>
                 </div>

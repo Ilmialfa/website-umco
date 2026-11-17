@@ -323,7 +323,7 @@
                                 <p class="font-hand text-2xl text-[var(--mentega)]">{{ $gallerySec?->subheading ?: 'Potret Ruang' }}</p>
                                 <h2 class="type-h2 font-display font-semibold">{{ $gallerySec?->heading ?: 'Suasana dari waktu ke waktu' }}</h2>
                             </div>
-                            <a href="{{ url($gallerySec?->cta_url ?: '/galeri') }}" wire:navigate class="text-sm font-semibold underline underline-offset-4 hover:text-[var(--mentega)]">
+                            <a href="{{ url($gallerySec?->cta_url ?: '/galeri') }}" wire:navigate.hover class="text-sm font-semibold underline underline-offset-4 hover:text-[var(--mentega)]">
                                 {{ $gallerySec?->cta_label ?: 'Buka seluruh galeri' }} &rarr;
                             </a>
                         </div>
@@ -372,7 +372,7 @@
                             </a>
                             <a
                                 href="{{ url($collab?->cta_url ?: '/reservasi') }}"
-                                wire:navigate
+                                wire:navigate.hover
                                 class="btn-umco bg-[var(--batu)] text-[var(--tinta)] hover:bg-[var(--tinta)] hover:text-[var(--kertas)]"
                             >
                                 <span>{{ $collab?->data['secondary_label'] ?? 'Pesan meja grup' }}</span>

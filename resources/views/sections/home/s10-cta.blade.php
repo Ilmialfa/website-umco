@@ -42,7 +42,7 @@
             <div data-reveal-stagger class="pt-3 flex flex-wrap items-center justify-center gap-3">
                 <a
                     href="{{ url($primaryUrl) }}"
-                    wire:navigate
+                    wire:navigate.hover
                     class="btn-umco bg-[#134731] text-white hover:bg-[#0E3524]"
                 >
                     <span class="btn-roll">

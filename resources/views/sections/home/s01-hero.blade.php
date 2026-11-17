@@ -47,7 +47,7 @@
                 <div class="flex flex-wrap items-center gap-3 pt-1">
                     <a
                         href="{{ url($ctaUrl) }}"
-                        wire:navigate
+                        wire:navigate.hover
                         class="btn-umco bg-[#F6F4ED] text-[#141916] hover:bg-white"
                     >
                         <span class="btn-roll">
@@ -57,7 +57,7 @@
                     </a>
                     <a
                         href="{{ url($secondaryUrl) }}"
-                        wire:navigate
+                        wire:navigate.hover
                         class="btn-umco bg-white/15 text-white hover:bg-white hover:text-[#141916]"
                     >
                         {{ $secondaryLabel }}

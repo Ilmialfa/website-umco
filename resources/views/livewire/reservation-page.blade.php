@@ -3,7 +3,7 @@
     $dateObj = $this->date ? \Carbon\Carbon::createFromFormat('Y-m-d', $this->date)->locale('id') : null;
     $dateDisplay = $dateObj ? $dateObj->isoFormat('ddd, D MMM') : 'Belum dipilih';
     $timeDisplay = $this->time ? str_replace(':', '.', $this->time) . ' WIB' : 'Belum dipilih';
-    $selectedSeating = $this->seatingOptions->firstWhere('id', $this->seatingOptionId);
+    $selectedSeating = $this->seatingOptionId ? $this->seatingOptions->firstWhere('id', $this->seatingOptionId) : null;
     $seatingDisplay = $selectedSeating ? $selectedSeating->label : 'Bebas di mana saja';
     $itemsSummaryText = collect($quoteData['items'])
         ->map(fn ($i) => $i['qty'] . 'x ' . $i['name_snapshot'])
@@ -148,12 +148,18 @@
             {{-- GRID UTAMA: Kiri 7 kol langkah aktif (tanpa wrapper 500% agar scroll selalu alami), Kanan 5 kol Karcis sticky --}}
             <div class="mt-6 lg:mt-8 lg:grid lg:grid-cols-12 lg:gap-10 items-start">
                 <div class="lg:col-span-7 min-w-0">
-                    <div>
-                        @include('livewire.reservasi.step-jadwal')
-                        @include('livewire.reservasi.step-tempat')
-                        @include('livewire.reservasi.step-menu')
-                        @include('livewire.reservasi.step-data')
-                        @include('livewire.reservasi.step-bayar')
+                    <div wire:key="step-panel-{{ $step }}">
+                        @if ($step === 1)
+                            @include('livewire.reservasi.step-jadwal')
+                        @elseif ($step === 2)
+                            @include('livewire.reservasi.step-tempat')
+                        @elseif ($step === 3)
+                            @include('livewire.reservasi.step-menu')
+                        @elseif ($step === 4)
+                            @include('livewire.reservasi.step-data')
+                        @elseif ($step === 5)
+                            @include('livewire.reservasi.step-bayar')
+                        @endif
                     </div>
                 </div>
 

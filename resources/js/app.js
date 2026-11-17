@@ -210,6 +210,27 @@ function initSectionModules() {
     lazyTargets.forEach((el) => io.observe(el));
 }
 
+function scheduleReservasiWarmPrefetch() {
+    if (document.body?.dataset.page === 'reservasi') return;
+
+    const triggerPrefetch = () => {
+        if (document.visibilityState === 'hidden') return;
+        const link = document.querySelector('a.nav-reservasi-pill[wire\\:navigate\\.hover], a[href$="/reservasi"][wire\\:navigate\\.hover]');
+        if (!link) return;
+        link.dispatchEvent(new MouseEvent('mouseenter', { bubbles: false }));
+        window.setTimeout(() => {
+            link.dispatchEvent(new MouseEvent('mouseleave', { bubbles: false }));
+        }, 80);
+    };
+
+    const startTimer = window.setTimeout(triggerPrefetch, 220);
+    const keepWarmTimer = window.setInterval(triggerPrefetch, 24000);
+    cleanups.push(() => {
+        clearTimeout(startTimer);
+        clearInterval(keepWarmTimer);
+    });
+}
+
 function bootPage() {
     const navDestroy = initNav();
     if (typeof navDestroy === 'function') cleanups.push(navDestroy);
@@ -219,6 +240,7 @@ function bootPage() {
     initSectionModules();
     initOffscreenMotionPause();
     initLenisIfEnabled();
+    scheduleReservasiWarmPrefetch();
 }
 
 function teardownPage() {

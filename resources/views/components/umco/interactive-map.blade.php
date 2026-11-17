@@ -105,19 +105,32 @@
 
                 {{-- Layer Google Maps Asli (saat tab Google Maps dipilih atau fallback) --}}
                 <template x-if="mode === 'gmaps'">
-                    <iframe
-                        src="{{ $googleEmbedUrl }}"
-                        title="Google Maps UMCO House"
-                        class="absolute inset-0 w-full h-full border-0"
-                        loading="lazy"
-                        allowfullscreen
-                        referrerpolicy="strict-origin-when-cross-origin"
-                    ></iframe>
+                    <div class="absolute inset-0 z-0 w-full h-full">
+                        <div class="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center bg-[var(--batu)] text-[var(--tinta-70)]">
+                            <p class="text-sm font-medium">Memuat Google Maps UMCO House...</p>
+                            <a
+                                href="{{ $mapsLink }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="btn-umco btn-umco-primary min-h-0 h-10 px-5 text-xs sm:text-sm"
+                            >
+                                <span>Buka Google Maps di tab baru</span>
+                                <svg class="w-3.5 h-3.5 shrink-0"><use href="#icon-arrow-right"/></svg>
+                            </a>
+                        </div>
+                        <iframe
+                            src="{{ $googleEmbedUrl }}"
+                            title="Google Maps UMCO House"
+                            class="relative w-full h-full border-0"
+                            allowfullscreen
+                            referrerpolicy="no-referrer-when-downgrade"
+                        ></iframe>
+                    </div>
                 </template>
 
                 {{-- Panel Pilihan Gaya Peta (otomatis bergeser rapi saat mode Google Maps agar kotak info Google tidak tertutup) --}}
                 <div
-                    class="absolute z-10 rounded-2xl bg-[var(--kertas-terang)]/95 p-1.5 border border-[var(--tinta)]/8 transition-all"
+                    class="absolute z-20 rounded-2xl bg-[var(--kertas-terang)]/95 p-1.5 border border-[var(--tinta)]/8 transition-all"
                     :class="mode === 'gmaps' ? 'top-3 right-3 sm:top-4 sm:right-4 max-w-[calc(100%-1.5rem)]' : 'top-3 left-3 sm:top-4 sm:left-4 max-w-[calc(100%-6rem)]'"
                 >
                     <p
@@ -137,7 +150,7 @@
                             class="px-3 py-1.5 rounded-xl text-left text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap"
                             :class="mode === 'voyager' ? 'bg-[var(--mentega)] text-white' : 'text-[var(--tinta-70)] hover:bg-[var(--batu)] hover:text-[var(--tinta)]'"
                         >
-                            Standar (Hangat)
+                            Standar
                         </button>
                         <button
                             type="button"

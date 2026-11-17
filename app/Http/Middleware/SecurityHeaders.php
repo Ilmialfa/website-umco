@@ -34,7 +34,7 @@ class SecurityHeaders
 
         $response->headers->set(
             'Content-Security-Policy',
-            "default-src 'self'; img-src 'self' data: blob: https:; font-src 'self' data: https:; style-src 'self' 'unsafe-inline'{$viteOrigin}; script-src 'self' 'unsafe-inline' 'unsafe-eval'{$viteOrigin}; worker-src 'self' blob:; child-src 'self' blob:; connect-src 'self' https:{$viteOrigin}{$viteWs}; frame-src 'self' https://www.google.com https://maps.google.com https://widgets.sociablekit.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'",
+            "default-src 'self'; img-src 'self' data: blob: https:; font-src 'self' data: https:; style-src 'self' 'unsafe-inline'{$viteOrigin}; script-src 'self' 'unsafe-inline' 'unsafe-eval'{$viteOrigin}; worker-src 'self' blob:; child-src 'self' blob: https://*.google.com https://*.google.co.id https://*.gstatic.com; connect-src 'self' https:{$viteOrigin}{$viteWs}; frame-src 'self' https://www.google.com https://maps.google.com https://*.google.com https://*.google.co.id https://*.gstatic.com https://widgets.sociablekit.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'",
             false
         );
         $response->headers->remove('X-Powered-By');
